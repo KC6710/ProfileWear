@@ -1,0 +1,190 @@
+/**
+ * Mega Filter Pack
+ * 
+ * @license Commercial
+ * @author info@ocdemo.eu
+ * 
+ * All code within this file is copyright OC Mega Extensions.
+ * You may not copy or reuse code within this file without written permission. 
+ */
+
+.ocme-lb-control-content {
+	margin-bottom: 15px;
+}
+
+.ocme-lb-menu {
+	padding: 0 7.5px;
+}
+
+.ocme-lb-workspace {
+	position: relative;
+}
+
+.ocme-lb-columns-bg {
+	z-index: 1;
+	position: absolute;
+	height: 100%;
+	top: 15px;
+	left: 15px;
+	right: 15px;
+}
+
+.ocme-lb-column-container > .ocme-lb-columns-bg {
+	top: 0;
+}
+
+.ocme-lb-workspace > .ocme-lb-columns-bg {
+	left: 8px;
+	right: 8px;
+}
+
+.ocme-lb-col {
+	width: 8.33%;
+	height: 100%;
+	float: left;
+	position: relative;
+}
+
+.ocme-lb-col-bg {
+	margin: 0 7.5px;
+	background: #f8f8f8;
+	height: 100%;
+}
+
+.ocme-lb-easing {
+	transition: width 0.5s, margin 0.5s, top 0.5s, left 0.5s, right 0.5s;
+}
+
+/* Rows ---------------------------------------------------------------------- */
+.ocme-lb-rows {
+	min-height: 200px;
+	z-index: 2;
+	position: relative;
+}
+
+/* Row ---------------------------------------------------------------------- */
+.ocme-lb-row {
+	margin: 10px 2px;
+	padding: 0;
+}
+.ocme-lb-row-menu {
+	padding: 5px;
+	float: right;
+}
+.ocme-lb-row-menu,
+.ocme-lb-columns-container {
+	background: rgba(37,40,48,0.3);
+}
+
+/* Columns ------------------------------------------------------------------ */
+.ocme-lb-columns {
+	min-height: 180px;
+	padding: 5px;
+}
+
+/* Column ------------------------------------------------------------------- */
+.ocme-lb-column {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.ocme-lb-column-menu {
+	padding: 5px;
+	float: right;
+	margin-right: -6px;
+	position: relative;
+	z-index: 5;
+}
+
+.ocme-lb-column-menu,
+.ocme-lb-column-container {
+	background: #fff;
+}
+
+.ocme-lb-column-offset {
+	background: rgba(0,0,0,0.3);
+	position: absolute;
+	height: calc(100% - 32px);
+}
+
+.ocme-lb-column-container {
+	position: relative;
+	margin: 0 -6px;
+	border: 10px solid #fff;
+	border-bottom-width: 20px;
+	border-left: none;
+	border-right: none;
+}
+
+.ocme-lb-offset-handle {
+	left: 1px;
+}
+.ocme-lb-width-handle {
+	right: 1px;
+}
+
+.ocme-lb-offset-handle,
+.ocme-lb-width-handle {
+	width: 8px;
+	position: absolute;
+	height: 100%;
+	background: #00acac;
+	cursor: col-resize;
+	top: 0;
+	z-index: 3;
+	opacity: 0.1;
+}
+
+.ocme-lb-offset-handle:hover,
+.ocme-lb-width-handle:hover {
+	opacity: 1;
+}
+
+.ocme-lb-column-rows {
+	min-height: 105px;
+	position: relative;
+	z-index: 4;
+	margin: 0 8px;
+}
+
+.ocme-lb-column-info {
+	font-size: 11px;
+	overflow: hidden;
+	padding: 0 10px;
+	text-align: right;
+	bottom: -19px;
+	right: 0;
+	position: absolute;
+	height: 18px;
+}
+
+.ocme-lb-column-conditions {
+	list-style-type: none;
+	margin: 5px 10px;
+	padding: 5px;
+	background: rgba(0,0,0,0.2);
+	border: 1px dashed rgba(0,0,0,0.5);
+	min-height: 38px;
+	position: relative;
+}
+.ocme-lb-column-conditions:before {
+	content: "Here you can DRAG & DROP the list of available conditions";
+	position: absolute;
+	z-index: 0;
+	text-align: center;
+	width: 100%;
+	height: 18px;
+	top: 8px;
+	color: #000;
+	overflow: hidden;
+}
+.ocme-lb-column-conditions li {
+	padding: 3px 5px;
+	color: #fff;
+	background: #777;
+	position: relative;
+	z-index: 1;
+}
+.ocme-lb-column-conditions li + li {
+	margin-top: 5px;
+}

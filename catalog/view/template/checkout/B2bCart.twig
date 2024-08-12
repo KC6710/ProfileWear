@@ -1,0 +1,320 @@
+{{ header }}
+<style>
+.btn:disabled, .btn.disabled, fieldset:disabled .btn{
+    border:none!important;
+}
+</style>
+<main class="main-body shopping-cart-details-container shopping-cart-customize-container">  
+  <div class="cart_breadcrumb">
+  {% for breadcrumb in breadcrumbs %}
+        
+    {% if loop.last %}
+      <span class="item">{{ breadcrumb.text }}</span>
+    {% else %}
+      <a href="{{ breadcrumb.href }}" class="item active">{{ breadcrumb.text }}</a>
+      <span class="round"></span>
+    {% endif %}
+
+  {% endfor %}
+  </div>
+  {% if attention %}
+    <div class="alert alert-info"><i class="fa-solid fa-circle-info"></i> {{ attention }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+  {% endif %}
+  {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-check"></i> {{ success }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+  {% endif %}
+  {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> {{ error_warning }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+  {% endif %}
+
+  <div class="header">
+    <div class="left">
+      <h6>{{ heading_title }}</h6>
+      <p>02 items</p>
+    </div>
+    <div class="right">
+      <span><a href="{{ continue }}">{{ button_shopping }}</a></span>
+      <img src="image/arrow_right.svg">
+    </div>
+  </div>
+  <div class="center-container" id="shopping-cart">
+    {{ list }}
+  </div>
+
+<script type="text/javascript"><!--
+$('#shopping-cart').on('submit', 'form', function (e) {
+    e.preventDefault();
+
+    var element = this;
+
+    if (e.originalEvent !== undefined && e.originalEvent.submitter !== undefined) {
+        var button = e.originalEvent.submitter;
+    } else {
+        var button = '';
+    }
+
+    $.ajax({
+        url: $(button).attr('formaction'),
+        type: 'post',
+        data: $(element).serialize(),
+        dataType: 'json',
+        beforeSend: function () {
+            $(button).button('loading');
+        },
+        complete: function () {
+            $(button).button('reset');
+        },
+        success: function (json) {
+            console.log(json);
+
+            if (json['redirect']) {
+                location = json['redirect'];
+            }
+
+            if (json['error']) {
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+            }
+
+            if (json['success']) {
+                $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+            }
+
+            $('#shopping-cart').load('index.php?route=checkout/cart.list&language={{ language }}', {}, function () {
+                $('#header-cart').load('index.php?route=common/cart.info&language={{ language }}');
+            });
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
+//--></script>
+
+<script>
+    document.querySelector('#file-input').addEventListener('change', function() {
+  var files = this.files;
+
+  var imagesJSON = localStorage.getItem('images');
+  var images = imagesJSON ? JSON.parse(imagesJSON) : [];
+
+  var filesProcessed = 0;
+  var totalSize = 0;
+
+  // Calculate the existing total size from local storage
+  if (images.length > 0) {
+    images.forEach(function(image) {
+      totalSize += parseFloat(image.fileSize);
+    });
+  }
+
+  if (files && files.length > 0) {
+    Array.from(files).forEach(function(file) {
+      // Calculate the file size in MB
+      var fileSizeInMB = (file.size / 1024 / 1024).toFixed(2);
+
+      // Calculate new total size if this file is added
+      var newTotalSize = totalSize + parseFloat(fileSizeInMB);
+
+      // Validate file size
+      if (fileSizeInMB > 5 || newTotalSize > 5) {
+        alert('Either individual file or total files size exceeds the 5 MB limit.');
+        return;
+      }
+
+      // Update the total size
+      totalSize = newTotalSize;
+
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        var dataURL = e.target.result;
+        var fileData = {
+          dataURL: dataURL,
+          fileName: file.name,
+          fileSize: fileSizeInMB,
+        };
+
+        images.push(fileData);
+
+        var fileDiv = document.createElement('div');
+        fileDiv.className = 'selected-file-name';
+        fileDiv.style.position = 'relative';
+
+        var fileNameSpan = document.createElement('span');
+        fileNameSpan.textContent = file.name + ' (' + fileSizeInMB + ' MB)';
+
+        var closeSpan = document.createElement('span');
+        closeSpan.textContent = 'x';
+        closeSpan.style.position = 'absolute';
+        closeSpan.style.top = '5px';
+        closeSpan.style.right = '5px';
+        closeSpan.style.cursor = 'pointer';
+
+        closeSpan.onclick = function() {
+          var index = images.indexOf(fileData);
+          if (index > -1) {
+            images.splice(index, 1);
+            localStorage.setItem('images', JSON.stringify(images));
+            fileDiv.remove();
+          }
+        };
+
+        var img = document.createElement('img');
+        img.src = dataURL;
+        img.style.height = '60px';
+
+        fileDiv.appendChild(img);
+        fileDiv.appendChild(fileNameSpan);
+        fileDiv.appendChild(closeSpan);
+
+        document.querySelector('#selected-file').appendChild(fileDiv);
+
+        filesProcessed++;
+
+        if (filesProcessed === files.length) {
+          localStorage.setItem('images', JSON.stringify(images));
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+});
+
+    // Retrieve the images on page load (e.g., on the checkout page)
+window.onload = function() {
+  var previewContainer = document.getElementById('selected-file');
+  var imagesJSON = localStorage.getItem('images');
+  var images = imagesJSON ? JSON.parse(imagesJSON) : [];
+
+  images.forEach(function(imageData, index) {
+    var dataURL = imageData.dataURL;
+    var fileName = imageData.fileName;
+    var fileSize = imageData.fileSize;
+
+    // Create a div and img element for each stored file
+    var div = document.createElement('div');
+    div.className = 'selected-file-name';
+    div.style.position = 'relative';
+    var fileNameSpan = document.createElement('span');
+    fileNameSpan.textContent = fileName + '(' + fileSize + ' mb)';
+
+    var span = document.createElement('span');
+    span.innerHTML = ' x';
+    span.dataset.index = index;
+    span.style.position = 'absolute';
+    span.style.top = '5px';
+    span.style.right = '5px';
+    span.style.cursor = 'pointer';
+    
+    span.onclick = function(e) {
+      var idx = e.target.dataset.index;
+      images.splice(idx, 1);
+      localStorage.setItem('images', JSON.stringify(images));
+      e.target.parentElement.remove(); // Remove the div containing the image
+    };
+    
+    var img = document.createElement('img');
+    img.alt = 'Preview';
+    img.src = dataURL;
+    img.style.height = '60px';
+
+    div.appendChild(img);
+    div.appendChild(fileNameSpan);
+    div.appendChild(document.createTextNode(' \u00A0 ')); // Non-breaking space
+    div.appendChild(span);
+
+    
+    previewContainer.appendChild(div);
+  });
+};
+
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  // Initialize existing code
+  var radios = document.getElementsByName('upload_files');
+  var imagesdiv = document.getElementById('fileUploadDiv');
+  var colorradios = document.getElementsByName('select_colors');
+  var colorsdiv = document.getElementById('ColorsDiv');
+  var textarea = document.querySelector('.custom_message');
+  var colorSelects = document.querySelectorAll('.form-select');
+
+  // Load state from localStorage
+  loadState();
+
+  function loadState() {
+    // Load radios
+    ['upload_files', 'select_colors'].forEach((key) => {
+      var radioButtons = document.getElementsByName(key);
+      if(radioButtons.length > 0) {
+        var savedValue = localStorage.getItem(key);
+        if (savedValue !== null) {
+          radioButtons[savedValue].checked = true;
+        }
+      }
+    });
+
+    // Load message
+    if (localStorage.getItem("message") !== null) {
+      textarea.value = localStorage.getItem("message");
+    }
+
+    // Load color selects
+if (localStorage.getItem("colorSelects") !== null) {
+  const savedSelectTexts = JSON.parse(localStorage.getItem("colorSelects"));
+  colorSelects.forEach((select, index) => {
+    if (savedSelectTexts[index] !== undefined) {
+      const matchingOption = Array.from(select.options).find(option => option.text === savedSelectTexts[index]);
+      if (matchingOption) {
+        select.value = matchingOption.value;
+      }
+    }
+  });
+}
+  }
+
+  function toggleUploadImages() {
+    setDisplay(imagesdiv, radios[1].checked);
+    localStorage.setItem("upload_files", radios[1].checked ? 1 : 0);
+  }
+
+  function toggleColorRadio() {
+    setDisplay(colorsdiv, colorradios[1].checked);
+    localStorage.setItem("select_colors", colorradios[1].checked ? 1 : 0);
+  }
+
+  function setDisplay(element, condition) {
+    element.style.display = condition ? 'flex' : 'none';
+  }
+
+  function saveMessage() {
+    localStorage.setItem("message", textarea.value);
+  }
+
+  function saveColorSelects() {
+  // Assumes colorSelects is a collection of all your select elements
+  const colorNames = Array.from(colorSelects).map(select => {
+    const option = select.options[select.selectedIndex];
+    return option ? option.text : "";  // use option.text to get the actual color name
+  });
+
+  localStorage.setItem("colorSelects", JSON.stringify(colorNames));
+}
+
+  // Event listeners
+  radios.forEach(radio => radio.addEventListener('change', toggleUploadImages));
+  colorradios.forEach(radio => radio.addEventListener('change', toggleColorRadio));
+  textarea.addEventListener('input', saveMessage);
+  colorSelects.forEach(select => select.addEventListener('change', saveColorSelects));
+
+  // Initial state
+  toggleUploadImages();
+  var radioButtons = document.getElementsByName('select_colors');
+      if(radioButtons.length > 0) {
+        toggleColorRadio();
+      }
+});
+</script>
+{{ footer }}

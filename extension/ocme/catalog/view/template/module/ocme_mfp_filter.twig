@@ -1,0 +1,88 @@
+<style type="text/css">
+	{% for css in import_css %}
+		@import url("{{ css.file }}"){% if css.resolution %} ({{ css.resolution }}){% endif %};
+	{% endfor %}
+	{% if global_custom_styles %}
+		{{ global_custom_styles }}
+	{% endif %}
+	{{ filter.customCss() }}
+	{% for group in filter.groups().items %}
+		{% for condition in group.conditions %}
+			{{ condition.customCss() }}
+		{% endfor %}
+	{% endfor %}
+</style>
+
+<div class="{{ filter.cssClasses() }}" id="ocme-mfp-filter-{{ id }}">
+	<ocme-mfp-filter inline-template
+		:id="{{ id }}"
+		:index="{{ filter.getIndex() }}"
+		b64users="{{ filter.usersAsVue() }}"
+		b64config="{{ filter.configAsVue() }}"
+		:left_filters="{{ filter.groups().left }}"
+		language_direction="{{ filter.getLanguageDirection() }}"
+	>
+		<div class="ocme-mfp-f-container">
+			<div class="ocme-mfp-f-mobile ocme-mfp-f-mobile-btn hidden">
+				<button type="button" class="{{ filter.mobileOpenButtonCssClasses() }}" style="{{ filter.mobileOpenButtonCssStyles() }}">
+					{{ filter.iconLeft('widget.button.open.icon') }} {{ filter.mobileOpenButtonLabel( title ) }} {{ filter.iconRight('widget.button.open.icon') }}
+				</button>
+			</div>
+			<div class="ocme-mfp-f-header">
+				{{ filter.headerIconLeft() }}{{ title }}{{ filter.headerIconRight() }}
+				{% if filter.withMobileCloseButton() %}
+					<button type="button" class="ocme-mfp-btn ocme-mfp-f-mobile ocme-mfp-btn-link ocme-mfp-f-mobile-btn-close" style="{{ filter.mobileCloseButtonCssStyles() }}" v-on:click="toggleMobile()">
+						{{ filter.iconLeft('widget.button.close.icon') }} {{ filter.mobileCloseButtonLabel() }} {{ filter.iconRight('widget.button.close.icon') }}
+					</button>
+				{% endif %}
+			</div>
+			<div class="ocme-mfp-f-body">
+				<div class="{{ filter.wrapConditionsCssClasses( with_layout ) }}">
+					{{ filters }}
+				</div>
+						
+				{% if filter.groups().left %}
+					<div v-cloak v-show="shownAllFilters && hiddenFilters" class="ocme-mfp-f-hidden-conditions">
+						<div class="{{ filter.wrapConditionsCssClasses( with_layout ) }}" id="ocme-mfp-f-hidden-conditions-{{ id }}"></div>
+					</div>
+					<div class="ocme-mfp-f-show-more-filters ocme-mfp-f-mobile">
+						<button type="button" class="ocme-mfp-btn ocme-mfp-btn-default" v-on:click="toggleShowMoreFilters()" v-html="labelShowMoreFilters">
+							<i class="ocme-fa ocme-fa-angle-down"></i> {{ ocme.trans('module::filter.text_show_more_filters')|replace({'%s': filter.groups().left }) }}
+						</button>
+					</div>
+				{% endif %}
+			</div>
+			{% if filter.groups().left %}
+				<div class="ocme-mfp-f-more">
+					<button type="button" class="ocme-mfp-btn ocme-mfp-btn-default ocme-btn-block" v-on:click="toggleShowMoreFilters()" v-html="labelShowMoreFilters">
+						<i class="ocme-fa ocme-fa-angle-down"></i> {{ ocme.trans('module::filter.text_show_more_filters')|replace({'%s': filter.groups().left }) }}
+					</button>
+				</div>
+			{% endif %}
+			<div class="ocme-mfp-f-footer">
+				<button type="button" class="ocme-mfp-btn ocme-mfp-btn-default" v-on:click="resetFilters()" {% if not filter.hasAnyFilters() %}disabled="disabled"{% endif %} :disabled="!canResetFilters()">
+					<span v-cloak class="ocme-mfp-f-spinner" v-if="busy == 'resetting'"></span> {{ ocme.trans('module::filter.text_reset') }}
+				</button>
+				<button type="button" class="ocme-mfp-btn ocme-mfp-btn-secondary{% if filter.withLoadResultsViaAjax %} ocme-mfp-f-mobile{% endif %}" v-on:click="applyFilters()" v-html="labelApplyFilters" {% if not filter.hasAnyFilters() %}disabled="disabled"{% endif %} :disabled="!canApplyFilters()">
+					<i class="ocme-fa ocme-fa-filter"></i> {% if not filter.hasAnyFilters() %}{{ ocme.trans('module::filter.text_entry_filters') }}{% elseif filter.pagination().total > 1 %}{{ ocme.trans('module::filter.text_show_results')|replace({'%s': filter.pagination().total }) }}{% elseif filter.pagination().total == 1 %}{{ ocme.trans('module::filter.text_show_result')|replace({'%s': filter.pagination().total }) }}{% endif %}
+				</button>
+			</div>
+		</div>
+	</ocme-mfp-filter>
+</div>
+
+<script type="text/javascript">
+	window.addEventListener('load', function() {
+		{% if fdata %}
+			ocme.filter.set({{ fdata }});
+		{% endif %}
+		
+		{% for event in events %}
+			ocme.filter.addEvent('{{ id }}', '{{ event.trigger }}', function( trigger, self ){
+				{{ event.code }}
+			});
+		{% endfor %}
+			
+		ocme.filter.init();
+	});
+</script>

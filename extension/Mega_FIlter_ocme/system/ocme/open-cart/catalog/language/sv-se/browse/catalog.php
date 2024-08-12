@@ -1,0 +1,28 @@
+<?php
+
+return array(
+	'text_home' => '<i class="fa fa-home"></i>',
+	'text_refine' => 'Gör om sökning',
+	'text_catalog' => 'Katalog',
+	'text_products' => 'Produkter',
+	'text_empty' => 'Inga produkter hittades.',
+	'text_quantity' => 'Antal:',
+	'text_manufacturer' => 'Tillverkare:',
+	'text_model' => 'Artikel:',
+	'text_points' => 'Reward Points:',
+	'text_price' => 'Pris:',
+	'text_tax' => 'Exkl. moms:',
+	'text_compare' => 'Product Compare (%s)',
+	'text_sort' => 'Sortera:',
+	'text_default' => 'Standard',
+	'text_name_asc' => 'Namn (A - Ö)',
+	'text_name_desc' => 'Namn (Ö - A)',
+	'text_price_asc' => 'Pris (Low &gt; High)',
+	'text_price_desc' => 'Pris (High &gt; Low)',
+	'text_rating_asc' => 'Rating (Lowest)',
+	'text_rating_desc' => 'Rating (Highest)',
+	'text_model_asc' => 'Model (A - Z)',
+	'text_model_desc' => 'Model (Z - A)',
+	'text_limit' => 'Show:',
+	'text_pagination' => 'Showing %d to %d of %d (%d Pages)',
+);

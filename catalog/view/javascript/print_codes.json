@@ -1,0 +1,220 @@
+[
+  {
+    "printCode": "DG01",
+    "method": "Digital Print",
+    "setupCharge": "500",
+    "productModel": "00-prt-d-s",
+    "productId": "",
+    "amountColor": [
+      {
+        "amountColorsId": "1",
+        "amountColorsName": "Digitalprint (> 25cm2)",
+        "productModel": "00-prt-d-25",
+        "productId": "",
+        "amountSetupCharges": [
+          {
+            "amountSetupChargeId": "1",
+            "decoPrices": [
+              {
+                "decoPrice": [
+                  {
+                    "priceFromQty": "0",
+                    "price": 10
+                  },
+                  {
+                    "priceFromQty": "50",
+                    "price": 9
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "amountColorsId": "2",
+        "amountColorsName": "Digitalprint (> 100cm2)",
+        "productModel": "00-prt-d-100",
+        "productId": "",
+        "amountSetupCharges": [
+          {
+            "amountSetupChargeId": "2",
+            "decoPrices": [
+              {
+                "decoPrice": [
+                  {
+                    "priceFromQty": "0",
+                    "price": 20
+                  },
+                  {
+                    "priceFromQty": "50",
+                    "price": 18
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "amountColorsId": "3",
+        "amountColorsName": "Digitalprint (> 200cm2)",
+        "productModel": "00-prt-d-200",
+        "productId": "",
+        "amountSetupCharges": [
+          {
+            "amountSetupChargeId": "2",
+            "decoPrices": [
+              {
+                "decoPrice": [
+                  {
+                    "priceFromQty": "0",
+                    "price": 20
+                  },
+                  {
+                    "priceFromQty": "50",
+                    "price": 18
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "amountColorsId": "4",
+        "amountColorsName": "Digitalprint (> 300cm2)",
+        "productModel": "00-prt-d-300",
+        "productId": "",
+        "amountSetupCharges": [
+          {
+            "amountSetupChargeId": "2",
+            "decoPrices": [
+              {
+                "decoPrice": [
+                  {
+                    "priceFromQty": "0",
+                    "price": 20
+                  },
+                  {
+                    "priceFromQty": "50",
+                    "price": 18
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "printCode": "SC01",
+    "method": "Screen Print",
+    "setupCharge": "250",
+    "productModel": "00-prt-scr-s",
+    "productId": "",
+    "amountColor": [
+      {
+        "amountColorsId": "1",
+        "amountColorsName": "Screen Print 1-Color",
+        "productModel": "00-prt-scr-1",
+        "productId": "",
+        "amountSetupCharges": [
+          {
+            "amountSetupChargeId": "1",
+            "decoPrices": [
+              {
+                "decoPrice": [
+                  {
+                    "priceFromQty": "0",
+                    "price": 10
+                  },
+                  {
+                    "priceFromQty": "50",
+                    "price": 9
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "amountColorsId": "2",
+        "amountColorsName": "Screen Print 2-Color",
+        "productModel": "00-prt-scr-2",
+        "productId": "",
+        "amountSetupCharges": [
+          {
+            "amountSetupChargeId": "1",
+            "decoPrices": [
+              {
+                "decoPrice": [
+                  {
+                    "priceFromQty": "0",
+                    "price": 20
+                  },
+                  {
+                    "priceFromQty": "50",
+                    "price": 18
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "amountColorsId": "3",
+        "amountColorsName": "Screen Print 3-Color",
+        "productModel": "00-prt-scr-3",
+        "productId": "",
+        "amountSetupCharges": [
+          {
+            "amountSetupChargeId": "1",
+            "decoPrices": [
+              {
+                "decoPrice": [
+                  {
+                    "priceFromQty": "0",
+                    "price": 20
+                  },
+                  {
+                    "priceFromQty": "50",
+                    "price": 18
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "amountColorsId": "4",
+        "amountColorsName": "Screen Print 4-Color",
+        "productModel": "00-prt-scr-4",
+        "productId": "",
+        "amountSetupCharges": [
+          {
+            "amountSetupChargeId": "1",
+            "decoPrices": [
+              {
+                "decoPrice": [
+                  {
+                    "priceFromQty": "0",
+                    "price": 20
+                  },
+                  {
+                    "priceFromQty": "50",
+                    "price": 18
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

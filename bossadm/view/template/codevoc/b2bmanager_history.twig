@@ -1,0 +1,34 @@
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <td class="text-start">DATE</td>
+        <td class="text-start">USER</td>
+        <td class="text-start">NOTIFIED CUSTOMER</td>
+        <td class="text-start">ORDER STATUS</td>
+        <td class="text-start">COMMENT</td>
+      </tr>
+    </thead>
+    <tbody>
+      {% if histories %}
+        {% for history in histories %}
+          <tr>
+            <td class="text-start">{{ history.date_added }}</td>
+            <td class="text-start">{{ history.user }}</td>
+            <td class="text-start">{{ history.notify }}</td>
+            <td class="text-start">{{ history.status }}</td>
+            <td class="text-start">{{ history.comment }}</td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td class="text-center" colspan="4">{{ text_no_results }}</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+<div class="row">
+  <div class="col-sm-6 text-start">{{ pagination }}</div>
+  <div class="col-sm-6 text-end">{{ results }}</div>
+</div>

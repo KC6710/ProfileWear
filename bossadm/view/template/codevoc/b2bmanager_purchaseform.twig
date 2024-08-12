@@ -1,0 +1,844 @@
+{{ header }}
+<link href="view/stylesheet/pw4_bootstrap_3.css" rel="stylesheet" type="text/css"/>
+<link href="view/stylesheet/pw4_style.css" rel="stylesheet" type="text/css"/>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+{# <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.1/underscore-umd-min.js"></script> #}
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+<link href="view/stylesheet/codevoc_b2b_mananger.css" rel="stylesheet">
+<link href="view/stylesheet/codevoc_b2b_mananger_dark.css" rel="stylesheet">
+<style type="text/css">
+//.input-group{display:block;}
+.space-left{margin-left:15px;}
+.space-adjustment{margin-top: -5px;}
+.panel-default.panel-purchase {border: 4px solid #79828c;border-top: 4px solid #79828c;}
+.completed-purchase .panel-heading {background: #2e5237;color: #5b8465;}
+.completed-purchase.panel-default {border-color:#437a51;}
+.completed-purchase-row{background: #213221;}
+.inventory-items{background: #d1e7d1;color: black;padding: 2px 10px;border-radius: 20px;border: 1px solid #87cd88;font-size: 10px;}
+.inventory-items span{background: #87cd88;padding: 1px 5px;border-radius: 53px;font-weight: bold;}
+.optionset{padding: 2px 6px;border: 1px solid #444c56;background: #1f232b;}
+.panel-default .panel-heading.purchase-list{color:#999;}
+.marked{border:1px solid #666;padding:2px 4px;}
+
+[v-cloak] {display: none;}
+</style>
+{{ column_left }}
+<div id="content">
+<div id="app" v-cloak>
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="button" class="btn btn-success"
+          :disabled="!(isAllOrdersFinished && !purchase_info.purchase_finished)"
+          @click="finishPurchaseAndChangeStatus">
+          <i class="fa fa-check"></i> Avsluta inköp & byt order status
+        </button>
+      </div>
+      <div class="pull-right" style="margin-right:15px;">
+
+      </div>
+
+
+      <h1>Inköpslista</h1>
+      <ul class="breadcrumb">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Inköp</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+
+    <div class="alert alert-success alert-dismissible" v-if="purchase_info.orders.length >0 && isAllOrdersFinished"><i class="fa fa-check-circle"></i>Denna inköp är komplett</div>
+
+    <div class="alert alert-success" v-if="success"><i class="fa fa-check-circle"></i> ${ success }
+      <button type="button" class="close" @click="success = null">×</button>
+    </div>
+
+    <div class="alert alert-danger" v-if="error"><i class="fa fa-check-circle"></i> ${ error }
+      <button type="button" class="close" @click="error = null">×</button>
+    </div>
+
+    <purchase-detail
+      :receivers="receivers"
+      :purchase="purchase_info"
+      inline-template
+    >
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">1. Inköpsorder information</h3>
+        </div>
+        <div class="panel-body">
+          <div class="alert alert-success" v-if="success"><i class="fa fa-check-circle"></i> ${ success }
+            <button type="button" class="close" @click="success = null">×</button>
+          </div>
+
+          <div class="alert alert-danger" v-if="error"><i class="fa fa-check-circle"></i> ${ error }
+            <button type="button" class="close" @click="error = null">×</button>
+          </div>
+          <form ref="form">
+            <div class="alert alert-danger alert-dismissible" v-if="error"><i class="fa fa-exclamation-circle"></i> ${ error } <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+            <div class="row">
+              <div class="col-sm-3">
+                <select class="form-select" v-model="receiver" required>
+                  <option value="">Välj inköp till</option>
+                  <option v-for="receiver in receivers" :value="receiver.purchase_receiver_id">${ receiver.name }</option>
+                </select>
+              </div>
+              <div class="col-sm-7">
+                <input type="text" class="form-control"  placeholder="Purchase name" v-model="purchase_name" required>
+              </div>
+              <div class="col-sm-2">
+                <button class="btn btn-success" type="button" @click="handleFormSubmit" :disabled="processing"><i class="fa fa-check"></i> Spara inköpsinformation</button>
+              </div>
+            </div>
+          </form>
+        </div><!-- panel-body -->
+      </div><!-- panel panel-default -->
+
+    </purchase-detail>
+
+    <p v-if="purchase_info.orders.length <=0">No orders found for this purchase order.</p>
+<hr>
+    <order-detail
+      :suppliers="suppliers"
+      :purchase="purchase_info"
+      :order="order"
+      v-for="order in purchase_info.orders"
+      :key="order.purchase_order_id"
+      inline-template
+    >
+      <div class="panel panel-default panel-purchase "
+        :class="{'completed-purchase': isOrderFinished}"
+      >
+        <div class="panel-heading purchase-list d-flex justify-content-between">
+          <div>
+            <h3 class="panel-title"><i class="fa fa-list"></i> Order id #${ componentOrder.order_id }</h3>
+            <i class="fa fa-user space-left"></i> ${ componentOrder.full_name } <i class="fa fa-envelope space-left"></i> ${ componentOrder.email }
+            <span class="marked">${componentOrder.order_type}</span>
+            <span v-if="componentOrder.quotation_id" class="marked"><strong>Offertnr:</strong> ${componentOrder.quotation_id}</span>
+            <span>Order Artiklar: ${componentOrder.order_product_count} / Inlästa artiklar: ${componentOrder.product_count}</span>
+          </div>
+          <div class="pull-right flex-shrink-0"><button class="btn btn-danger btn-sm" type="button" @click="removeOrderAndChangeStatus" :disabled="processing" style="margin-top:-3px"><i class="fa fa-close"></i> Ta bort & restnotera</button> <button class="btn btn-danger btn-sm" type="button" @click="removeOrder" :disabled="processing" style="margin-top:-3px"><i class="fa fa-close"></i> Ta bort från inköp</button> <a :href="componentOrder.link | urlDecode" class="btn btn-primary btn-sm space-adjustment" target="_blank"><i class="fa fa-caret-right"></i> Öppna order</a></div>
+        </div>
+        <div class="panel-body">
+          <div class="alert alert-success" v-if="success">
+            <i class="fa fa-check-circle"></i> ${ success }
+            <button type="button" class="close" @click="success = null">×</button>
+          </div>
+          <div class="alert alert-danger" v-if="error">
+            <i class="fa fa-times-circle"></i> ${ error }
+            <button type="button" class="close" @click="error = null">×</button>
+          </div>
+          <div v-if="showOrder"  style="margin-bottom: 25px">
+            <form action="#" method="post" enctype="multipart/form-data" id="form-stock-status">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <td align="center" width="7%"><input class="form-check-input checkbox-lg" type="checkbox" @change="checkAll" v-model="selectAll"> Inköpt</td>
+                      <td align="center" width="7%">Restnotering</td>
+                      <td width="10%">Artnr</td>
+                      <td width="20%">Namn</td>
+                      <td width="20%">Alternativ</td>
+                      <td width="15%">Leverantör</td>
+                      <td>PW Lager</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="product in componentOrder.products"
+                      :class="{'completed-purchase-row': product.purchased}"
+                    >
+                      <td align="center"><input type="checkbox" class="form-check-input checkbox-lg" v-model="product.purchased" @change="productCheckChange(product)"></td>
+                      <td align="center"><input type="checkbox" class="form-check-input checkbox-lg" v-model="product.pending"></td>
+                      <td>${ product.model }</td>
+                      <td>${ product.name }</td>
+                      <td>${ product.quantity } x <span class="optionset">${ product.options | optionString }</span></td>
+                      <td>${ product.supplier_name }</td>
+                      <td>
+                        <span class="inventory-items" v-if="product.inventory">${product.inventory.quantity} <span>${product.inventory.location}</span></span>
+                        <span v-else> </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div><!-- table-responsive -->
+            </form>
+            <div class="row">
+              <div class="col-sm-12">
+                  <div class="input-group">
+                    <select class="form-select" v-model="supplier" style="width:90%">
+                      <option value="">Välj leverantör</option>
+                      <option v-for="supplier in suppliers" :value="supplier.purchase_supplier_id">${ supplier.name }</option>
+                    </select>
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button" @click="saveSupplier"><i class="fa fa-check"></i></button>
+                    </span>
+                  </div>
+              <hr>
+              </div>
+
+              <div class="col-sm-12">
+                  <div class="input-group">
+                    <textarea class="form-control" style="width:90%" placeholder="" v-model="componentOrder.comment" rows="4"></textarea>
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button" @click="saveComment" :disabled="processing" style="height:90px;"><i class="fa fa-check"></i></button>
+                    </span>
+                  </div>
+                  <hr>
+              </div>
+              <div class="col-sm-12">
+
+                  <order-detail-costs
+                    :order-id="componentOrder.order_id"
+                    :costs="componentOrder.costs"
+                    inline-template
+                  >
+                    <div>
+                    <h4>Kostnader</h4>
+                      <form ref="form" method="POST">
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <select class="form-select" v-model="supplier" required>
+                              <option value="">Kostnad: Välj leverantör</option>
+                              <option v-for="supplier in all_suppliers" :value="supplier.name">${ supplier.name }</option>
+                            </select>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="input-group">
+                              <input type="number" class="form-control"  placeholder="Inköpskostnad" v-model.number="cost" step="0.01" required style="width: 90%"/>
+                              <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"  :disabled="processing" @click="savePurchaseCost"><i class="fa fa-check"></i></button>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      <div>
+                        <ul style="list-style:none; margin:0;padding:0;margin-left:10px; width:350px;">
+                          <li style="border-bottom:1px solid #444c56;padding:8px 2px;" v-for="(item, index) in costs_list"> <i class="fa fa-check-square-o"></i> 
+                          <span style="border:1px dashed #444c56; margin-left:5px;padding:4px 6px; min-width:100px;display: inline-block;" v-html="item.supplier"></span>  
+                          <!--<span v-html="item.type"></span> --> ${ item.cost } kr<button class="btn btn-link btn-sm" @click="removeCost(item, index)" style="float:right;"><i class="fa fa-trash"></i></button></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </order-detail-costs>
+              </div>
+            </div>
+          </div>
+          <div>
+            <button class="btn btn-default " type="button" @click="showPurchaseOrder" style="width:100%"><i class="fa  fa-caret-down"></i></button>
+          </div>
+
+
+        </div><!-- panel-body -->
+      </div><!-- panel panel-default -->
+    </order-detail>
+
+  <br>
+
+  <hr>
+
+    <section-add-orders
+      :purchase="purchase_info"
+      inline-template
+    >
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Lägg till order i inköp</h3>
+        </div>
+        <div class="panel-body">
+          <div v-if="show" style="margin-bottom: 25px">
+            <div class="alert alert-success" v-if="success"><i class="fa fa-check-circle"></i> ${ success }
+              <button type="button" class="close" @click="success = null">×</button>
+            </div>
+
+            <div class="alert alert-danger alert-dismissible" v-if="error"><i class="fa fa-exclamation-circle"></i> <span v-for="item in error">${item}</span> <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+            <form ref="form">
+
+              <div class="row">
+                <div class="col-sm-8">
+                  <input type="text" class="form-control"  placeholder="Ange ordernr.." v-model="orders" @input="handleInput" required>
+                </div>
+                <div class="col-sm-4">
+                  <button class="btn btn-success" type="button" @click="handleSubmit" :disabled="processing"><i class="fa fa-plus"></i> Hämta order</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div>
+            <button class="btn btn-default " type="button" @click="show = !show" style="width:100%">
+              <i class="fa  fa-caret-down" v-if="!show"></i>
+              <i class="fa  fa-caret-up" v-if="show"></i>
+            </button>
+          </div>
+        </div><!-- panel-body -->
+      </div><!-- panel panel-default -->
+
+    </section-add-orders>
+
+  <br><div style="height:20px;"></div>
+
+  </div><!-- End of APP -->
+  </div>
+<script>
+window.Bus = new Vue();
+window.api_token = "{{ user_token }}"
+Vue.component('section-add-orders', {
+  props: ['purchase'],
+  data: function() {
+    return {
+      orders: '',
+      processing: false,
+      error: null,
+      success: null,
+      show: false,
+    }
+  },
+  methods: {
+    handleInput: function(event) {
+      this.orders = event.target.value.replace(/[^0-9]/, '');
+    },
+    handleSubmit: function() {
+      if(!this.$refs.form.checkValidity()) {
+        this.$refs.form.reportValidity();
+        return false;
+      }
+      var self = this
+      $.ajax({
+			url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.addOrderstoPurchase&user_token='+ window.api_token,
+			dataType: 'json',
+      method: 'POST',
+      data: {
+        purchase_id: this.purchase.purchase_id,
+        orders: this.orders,
+      },
+			beforeSend: function() {
+				self.processing = true
+        self.error = null
+        self.success = null
+			},
+			complete: function() {
+				self.processing = false
+			},
+			success: function(json) {
+				if (json['error']) {
+					self.error = json['error']
+				}
+
+				if (json['success']) {
+          self.success = "Order är inlagd i inköpslistan."
+          self.orders = ''
+          Bus.$emit('fetch-all-orders');
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+
+    }
+  },
+})
+Vue.component('purchase-detail', {
+  props: ['receivers', 'purchase'],
+  data: function() {
+    return {
+      receiver: '',
+      purchase_name: '',
+      processing: false,
+      error: null,
+      success: null,
+    }
+  },
+  mounted: function() {
+    if(this.purchase) {
+      this.purchase_name = this.purchase.name ? this.purchase.name : ''
+      this.receiver = this.purchase.purchase_receiver_id ? this.purchase.purchase_receiver_id : ''
+    }
+  },
+  methods: {
+    handleFormSubmit: function() {
+      if(!this.$refs.form.checkValidity()) {
+        this.$refs.form.reportValidity();
+        return false;
+      }
+      var self = this
+      $.ajax({
+			url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.savePurchaseDetail&user_token='+ window.api_token,
+			dataType: 'json',
+      method: 'POST',
+      data: {
+        purchase_id: this.purchase.purchase_id,
+        name: this.purchase_name,
+        purchase_receiver_id: this.receiver
+      },
+			beforeSend: function() {
+				self.processing = true
+        self.error = null
+        self.success = null
+			},
+			complete: function() {
+				self.processing = false
+			},
+			success: function(json) {
+				if (json['error']) {
+					self.error = json['error']
+				}
+
+				if (json['success']) {
+          self.success = "Inköp uppdaterad."
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+
+    }
+  },
+});
+Vue.component('order-detail', {
+  props: ['suppliers', 'purchase', 'order'],
+  data: function(){
+    return {
+      componentOrder: null,
+      processing: false,
+      error: null,
+      success: null,
+      selectAll: false,
+      supplier: '',
+      showOrder: true,
+    }
+  },
+  computed: {
+    isOrderFinished: function() {
+      var totalProductsCount = this.componentOrder.products.length
+      var finishedProductsCount = this.componentOrder.products.filter(function(product) {
+        return (product.purchased && product.purchase_supplier_id != "0") || product.pending
+      }).length
+
+      return totalProductsCount === finishedProductsCount
+    },
+  },
+  filters: {
+    urlDecode: function(value) {
+      return _.unescape(value)
+    },
+    optionString: function(optionArray) {
+      var optionString = []
+      optionArray.forEach(function(option) {
+        optionString.push(' '+option.value+' ')
+      })
+      return optionString.join(" | ")
+    }
+  },
+  created: function() {
+    this.componentOrder = _.cloneDeep(this.order);
+  },
+  mounted: function() {
+    this.checkOrderFinished()
+  },
+  methods: {
+    saveComment: function() {
+      if(!this.componentOrder.comment) {
+        this.error = "För spara, ange kommentar.."
+        return;
+      }
+
+      var self = this
+      $.ajax({
+        url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.saveOrderComment&user_token='+ window.api_token,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+          purchase_order_id: this.componentOrder.purchase_order_id,
+          comment: this.componentOrder.comment,
+        },
+        beforeSend: function() {
+          self.error = null
+          self.success = null
+          self.processing = true
+        },
+        complete: function() {
+          self.processing = false
+        },
+        success: function(json) {
+          if (json['error']) {
+            self.error = json['error']
+          }
+
+          if (json['success']) {
+            self.success = json['success']
+          }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    },
+    removeOrder: function() {
+      if(confirm("Är du säker på att du önskar ta bort ordern från inköpslistan?")) {
+        var self = this;
+        $.ajax({
+          url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.removeOrder&user_token='+ window.api_token,
+          dataType: 'json',
+          method: 'POST',
+          data: {
+            purchase_order_id: this.componentOrder.purchase_order_id,
+          },
+          beforeSend: function() {
+            self.error = null
+            self.success = null
+            self.processing = true
+          },
+          complete: function() {
+            self.processing = false
+          },
+          success: function(json) {
+            if (json['error']) {
+              self.error = json['error']
+            }
+
+            if (json['success']) {
+              self.success = "En order borttagen från inköpslistan"
+              Bus.$emit('order-removed', self.componentOrder.purchase_order_id)
+            }
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          }
+        });
+      }
+    },
+    removeOrderAndChangeStatus: function() {
+      if(confirm("Vill du ta bort order från inköp och byta status till Restnotering?")) {
+        var self = this;
+        $.ajax({
+          url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.removeOrderAndChangeStatus&user_token='+ window.api_token,
+          dataType: 'json',
+          method: 'POST',
+          data: {
+            purchase_order_id: this.componentOrder.purchase_order_id,
+          },
+          beforeSend: function() {
+            self.error = null
+            self.success = null
+            self.processing = true
+          },
+          complete: function() {
+            self.processing = false
+          },
+          success: function(json) {
+            if (json['error']) {
+              self.error = json['error']
+            }
+
+            if (json['success']) {
+              self.success = "En order borttagen från inköpslistan"
+              Bus.$emit('order-removed', self.componentOrder.purchase_order_id)
+            }
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          }
+        });
+      }
+    },
+    checkAll: function(value) {
+      var self = this
+      this.componentOrder.products.forEach(function(product) {
+        product.purchased = self.selectAll == true ? 1 : 0
+      })
+    },
+    productCheckChange: function(product) {
+      if(!product.purchased)
+        this.selectAll = 0
+      var productsLength = this.componentOrder.products.length
+      var checkedProductLength = this.componentOrder.products.filter(function(product) {
+        return product.purchased
+      }).length
+      if(product.purchased && (productsLength == checkedProductLength)) {
+        this.selectAll = 1
+      }
+    },
+    saveSupplier: function() {
+      /*
+      var checkedProducts = this.componentOrder.products.filter(function(product) {
+        return product.purchased
+      })
+      if(checkedProducts.length <= 0 || !this.supplier) {
+        alert("Please make sure you selected supplier and selected atleast one product.")
+        return;
+      }
+      */
+
+      var self = this
+      $.ajax({
+        url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.saveSupplier&user_token='+ window.api_token,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+          purchase_order_id: this.componentOrder.purchase_order_id,
+          products: this.componentOrder.products,
+          supplier_id: this.supplier,
+        },
+        beforeSend: function() {
+          self.error = null
+          self.success = null
+          self.processing = true
+        },
+        complete: function() {
+          self.processing = false
+        },
+        success: function(json) {
+          if (json['error']) {
+            self.error = json['error']
+          }
+
+          if (json['success']) {
+            self.componentOrder.products = Array.from(json['products'])
+            self.checkOrderFinished()
+            Bus.$emit('fetch-all-orders');
+            self.success = "Leverantör vald & sparad"
+          }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    },
+    showPurchaseOrder: function() {
+      this.showOrder = !this.showOrder
+    },
+    checkOrderFinished: function() {
+      var totalProductsCount = this.componentOrder.products.length
+      var finishedProductsCount = this.componentOrder.products.filter(function(product) {
+        return (product.purchased && product.purchase_supplier_id != "0") || product.pending
+      }).length
+      if(totalProductsCount == finishedProductsCount) {
+        this.showOrder = false
+      }
+    }
+  }
+})
+Vue.component('order-detail-costs', {
+  props: ['orderId', 'costs'],
+  data: function() {
+    return {
+      all_suppliers: JSON.parse('{{ all_suppliers | json_encode }}'),
+      supplier: "",
+      costs_list: [],
+      cost: null,
+      error: null,
+      success: null,
+      processing: false,
+    }
+  },
+  mounted: function() {
+    this.costs_list = Array.from(this.costs)
+  },
+  methods: {
+    savePurchaseCost: function(e) {
+      var form = this.$refs.form
+      if (!form[0].checkValidity()) {
+        form[0].reportValidity()
+        return;
+      }
+
+      if(!this.cost) {
+        this.error = "För att spara, ange inköpskostnad .."
+        return;
+      }
+
+      var self = this
+      $.ajax({
+        url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.savePurchaseCost&user_token='+ window.api_token,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+          order_id: this.orderId,
+          cost: this.cost,
+          supplier: this.supplier,
+          type: 'Garment', 
+        },
+        beforeSend: function() {
+          self.error = null
+          self.success = null
+          self.processing = true
+        },
+        complete: function() {
+          self.processing = false
+        },
+        success: function(json) {
+          if (json['error']) {
+            self.error = json['error']
+          }
+
+          if (json['success']) {
+            self.success = json['success']
+
+            if('item' in json)
+              self.costs_list.push(json['item'])
+
+            self.supplier = ''
+            self.cost = null
+          }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+      return false;
+    },
+    removeCost: function(item, index) {
+      if(confirm("Vill du ta bort inköpskostnaden?")) {
+        var self = this
+        $.ajax({
+          url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.removeCost&user_token='+ window.api_token,
+          dataType: 'json',
+          method: 'POST',
+          data: {
+            cost_id: item.id,
+          },
+          beforeSend: function() {
+            self.error = null
+            self.success = null
+            self.processing = true
+          },
+          complete: function() {
+            self.processing = false
+          },
+          success: function(json) {
+            if (json['error']) {
+              self.error = json['error']
+            }
+
+            if (json['success']) {
+              self.success = json['success']
+            }
+
+            self.costs_list.splice(index,1)
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          }
+        });
+      }
+    },
+  },
+
+})
+console.log(JSON.parse('{{ purchase_info_json }}'));
+var app = new Vue({
+  el: '#app',
+  delimiters: ['${', '}'],
+  data: {
+    purchase_info: JSON.parse('{{ purchase_info_json }}'),
+    receivers: JSON.parse('{{ receivers | json_encode }}'),
+    suppliers: JSON.parse('{{ suppliers | json_encode }}'),
+    success: null,
+    error: null,
+    processing: false,
+  },
+  computed: {
+    isAllOrdersFinished: function() {
+      var self = this
+      var finishedOrderCount = 0
+      var totalOrdersCount = this.purchase_info.orders.length
+
+      // Check which order is finished
+      this.purchase_info.orders.forEach(function(order) {
+        var totalProductsCount = order.products.length
+        var finishedProductsCount = order.products.filter(function(product) {
+          return (product.purchased && product.purchase_supplier_id != "0") || product.pending
+        }).length
+
+        if(totalProductsCount === finishedProductsCount) {
+          finishedOrderCount += 1;
+        }
+      })
+
+      return finishedOrderCount === totalOrdersCount
+    },
+  },
+  mounted: function() {
+    var self = this
+    Bus.$on('order-removed', function(purchase_order_id) {
+      self.purchase_info.orders = Array.from(self.purchase_info.orders.filter(function(order) {
+        return order.purchase_order_id != purchase_order_id
+      }))
+      //self.fetchAllOrders();
+    })
+    Bus.$on('fetch-all-orders', function() {
+      self.fetchAllOrders();
+    })
+  },
+  methods: {
+    finishPurchaseAndChangeStatus: function() {
+      if(!confirm("Är du säker?")) {
+        return;
+      }
+      var self = this
+      $.ajax({
+        url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.finishPurchaseAndChangeStatus&user_token='+ window.api_token,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+          purchase_id: this.purchase_info.purchase_id,
+        },
+        beforeSend: function() {
+          self.error = null
+          self.success = null
+          self.processing = true
+        },
+        complete: function() {
+          self.processing = false
+        },
+        success: function(json) {
+          if (json['error']) {
+            self.error = json['error']
+          }
+
+          if (json['success']) {
+            self.success = "Samtliga order i inköpslistan har uppdaterats & order status är under behandling"
+            self.purchase_info.purchase_finished = 1
+          }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    },
+    fetchAllOrders: function() {
+      var self = this
+      $.ajax({
+        url: '{{ catalog }}index.php?route=codevoc/b2bmanager_purchase.getAllPurchaseOrder&purchase_id='+ this.purchase_info.purchase_id +'&user_token='+ window.api_token,
+        dataType: 'json',
+        method: 'GET',
+        beforeSend: function() {
+          self.error = null
+          self.success = null
+          self.processing = true
+        },
+        complete: function() {
+          self.processing = false
+        },
+        success: function(json) {
+          if (json['error']) {
+            self.error = json['error']
+          }
+
+          if (json['success']) {
+            self.purchase_info.orders = _.cloneDeep(json['orders'])
+          }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    },
+  }
+})
+</script>
+{{ footer }}

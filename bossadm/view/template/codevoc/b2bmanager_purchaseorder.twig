@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html dir="{{ direction }}" lang="{{ lang }}">
+<head>
+<meta charset="UTF-8" />
+<title>Profilewear.se - Order</title>
+<base href="{{ base }}" />
+<link href="view/stylesheet/bootstrap.css" rel="stylesheet" media="all" />
+<script type="text/javascript" src="view/javascript/jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="view/javascript/bootstrap/js/bootstrap.min.js"></script>
+<link href="view/javascript/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+<link type="text/css" href="view/stylesheet/stylesheet.css" rel="stylesheet" media="all" />
+<link href="view/javascript/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+
+</head>
+<body>
+
+<style type="text/css">
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;700&display=swap');
+body{color:#333;font-size:11px;font-family: 'Work Sans', sans-serif;}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding: 4px 3px;
+}
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+    border-bottom: 1px solid #ddd;
+}.table thead > tr > td, .table tbody > tr > td {
+    vertical-align: top;
+}
+h1{font-weight:700;letter-spacing: -1px;font-size: 22px}
+hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 0;
+    border-top: 1px solid #ccc;
+}
+hr.small{margin: 2px 0;
+    padding: 0;
+    border-top: 1px dashed #ccc;}
+</style>  
+
+
+
+
+
+
+{% if request_type == 'receipt' %}
+
+<div class="container">
+  {% for order in orders %}
+  <div style="page-break-after: always;">
+  <table width="100%">
+    <tr>
+{% set randomPassword = [] %}
+{% set alpha = 'abcdefghijklmnopqrstuvwxyz' %}
+{% set numbers = '0123456789' %}  
+{% for i in 1..30 %}
+    {% set randomCharacter = random(alpha ~ alpha|upper ~ numbers ~ '') %}
+    {% set randomPassword = randomPassword|merge([randomCharacter]) %}
+{% endfor %}
+{% set randomPassword = randomPassword|join %}  
+      <td width="60px"><img src="view/image/pw-logo-outline.svg"></td>
+      <td width="400px"><div style="border-left: 15px solid #fff;padding-left: 0px;font-size: 26px;font-weight: bold;letter-spacing: -0.3px;height: 73px;line-height: 15px;
+    padding-top: 20px;">Kvitto <br><span style="font-size:13px">Ordernr. {{ order.order_id }} {% if order.quotation_id > 0 %} Offertnr {{ order.quotation_id }} {% endif %}  Orderdatum: {{ order.date_added| date('Y-m-d') }}</span></div><br>
+    </td>
+      <td style="font-style:italic">
+Ett köp från:<br>
+Swedish Profile Wear AB (Orgnr: 559061-3880)<br>Innehar f-skattsedel
+      </td>
+    </tr>
+  </table> 
+  <br>
+<table width="100%" style="border-collapse: collapse;background: #fff;border: 1px solid #999;font-size:10px">
+    <tr>
+      <td style="padding: 5px 10px;">
+        <strong>Orderdatum:</strong> {{ order.date_added }}<br>
+        <strong>Ordernr.:</strong> {{ order.order_id }}<br>
+      <td style="padding: 5px 10px;">
+        <strong>Betalmeotd:</strong> {{ order.payment_method }}<br>
+            {% if order.shipping_method %}
+            <strong>Leveransmetod:</strong> {{ order.shipping_method }}<br>
+            {% endif %}
+        
+      </td>
+    </tr>
+  </table><br>  
+
+  <table width="100%">
+    <tr>
+      <td>
+        <table>
+          <tr>
+            <td style="vertical-align: text-top;">
+              <div style="width: 50px;height: 50px;margin-right: 10px;background-position: center;background-size: 42px;border: 1px solid #000;"><img src="view/image/icon_truck.png" width="47"></div>   
+            </td>
+            <td>
+              <strong>Leverans</strong><br>
+              {{ order.shipping_address }}
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td>
+        <table>
+          <tr>
+            <td style="vertical-align: text-top;">
+              <div style="width: 50px;height: 50px;margin-right: 10px;background-position: center;background-size: 25px;border: 1px solid #000;"><img src="view/image/icon_checkbox.png" style="width: 27px;margin: 11px;"></div>   
+            </td>
+            <td>
+              <strong>Betalning</strong><br>
+              {{ order.payment_address }}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table><br>
+
+  
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <td><b>Produkt</b></td>
+          <td><b>Artnr.</b></td>
+          <td><b>Pris</b></td>
+          <td class="text-right"><b>{{ column_total }}</b></td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in order.product %}
+        <tr>
+          <td><b>{{ product.name }}</b><br>
+            {% for option in product.option %}
+            <span style="border-radius: 10px;border: 1px solid #999;padding:0 10px">{{ option.value }}</span>
+            {% endfor %}</td>
+          <td>{{ product.model }}</td>
+          <td>{{ product.quantity }} X {{ product.price }}</td>
+          <td class="text-right">{{ product.total }}</td>
+        </tr>
+        {% endfor %}
+        {% for voucher in order.voucher %}
+        <tr>
+          <td>{{ voucher.description }}</td>
+          <td></td>
+          <td class="text-right">1</td>
+          <td class="text-right">{{ voucher.amount }}</td>
+          <td class="text-right">{{ voucher.amount }}</td>
+        </tr>
+        {% endfor %}
+        {% for total in order.total %}
+        <tr>
+          <td class="text-right" colspan="3"><b>{{ total.title }}</b></td>
+          <td class="text-right">{{ total.text }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if order.comment %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <td><b>{{ text_comment }}</b></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ order.comment }}</td>
+        </tr>
+      </tbody>
+    </table>
+    {% endif %}
+  <div align="center">Profilewear.se • 010-551 88 60 • hej@profilewear.se •  Följ oss @profilewear.se<br><span style="font-size:10px;font-weight:lighter;text-transform:uppercase;">ID: {{ randomPassword }}</span></div>
+
+  </div>
+  {% endfor %}
+{% else %}{# if not requested type #}  
+<div class="container">
+  {% for order in orders %}
+  <div style="page-break-after: always;">
+  <table width="100%">
+    <tr>
+      <td width="60px"><img src="view/image/pw-logo-outline.svg"></td>
+      <td width="400px"><div style="border-left: 15px solid #fff;padding-left: 0px;font-size: 26px;font-weight: bold;letter-spacing: -0.3px;height: 73px;line-height: 20px;
+    padding-top: 20px;">Följesedel<br><span style="font-size:13px">Ordernr. {{ order.order_id }} {% if order.quotation_id > 0 %} Offertnr {{ order.quotation_id }} {% endif %}  Orderdatum: {{ order.date_added }}</span></div></td>
+      <td style="font-style:italic"></td>
+    </tr>
+  </table> 
+  <hr>
+  <table width="100%">
+    <tr>
+      <td>
+        <table>
+          <tr>
+            <td style="vertical-align: text-top;">
+              <div style="width: 50px;height: 50px;margin-right: 10px;background-position: center;background-size: 42px;border: 1px solid #000;"><img src="view/image/icon_truck.png" width="47"></div>   
+            </td>
+            <td>
+              <strong>Leverans</strong><br>
+              {{ order.shipping_address }}
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td>
+        <table>
+          <tr>
+            <td style="vertical-align: text-top;">
+              <div style="width: 50px;height: 50px;margin-right: 10px;background-position: center;background-size: 25px;border: 1px solid #000;"><img src="view/image/icon_checkbox.png" style="width: 27px;margin: 11px;"></div>   
+            </td>
+            <td>
+              <strong>Betalning</strong><br>
+              {{ order.payment_address }}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <hr>
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <td width="5%"></td>
+          <td width="5%">ANTAL</td>
+          <td width="15%">ARTNR.</td>
+          <td width="80%">ARTIKEL</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in order.product %}
+          {% if product.model starts with '00-' or product.model starts with '000-' %}
+          {% else %}
+        <tr>
+          <td><div align="center" style="margin:0 auto;width:15px;height:15px;border:1px solid #000"></div></td>
+          <td>{{ product.quantity }}</td>          
+          <td>{{ product.model }}</td>
+          <td>{{ product.name }}
+          <div style="float:right">
+            {% for option in product.option %}
+            <div style="border-radius: 10px;border: 1px solid #999;padding:0 10px;min-width:80px;display:inline-block;text-align:center">{{ option.value }}</div>
+            {% endfor %}
+          </div>
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+<hr>
+  Denna sammanställning är endast en följesedel för din order. Har du inte fått din faktura eller kvitto vänligen maila oss med ordernr till hej@profilewear.se <b>Vid retur/reklamation:</b> Profilewear.se/retur-reklamation
+  <hr>
+<table width="100%">
+  <tr style="border: 1px solid #999;">
+    <td style="padding:6px 16px">
+      <h1><i class="fa fa-info-circle"></i><br>Vi vill att dina kläder &amp; tryck ska hålla länge</h1>
+      Se skötselråd via qr-koden eller gå in på profilewear.se/skotselrad
+    </td>
+    <td style="padding-right:30px">
+      <img src="view/image/pw-care-info-qr.svg" style="    width: 73px;">
+    </td>
+  </tr>
+</table><br>
+  <div align="center">Profilewear.se • 010-551 88 60 • hej@profilewear.se •  Följ oss @profilewear.se </div>
+
+  </div>
+  {% endfor %}
+
+{% endif %}  {# ends request type #}  
+
+</div>
+</body>
+</html>

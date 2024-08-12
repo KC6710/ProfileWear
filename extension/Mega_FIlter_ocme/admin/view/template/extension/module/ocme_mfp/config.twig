@@ -1,0 +1,66 @@
+{{ header }}
+
+<div class="ocme-config">
+	<div class="row">
+		<div class="col-xs-2">
+			<div class="nav-tabs-wrapper">
+				<ul class="nav nav-tabs tabs-left">
+					<li class="nav-item{{ ocme.oc().isV4() ? '' : ' active' }}">
+						<a class="nav-link{{ ocme.oc().isV4() ? ' active' : '' }}" href="#tab-attributes" data-toggle="tab" data-bs-toggle="tab">{{ ocme.trans('module::global.text_attributes') }}</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#tab-cache" data-toggle="tab" data-bs-toggle="tab">{{ ocme.trans('module::global.text_cache') }}</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-xs-10">
+			<div class="tab-content">
+				<div id="tab-attributes" class="tab-pane active">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{ ocme.trans('module::global.text_values_separator') }}</label>
+						<div class="col-sm-10">
+							<select class="form-control" name="variables[attribute][values_separator]">
+								{% for separator in ocme.config().get('attribute.value_separators') %}
+									<option value="{{ separator.value }}" {{ ocme.variable().store(ocme.request().get('store_id')).get('attribute.values_separator') == separator.value ? ' selected="selected"' : '' }}>{{ separator.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{ ocme.trans('module::global.text_displayed_values_separator') }}</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="variables[attribute][displayed_values_separator]" value="{{ ocme.variable().store(ocme.request().get('store_id')).get('attribute.displayed_values_separator') }}" />
+						</div>
+					</div>
+				</div>
+				<div id="tab-cache" class="tab-pane">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{ ocme.trans('module::global.text_flush_cache') }}</label>
+						<div class="col-sm-10">
+							<button id="ocme-flush-cache" type="button" class="btn btn-danger"><i class="fa fa-trash"></i> {{ ocme.trans('module::global.text_clear_all_cache') }}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+						
+<script type="text/javascript">
+	(function(){
+		jQuery('#ocme-flush-cache').click(function(){
+			var _this = jQuery(this);
+			
+			_this.prop('disabled', true);
+			_this.find('i').removeClass('fa-trash').addClass('fa-spin fa-spinner');
+			
+			jQuery.get(ocme_fix_url('{{ action_flush_cache }}'), {}, function(){
+				_this.prop('disabled', false);
+				_this.find('i').removeClass('fa-spin fa-spinner').addClass('fa-trash');
+			});
+		});
+	})();
+</script>
+							
+{{ footer }}

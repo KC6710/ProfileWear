@@ -1,0 +1,19 @@
+{{ header }}
+<style>
+.main-text{
+  text-align:center;
+  padding: 30px 80px 0 80px;
+}
+</style>
+<main class="main-text">
+  <img src="image/error-img.svg" alt="Thank you!" class="thank-you-img" style="height: 350px; width: 360px">
+  <h5 class="heading">{{ heading_title }}</h5>
+  <p class="text mt-1">
+    {{ text_error }}
+  </p>
+  <a href="{{ continue }}">
+    <button class="outlinedButton">
+      {{ button_continue }}<img src="image/arrow-right-green.svg">
+    </button>
+  </a>
+{{ footer }}

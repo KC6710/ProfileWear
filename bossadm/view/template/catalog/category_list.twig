@@ -1,0 +1,81 @@
+<form id="form-category" method="post" data-oc-toggle="ajax" data-oc-load="{{ action }}" data-oc-target="#category">
+	<div class="table-responsive">
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<td class="text-center" style="width: 1px;"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', $(this).prop('checked'));" class="form-check-input"/></td>
+					<td class="text-start"><a href="{{ sort_id }}"{% if sort == 'category_id' %} class="{{ order|lower }}"{% endif %}>{{ column_id }}</a></td>
+					<td class="text-start"><a href="{{ sort_name }}"{% if sort == 'name' %} class="{{ order|lower }}"{% endif %}>{{ column_name }}</a></td>
+					<td class="text-start">{{ column_seo_url }}</a></td>
+					<td class="text-start">{{ column_parent }}</a></td>
+					<td class="text-center">{{ column_image }}</td>
+					<td class="text-center">{{ column_description }}</td>
+					<td class="text-center">{{ column_meta_tag_title }}</td>
+					<td class="text-center">{{ column_meta_tag_description }}</td>
+					<td class="text-center">{{ column_status }}</td>
+					<td class="text-end"><a href="{{ sort_sort_order }}"{% if sort == 'sort_order' %} class="{{ order|lower }}"{% endif %}>{{ column_sort_order }}</a></td>
+					<td class="text-end">{{ column_action }}</td>
+				</tr>
+			</thead>
+			<tbody>
+				{% if categories %}
+					{% for category in categories %}
+						<tr>
+							<td class="text-center"><input type="checkbox" name="selected[]" value="{{ category.category_id }}" class="form-check-input"/></td>
+							<td class="text-start">{{ category.category_id }}</td>
+							<td class="text-start">{{ category.name }}</td>
+							<td class="text-start"><a href="{{ category.seo_url }}" target="_blank">{{ category.seo_keyword }}</a></td>
+							<td class="text-start">{{category.parent}}</td>
+							<td class="text-center">
+							{% if category.image %}
+							<i style="color:green;" class="fas fa-check-square fa-2xl"></i>
+							{% else %}
+							<i style="color:red;" class="fas fa-square-minus fa-2xl"></i>
+							{% endif %}
+							</td>
+							<td class="text-center">
+							{% if category.description %}
+							<i style="color:green;" class="fas fa-check-square fa-2xl"></i>
+							{% else %}
+							<i style="color:red;" class="fas fa-square-minus fa-2xl"></i>
+							{% endif %}
+							</td>
+							<td class="text-center">
+							{% if category.meta_title %}
+							<i style="color:green;" class="fas fa-check-square fa-2xl"></i>
+							{% else %}
+							<i style="color:red;" class="fas fa-square-minus fa-2xl"></i>
+							{% endif %}
+							</td>
+							<td class="text-center">
+							{% if category.meta_description %}
+							<i style="color:green;" class="fas fa-check-square fa-2xl"></i>
+							{% else %}
+							<i style="color:red;" class="fas fa-square-minus fa-2xl"></i>
+							{% endif %}
+							</td>
+							<td class="text-center">
+							{% if category.status == 1 %}
+							<i style="color:green;" class="fas fa-check-square fa-2xl"></i>
+							{% else %}
+							<i style="color:red;" class="fas fa-square-minus fa-2xl"></i>
+							{% endif %}
+							</td>
+							<td class="text-end">{{ category.sort_order }}</td>
+							<td class="text-end"><a href="{{ category.edit }}" data-bs-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa-solid fa-pencil"></i></a></td>
+						</tr>
+					{% endfor %}
+				{% else %}
+					<tr>
+						<td class="text-center" colspan="4">{{ text_no_results }}</td>
+					</tr>
+				{% endif %}
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		{# <div class="col-sm-6 text-start">{{ pagination }}</div> #}
+		<div class="col-sm-6 text-end">{{ results }}</div>
+	</div>
+</form>
+

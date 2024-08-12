@@ -1,0 +1,526 @@
+{{ header }}
+
+<ul class="nav nav-tabs tabs-top">
+	<li class="active"><a href="{{ action_filter }}"><i class="fa fa-file"></i> {{ ocme.trans('module::global.text_modules') }}</a></li>
+	<li><a href="{{ action_filter_settings }}"><i class="fa fa-cog"></i> {{ ocme.trans('module::global.text_settings') }}</a></li>
+	<li><a href="{{ action_filter_indexation }}"><i class="fa fa-database"></i> {{ ocme.trans('module::global.text_indexation') }}<span id="has_any_to_re_index" class="hidden">{{ ocme.trans('module::global.text_new') }}</span></a></li>
+</ul>
+
+<div class="clearfix"></div>
+
+<div id="filter-configurator">
+	<ocme-filter
+		inline-template
+		url="{{ action_filter_config }}"
+		url_autocomplete="{{ action_autocomplete }}"
+		type="filter"
+		license="{{ ocme_mfp_license }}"
+		module_id="{{ ocme_mfp_module_id }}"
+		:editable="{{ ocme_mfp_editable }}"
+	>	
+		<div class="row">
+			<div v-show="!initialized" class="text-center">
+				<div class="progress" id="ocme-progress-bar">
+					<div class="progress-bar">
+						<span class="sr-only"></span>
+					</div>
+				</div>
+				<span v-if="!loaded_msg">
+					<i class="fa fa-circle-o-notch fa-spin fa-2x"></i><br /><br />
+					{{ ocme.trans('module::global.text_loading_app') }}
+				</span>
+				<strong v-else v-html="loaded_msg"></strong>
+				<br /><br />
+			</div>
+			
+			{% verbatim %}
+				<form method="post" action="javascript:void(0);" class="hidden" ref="form">
+					<div :class="{'col-xs-2': true, hidden: ! initialized}">
+						<div class="nav-tabs-wrapper">
+							<div class="input-group input-group-sm" v-if="modules.length > 10">
+								<div class="input-group-addon">
+									<i class="fa fa-filter"></i>
+								</div>
+								<input type="text" class="form-control input-sm" v-model="filter_module_name">
+							</div>
+							<ul class="nav nav-tabs tabs-left" id="nav-tabs">
+								<li :class="{active: module && module.module_id == m.module_id}" v-for="m in filteredModules">
+									<a v-on:click.prevent="displayModule(m.module_id)" :href="'#module:' + m.module_id">
+										<b class="pull-left"><span v-html="m.name"></span></b>
+
+										<div class="pull-right">
+											<div class="btn-group">
+												<button v-on:click.prevent.stop="duplicateModule(m.module_id)" type="button" class="btn btn-primary btn-xs" data-toggle="tooltip" :title="trans('text_duplicate')"><i class="fa fa-copy"></i></button>
+												<button v-on:click.prevent.stop="removeModule(m.module_id)" type="button" class="btn btn-danger btn-xs" data-toggle="tooltip" :title="trans('text_remove')"><i class="fa fa-trash"></i></button>
+											</div>
+										</div>
+
+										<div class="clearfix"></div>
+									</a>
+								</li>
+							</ul>
+							<div class="pull-right pr-10">
+								<button type="button" class="btn btn-success btn-xs" v-on:click="addModule($event)"><i class="fa fa-plus-circle"></i> {{ trans('text_add_module') }}</button>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+					<div :class="{'col-xs-10': true, hidden: ! initialized || ! module, 'ocme-module-not-initialized': ! initialized_module}">
+						<div class="ocme-form-group-wrapper form-horizontal ocme-module-name" v-if="module">
+							<label class="control-label col-lg-1">{{ trans('text_name') }}</label>
+							<div class="col-lg-11">
+								<div :class="{'input-group': module && modified && ! busy}">
+									<div><ocme-input name="name" namespace="module" /></div>
+									<span class="input-group-btn" v-show="module && modified && ! busy && ! loading">
+										<button 
+											v-on:click.prevent.stop="saveModule( true )" 
+											type="button" 
+											class="btn btn-primary">
+												<i class="fa fa-save"></i> {{ trans('text_save') }}
+										</button>
+									</span>
+								</div>
+							</div>
+						</div>
+
+						<hr v-if="module" />
+
+						<ul class="nav nav-tabs">
+							<li :class="{active: isTab('general', false, true) }">
+								<a v-on:click.prevent.stop="displayTab('general')" href="#">
+									<i class="fa fa-cog"></i> {{ trans('text_general') }}
+								</a>
+							</li>
+							<li :class="{active: isTab('conditions', false, true) }">
+								<a v-on:click.prevent.stop="displayTab('conditions')" href="#">
+									<i class="fa fa-filter"></i> {{ trans('text_conditions') }}
+								</a>
+							</li>
+							<li :class="{active: isTab('widget', false, true) }">
+								<a v-on:click.prevent.stop="displayTab('widget')" href="#">
+									<i class="fa fa-search"></i> {{ trans('text_widget') }}
+								</a>
+							</li>
+							<li :class="{active: isTab('layout', false, true) }">
+								<a v-on:click.prevent.stop="displayTab('layout')" href="#">
+									<i class="fa fa-desktop"></i> {{ trans('text_layout') }}
+								</a>
+							</li>
+							<li :class="{active: isTab('configuration', false, true) }">
+								<a v-on:click.prevent.stop="displayTab('configuration')" href="#">
+									<i class="fa fa-wrench"></i> {{ trans('text_configuration') }}
+								</a>
+							</li>
+						</ul>
+
+						<div class="tab-content">
+							<div :class="{'tab-pane form-horizontal fade in': true, active: isTab('general')}" data-tab="general">
+								<div class="form-group">
+									<label class="control-label col-lg-2">{{ trans('text_title') }}</label>
+									<div class="control-content col-lg-10">
+										<ocme-multilanguage-text namespace="module.setting" :languages="languages" name="title"></ocme-multilanguage-text>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-lg-2">{{ trans('text_status') }}</label>
+									<div class="control-content col-lg-10">
+										<ocme-status namespace="module.setting" :config="config"></ocme-status>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-lg-2">{{ trans('text_layout') }}</label>
+									<div class="control-content col-lg-10">
+										<ocme-tree namespace="module.setting" name="layouts"></ocme-tree>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-lg-2">{{ trans('text_position') }}</label>
+									<div class="control-content col-lg-10">
+										<ocme-btn-group namespace="module.setting" name="position" type="radio"></ocme-btn-group>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-lg-2">{{ trans('text_collapsed') }}</label>
+									<div class="control-content col-lg-10">
+										<ocme-btn-group namespace="module.setting" name="collapsed" type="checkbox"></ocme-btn-group>
+									</div>
+								</div>
+
+								<div class="form-group ocme-form-group-wrapper-soon">
+									<label class="control-label col-lg-2">{{ trans('text_display_selected_filters') }}</label>
+									<div class="control-content col-lg-10">
+										<ocme-btn-group namespace="module.setting" name="display_selected_filters" :default_value="['0']" type="checkbox"></ocme-btn-group>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-lg-2">{{ trans('text_sort_order') }}</label>
+									<div class="control-content col-lg-2">
+										<ocme-input name="sort_order" :step="1" type="number" namespace="module.setting"></ocme-input>
+									</div>
+								</div>
+							</div>
+							<div :class="{'tab-pane form-horizontal fade in': true, active: isTab('conditions')}" data-tab="conditions">
+								<ul class="nav nav-tabs mb-0">
+									<li :class="{active: isTab('conditions', true) || isTab('conditions.global') }">
+										<a v-on:click.prevent.stop="displayTab('conditions.global')" href="#">
+											{{ trans('text_global') }}
+										</a>
+									</li>
+									<li :class="{active: isTab('conditions.base-attributes') }">
+										<a v-on:click.prevent.stop="displayTab('conditions.base-attributes')" href="#">
+											{{ trans('text_base_attributes') }}
+										</a>
+									</li>
+									<li :class="{active: isTab('conditions.properties') }">
+										<a v-on:click.prevent.stop="displayTab('conditions.properties')" href="#">
+											{{ trans('text_properties') }}
+										</a>
+									</li>
+									<li :class="{active: isTab('conditions.attributes') }">
+										<a v-on:click.prevent.stop="displayTab('conditions.attributes')" href="#">
+											{{ trans('text_attributes') }}
+										</a>
+									</li>
+									<li :class="{active: isTab('conditions.options') }">
+										<a v-on:click.prevent.stop="displayTab('conditions.options')" href="#">
+											{{ trans('text_options') }}
+										</a>
+									</li>
+									<li :class="{active: isTab('conditions.filter_groups') }">
+										<a v-on:click.prevent.stop="displayTab('conditions.filter_groups')" href="#">
+											{{ trans('text_filters') }}
+										</a>
+									</li>
+									<!-- <li :class="{active: isTab('conditions.features') }">
+										<a v-on:click.prevent.stop="displayTab('conditions.features')" href="#">
+											{{ trans('text_features') }}
+										</a>
+									</li> -->
+								</ul>
+
+								<div class="tab-content">
+									<div :class="{'tab-pane pt-25 fade in': true, active: isTab('conditions', true) || isTab('conditions.global')}" data-tab="conditions.global">
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_mode') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group namespace="module.setting.conditions.global" name="mode"></ocme-btn-group>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_type') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group namespace="module.setting.conditions.global" name="type"></ocme-btn-group>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_slider_mode') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="slider_mode" namespace="module.setting.conditions.global"></ocme-btn-group>
+												<div class="ocme-bd-callout ocme-bd-callout-info">{{ trans('text_option_available_only_for_range_type') }}</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_collapsed') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="collapsed" type="checkbox" namespace="module.setting.conditions.global"></ocme-btn-group>
+												<div class="ocme-bd-callout ocme-bd-callout-info">{{ trans('text_option_available_only_for_standard_mode') }}</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_hide_input') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="hide_input" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_calculate_count') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="calculate_count" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+												<div class="ocme-bd-callout ocme-bd-callout-info">{{ trans('text_calculate_count_help') }}</div>
+											</div>
+										</div> 
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_show_count_badge') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group v-show="calculate_count_is_enabled" name="show_count_badge" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+												<div v-show="!calculate_count_is_enabled" class="ocme-warning"><div class="ocme-warning-text">{{ trans('text_option_available_only_if_calculate_count_is_enabled') }}</div></div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_hide_inactive_values') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group v-show="calculate_count_is_enabled" name="hide_inactive_values" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+												<div class="ocme-bd-callout ocme-bd-callout-info" v-show="calculate_count_is_enabled">{{ trans('text_hide_inactive_values_help') }}</div>
+												<div v-show="!calculate_count_is_enabled" class="ocme-warning"><div class="ocme-warning-text">{{ trans('text_option_available_only_if_calculate_count_is_enabled') }}</div></div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_hide_if_one_value') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="hide_if_one_value" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+											</div>
+										</div> 
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_display_selected_values_first') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="display_selected_values_first" type="checkbox" namespace="module.setting.conditions.global"></ocme-btn-group>
+												<div class="ocme-bd-callout ocme-bd-callout-info">{{ trans('text_display_selected_values_first_help') }}</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_show_header') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="show_header" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_display') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="display" type="checkbox" namespace="module.setting.conditions.global"></ocme-btn-group>
+
+												<div class="form-group" v-show="can_show_image_size">
+													<label class="control-label col-lg-2">{{ trans('text_image_size') }}</label>
+													<div class="control-content col-lg-3">
+														<div class="input-group">
+															<ocme-input type="number" input_class="form-control" namespace="module.setting.conditions.global" name="image_width" :step="10" :min="1" :inherit_namespaces="inherit_namespaces"></ocme-input>
+															<span class="input-group-addon">X</span>
+															<ocme-input type="number" input_class="form-control" namespace="module.setting.conditions.global" name="image_height" :step="10" :min="1" :inherit_namespaces="inherit_namespaces"></ocme-input>
+															<span class="input-group-addon">{{ trans('text_px') }}</span>
+														</div>
+													</div>
+												</div>
+
+												<div class="form-group" v-show="can_show_color_size">
+													<label class="control-label col-lg-2">{{ trans('text_color_size') }}</label>
+													<div class="control-content col-lg-3">
+														<div class="input-group">
+															<ocme-input type="number" input_class="form-control" namespace="module.setting.conditions.global" name="color_width" :step="10" :min="1" :inherit_namespaces="inherit_namespaces"></ocme-input>
+															<span class="input-group-addon">X</span>
+															<ocme-input type="number" input_class="form-control" namespace="module.setting.conditions.global" name="color_height" :step="10" :min="1" :inherit_namespaces="inherit_namespaces"></ocme-input>
+															<span class="input-group-addon">{{ trans('text_px') }}</span>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_display_list_of_items') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="display_list_of_items" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+
+												<div class="form-group m-0 pt-8 pb-10" v-show="can_show_limit_of_items">
+													<label class="col-lg-2 control-label"><span>{{ trans('text_limit_of_items') }}</span></label>
+													<div class="col-lg-10">
+														<div class="width-150">
+															<ocme-input input_class="form-control" namespace="module.setting.conditions.global" name="limit_of_items" :inherit_namespaces="inherit_namespaces" :step="1" :min="1" type="number" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2 fs-13">{{ trans('text_button_select_deselect_all') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="button_select_deselect_all" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_max_height') }}</label>
+											<div class="control-content col-lg-10">
+												<div class="input-group width-150">
+													<ocme-input type="number" input_class="form-control" namespace="module.setting.conditions.global" name="max_height" :step="10" :min="10" :inherit_namespaces="inherit_namespaces"></ocme-input>
+													<span class="input-group-addon">{{ trans('text_px') }}</span>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_max_items') }}</label>
+											<div class="control-content col-lg-10">
+												<div class="width-150">
+													<ocme-input type="number" input_class="form-control" namespace="module.setting.conditions.global" name="max_items" :step="1" :min="1" :inherit_namespaces="inherit_namespaces"></ocme-input>
+												</div>
+												<div class="ocme-bd-callout ocme-bd-callout-info">{{ trans('text_max_items_help') }}</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_layout_of_items') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="layout" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+
+												<div v-show="can_show_layout_cols">
+													<hr class="mt-10 mb-10" />
+
+													<ocme-sizes
+														:config="config"
+														name="layout_cols"
+														namespace="module.setting.conditions.global"
+														:inherit_namespaces="inherit_namespaces"
+													>
+														<template v-slot:tab="slotProps">
+															<div class="pb-20">
+																<ocme-slider
+																	namespace="module.setting.conditions.global.layout_cols"
+																	:name="slotProps.id"
+																	:adsorb="true"
+																	:data="ocme.predefopts.layout_cols( false, slotProps.value != 'default' )"
+																	:process="false"
+																	:lazy="true"
+																	data-label="label"
+																></ocme-slider>
+															</div>
+														</template>
+													</ocme-sizes>
+												</div>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_live_filter') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="live_filter" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_values_rounding') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="values_rounding" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+											</div>
+										</div>
+
+										<div class="form-group">
+											<label class="control-label col-lg-2">{{ trans('text_values_sort_order') }}</label>
+											<div class="control-content col-lg-10">
+												<ocme-btn-group name="values_sort_order" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+												<ocme-btn-group name="values_sort_order_type" type="radio" namespace="module.setting.conditions.global"></ocme-btn-group>
+												<div class="ocme-bd-callout ocme-bd-callout-info" v-html="trans('text_values_sort_order_help')"></div>
+											</div>
+										</div>
+									</div>
+									<div :class="{'tab-pane fade in': true, active: isTab('conditions.base-attributes')}" data-tab="conditions.base-attributes">
+										<ocme-properties 
+											:languages="languages" 
+											:config="config"
+											:busy="busy" 
+											:properties="{% endverbatim %}{{ base_attributes_names }}{% verbatim %}" 
+											type="base_attribute"
+											namespace="module.setting.conditions"
+											name="base_attributes"></ocme-properties>
+									</div>
+									<div :class="{'tab-pane fade in': true, active: isTab('conditions.properties')}" data-tab="conditions.properties">
+										<ocme-properties 
+											:languages="languages" 
+											:config="config"
+											:busy="busy" 
+											:properties="{% endverbatim %}{{ properties_names }}{% verbatim %}" 
+											type="property" 
+											namespace="module.setting.conditions"
+											name="properties"></ocme-properties>
+									</div>
+									<div :class="{'tab-pane fade in': true, active: isTab('conditions.attributes')}" data-tab="conditions.attributes">
+										<ocme-conditions
+											type="attribute"
+											namespace="module.setting.conditions"
+											:config="config"
+											:languages="languages" 
+											:values="attributes" 
+											:value_groups="attribute_groups" 
+											:busy="busy" 
+											:module_values="module_attributes" 
+											:module_value_groups="module_attribute_groups"
+											:module="module" 
+											:tab="tab"
+											:editable="editable"
+											:validate-modify-permission="validateModifyPermission"
+											:url_autocomplete="url_autocomplete"></ocme-conditions>
+									</div>
+									<div :class="{'tab-pane fade in': true, active: isTab('conditions.options')}" data-tab="conditions.options">
+										<ocme-conditions
+											type="option"
+											namespace="module.setting.conditions"
+											:config="config"
+											:languages="languages" 
+											:values="options" 
+											:busy="busy" 
+											:module_values="module_options" 
+											:module="module" 
+											:tab="tab"
+											:editable="editable"
+											:validate-modify-permission="validateModifyPermission"
+											:url_autocomplete="url_autocomplete"></ocme-conditions>
+									</div>
+									<div :class="{'tab-pane fade in': true, active: isTab('conditions.filter_groups')}" data-tab="conditions.filter_groups">
+										<ocme-conditions
+											type="filter_group"
+											namespace="module.setting.conditions"
+											:config="config"
+											:languages="languages" 
+											:values="filter_groups" 
+											:busy="busy" 
+											:module_values="module_filter_groups" 
+											:module="module" 
+											:tab="tab"
+											:editable="editable"
+											:validate-modify-permission="validateModifyPermission"
+											:url_autocomplete="url_autocomplete"></ocme-conditions>
+									</div>
+									<!-- <div :class="{'tab-pane': true, active: isTab('conditions.features')}">
+
+									</div> -->
+								</div>
+							</div>
+							<div :class="{'tab-pane form-horizontal fade in': true, active: isTab('widget')}" data-tab="widget">
+								<ocme-filter-widget
+									namespace="module.setting.widget"
+									:config="config"
+									:languages="languages" 
+									:busy="busy">
+								</ocme-filter-widget>
+							</div>
+							<div :class="{'tab-pane': true, active: isTab('layout')}">
+								<ocme-layout-structure-builder
+									:busy="busy"
+									:modified="modified"
+									:module="module"
+									:tab="tab"
+								></ocme-layout-structure-builder>
+							</div>
+							<div :class="{'tab-pane form-horizontal fade in': true, active: isTab('configuration')}" data-tab="configuration">
+								<ocme-filter-configuration
+									namespace="module.setting.configuration"
+									:config="config"
+									:languages="languages" 
+									:busy="busy">
+								</ocme-filter-configuration>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</form>
+			{% endverbatim %}
+		</div>
+	</ocme-filter>
+</div>
+
+{{ footer }}

@@ -1,0 +1,27 @@
+.htaccess
+config.php
+bossadm/config.php
+
+!index.html
+
+download/
+image/data/
+image/cache/
+system/cache/
+system/logs/
+
+system/storage/
+
+# vQmod log files
+vqmod/logs/*
+# vQmod cache files
+vqmod/vqcache/*
+vqmod/checked.cache
+vqmod/mods.cache
+
+
+db/
+
+image/catalog/
+
+

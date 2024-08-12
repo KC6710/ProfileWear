@@ -1,0 +1,89 @@
+{{ header }}
+<main class="main-body contact-us-main">
+  <div class="header">
+    {% for breadcrumb in breadcrumbs %}
+      
+      {% if loop.last %}
+      <span class="item">{{ breadcrumb.text }}</span>
+      {% else %}
+      <a href="{{ breadcrumb.href }}"><span class="item active">{{ breadcrumb.text }}</span></a>
+      <span class="round"></span>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+  <div class="banner" style="display: block;">
+    <div class="row justify-content-between">
+      <div class="col-12 col-md-12 col-lg-12 ">
+          <div class="title">
+              <h2>{{ heading_title }}</h2>
+          </div>
+      </div>
+      <div class="col-12 col-md-12 col-lg-4 ">
+        <div class="need-help-box">
+          <img src="image/location.svg">
+          <div>
+            <p>RETURN TO</p>
+            <h5>{{ address }}</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-12 col-lg-4 ">
+        <div class="need-help-box">
+          <img src="image/call-icon.svg">
+          <div>
+            <p>CALL US AT</p>
+            <h5>{{ telephone }}</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-12 col-lg-4 ">
+        <div class="need-help-box">
+          <img src="image/email-icon.svg">
+          <div>
+            <p>DROP US A MAIL AT</p>
+            <h5>hej@profilewear.se</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gap-div"></div>
+  
+    <div class="get-in-touch">
+      <div class="row justify-content-between gy-2">
+        <div class="col-12 col-md-12 col-lg-12 mb-2">
+          <h2>{{ text_contact }}</h2>
+        </div>
+        {# <form id="form-contact" action="{{ send }}" method="post" data-oc-toggle="ajax"> #}
+          <div class="col-12 col-md-12 col-lg-6 col-sm-6 mb-2 p-2">
+              <label for="input-name" class="form-label input-label">Name <span class="input-required">*</span></label>
+              <input type="text" name="name" value="{{ name }}" class="form-control input-default" id="inputFirstName" placeholder="Enter your Name">
+              <div id="error-name" class="invalid-feedback"></div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-6 col-sm-6 mb-2 p-2">
+              <label for="input-company_name" class="form-label input-label">Company Name <span class="input-required">*</span></label>
+              <input type="text" name="company_name" value="{{ name }}" class="form-control input-default" id="input-company_name" placeholder="Enter your Compamy Name">
+              <div id="error-company_name" class="invalid-feedback"></div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-6 col-sm-6 mb-2 p-2">
+              <label for="input-phone" class="form-label input-label">Phone <span class="input-required">*</span></label>
+              <input type="text" name="phone" value="{{ name }}" class="form-control input-default" id="input-phone" placeholder="Enter your Valid Phone Number">
+              <div id="error-phone" class="invalid-feedback"></div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-6 col-sm-6 mb-2 p-2">
+              <label for="input-email" class="form-label input-label">Phone <span class="input-required">*</span></label>
+              <input type="text" name="email" value="{{ name }}" class="form-control input-default" id="input-email" placeholder="Enter your Valid Email">
+              <div id="error-email" class="invalid-feedback"></div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-12 col-sm-6 mb-2 p-2">
+              <label for="input-enquiry" class="form-label input-label">Message <span class="input-required">*</span></label>
+              <textarea style="resize: none;" name="enquiry" class="form-control input-enquiry" aria-label="With textarea"></textarea>
+          </div>
+        {# </form> #}
+      </div>
+      <button style="margin-top: 20px" class="primaryButton">
+          Submit<img src="image/arrow-right.png">
+      </button>
+    </div>
+{{ footer }}

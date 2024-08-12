@@ -1,0 +1,49 @@
+{% if addresses %}
+  {% for address in addresses %}
+  {% if address.default %}
+    <div class="address-card" style="border:2px solid black">
+      <form method="post" data-oc-toggle="ajax">
+        <div>
+          <h5>Address</h5>
+          <p class="semi-colon">
+            <div class="dropdown">
+              <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {# <li><a class="dropdown-item" href="{{ address.edit }}"><i class="fa fa-pencil-alt"></i> {{ button_edit }}</a></li> #}
+                <li><button type="submit" formaction="{{ address.delete }}" class="dropdown-item" data-remove_url="{{ remove }}"><i class="fa fa-trash-alt"></i> {{ button_delete }}</button></li>
+                <li><button type="submit" formaction="{{ address.markdefault }}" class="dropdown-item" data-remove_url="{{ remove }}"><i class="fa fa-star"></i> {{ button_markdefault }}</button></li>
+              </ul>
+            </div>
+          </p>
+        </div>
+      </form>
+      {{ address.address }}
+    </div>
+  {% else %}
+      <div class="address-card">
+      <form method="post" data-oc-toggle="ajax">
+      <div>
+        <h5>Address</h5>
+        <p class="semi-colon">
+          <div class="dropdown">
+            <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {# <li><a class="dropdown-item" href="{{ address.edit }}"><i class="fa fa-pencil-alt"></i> {{ button_edit }}</a></li> #}
+                <li><button type="submit" formaction="{{ address.delete }}" class="dropdown-item" data-remove_url="{{ remove }}"><i class="fa fa-trash-alt"></i> {{ button_delete }}</button></li>
+                <li><button type="submit" formaction="{{ address.markdefault }}" class="dropdown-item" data-remove_url="{{ remove }}"><i class="fa fa-star"></i> {{ button_markdefault }}</button></li>
+              </ul>
+          </div>
+        </p>
+      </div>
+      </form>
+      {{ address.address }}
+    </div>
+  {% endif %}
+  {% endfor %}
+{% else %}
+  <p>{{ text_no_results }}</p>
+{% endif %}

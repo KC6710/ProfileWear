@@ -1,0 +1,314 @@
+{% for gkey, group in items %}
+	{% if gkey %}
+		<div class="ocme-mfp-f-group">
+			{% if group.data.setting.title is not empty %}
+				<div class="ocme-mfp-f-group-header">
+					<span class="ocme-mfp-f-group-header-label">{{ group.data.setting.title }}</span>
+				</div>
+			{% endif %}
+			<div class="ocme-mfp-f-group-conditions">
+	{% endif %}
+	{% for condition in group.conditions %}
+		<{{ condition.componentName() }} inline-template
+			:busy="busy"
+			:users="users"
+			b64config="{{ condition.getConfigAsVue() }}"
+			:module_config="config"
+			b64data="{{ condition.getDataAsVue() }}"
+			:with_search_button="{{ condition.withSearchButton() ? 'true' : 'false' }}"
+			:with_button_select_deselect_all="{{ condition.withButtonSelectDeselectAll() ? 'true' : 'false' }}"
+			:is-mounted="isMounted"
+			@load="load"
+			@change="change"
+			@refresh="refresh"
+			@register-condition="registerCondition"
+			@apply-filters="applyFilters"
+		>
+			<fieldset class="{{ condition.wrapCssClasses() }}" @click.stop="">
+				<div class="ocme-mfp-f-condition-body">
+					{% if condition.withHeader() %}
+						<div class="ocme-mfp-f-condition-header" v-on:click="toggleOpen()">
+							{% if condition.withButtonSelectDeselectAll() %}
+								<ocme-mfp-f-value-input v-show="opened">
+									<span class="ocme-mfp-f-value-input"></span>
+								</ocme-mfp-f-value-input>
+							{% endif %}
+							<span class="ocme-mfp-f-condition-header-label" v-show="opened || firstValue === null">
+								<span class="ocme-mfp-f-condition-header-label-text">{{ condition.iconLeft('setting.icon') }}{{ condition.getConfig('setting.title') }}{{ condition.iconRight('setting.icon') }}</span>
+							</span>
+							<span v-cloak class="ocme-mfp-f-condition-header-active-values" v-if="! opened && firstValue !== null">
+								{% verbatim %}<span v-html="firstValue" class="mr-5"></span>{% endverbatim %}
+								<span v-cloak data-toogle="tooltip" data-html="1" :title="restValues" class="ocme-mfp-f-condition-header-active-values-more" v-if="restValues !== null && activeValues.length > 1">+{% verbatim %}{{ activeValues.length-1 }}{% endverbatim %}</span>
+							</span>
+							<span class="ocme-mfp-f-condition-header-append">
+								<i v-if="!hasSoftActiveValues || busy == 'resetting'" :class="{ 'ocme-fa': true, 'ocme-fa-angle-down': opened, 'ocme-fa-angle-right': ! opened }"></i>
+								<button v-cloak v-else type="button" v-on:click.stop="softResetAndRefresh()" class="ocme-mfp-btn ocme-mfp-btn-xs ocme-mfp-btn-default ocme-mfp-f-reset-condition">
+									{% if filter.getConfig('configuration.refresh.mode') == 'with_delay' %}
+										<i v-if="( applying.length || deleting.length ) && ! busy" class="ocme-mfp-f-hourglass-hourglass">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 206" preserveAspectRatio="none" style="animation-duration: {{ filter.getConfig('configuration.refresh.delay') + filter.getConfig('configuration.refresh.delay') * 0.25 }}ms">
+												<path class="ocme-mfp-f-hourglass-middle" d="M120 0H0v206h120V0zM77.1 133.2C87.5 140.9 92 145 92 152.6V178H28v-25.4c0-7.6 4.5-11.7 14.9-19.4 6-4.5 13-9.6 17.1-17 4.1 7.4 11.1 12.6 17.1 17zM60 89.7c-4.1-7.3-11.1-12.5-17.1-17C32.5 65.1 28 61 28 53.4V28h64v25.4c0 7.6-4.5 11.7-14.9 19.4-6 4.4-13 9.6-17.1 16.9z"/>
+												<path class="ocme-mfp-f-hourglass-outer" d="M93.7 95.3c10.5-7.7 26.3-19.4 26.3-41.9V0H0v53.4c0 22.5 15.8 34.2 26.3 41.9 3 2.2 7.9 5.8 9 7.7-1.1 1.9-6 5.5-9 7.7C15.8 118.4 0 130.1 0 152.6V206h120v-53.4c0-22.5-15.8-34.2-26.3-41.9-3-2.2-7.9-5.8-9-7.7 1.1-2 6-5.5 9-7.7zM70.6 103c0 18 35.4 21.8 35.4 49.6V192H14v-39.4c0-27.9 35.4-31.6 35.4-49.6S14 81.2 14 53.4V14h92v39.4C106 81.2 70.6 85 70.6 103z"/>
+											</svg>
+										</i>
+									{% endif %}
+									<i {% if filter.getConfig('configuration.refresh.mode') == 'with_delay' %}v-else{% endif %} :class="{ 'ocme-fa ocme-fa-minus-circle': ( ! applying.length && ! deleting.length ) || busy == 'resetting', 'ocme-mfp-f-spinner': ( applying.length || deleting.length ) && busy != 'resetting' && busy }"></i>
+								</button>
+							</span>
+						</div>
+					{% endif %}
+					<div class="ocme-mfp-f-values">
+						{% if condition.withRangeInputs() %}
+							<div class="input-group">
+								{% if condition.getConfig('data.symbol_left') %}
+									<span class="input-group-addon">{{ condition.getConfig('data.symbol_left') }}</span>
+								{% endif %}
+								<input type="{{ condition.rangeInputsType() }}" class="form-control" v-model.number="input_min" :placeholder="placeholder_vmin" :disabled="disabled" @change="checkValue('min')" />
+								<span class="input-group-addon ocme-mfp-f-input-separator">-</span>
+								<input type="{{ condition.rangeInputsType() }}" class="form-control" v-model.number="input_max" :placeholder="placeholder_vmax" :disabled="disabled" @change="checkValue('max')" />
+								{% if condition.getConfig('data.symbol_right') %}
+									<span class="input-group-addon">{{ condition.getConfig('data.symbol_right') }}</span>
+								{% endif %}
+							</div>
+						{% endif %}
+
+						{% if condition.withSlider() %}
+							<div v-if="!isMounted" class="vue-slider vue-slider-ltr vue-slider-pre-render">
+								<div class="vue-slider-rail">
+									{% if condition.withSliderMarks() %}
+										<div class="vue-slider-marks">
+											<div class="vue-slider-mark vue-slider-mark-active vue-slider-mark-start">
+												<div class="vue-slider-mark-label vue-slider-mark-label-active">{{ condition.formatValue( condition.getData().range.min ) }}</div>
+											</div>
+											<div class="vue-slider-mark vue-slider-mark-active vue-slider-mark-end">
+												<div class="vue-slider-mark-label vue-slider-mark-label-active">{{ condition.formatValue( condition.getData().range.max ) }}</div>
+											</div>
+										</div>
+									{% endif %}
+								</div>
+							</div>
+							<vue-slider
+								ref="slider"
+								v-model="value"
+								:min="range_min"
+								:max="range_max"
+								:enable-cross="false"
+								:marks="marks"
+								:interval="step"
+								:tooltip-formatter="tooltipFormatter"
+								:data="vrange"
+								data-value="id"
+								data-label="name"
+								:silent="true"
+								:disabled="disabled"
+
+								{% for opt_name in [ 'tooltip' ] %}
+									{% if condition.getConfig('setting.slider.' ~ opt_name) is defined %}
+										{{ opt_name }}="{{ condition.getConfig('setting.slider.' ~ opt_name) }}"
+									{% endif %}
+								{% endfor %}
+
+								@dragging="dragging"
+								@change="change"
+								@drag-start="dragStart"
+								@drag-end="dragEnd"
+							></vue-slider>
+						{% endif %}
+
+						{% if condition.isVirtualList() %}
+							{% if condition.withLiveFilter() %}
+								<div class="input-group ocme-mfp-f-live-filter">
+									<input type="text" class="form-control input-sm" v-model.trim="phrase" v-on:keydown="lazyApplyLiveFilter" />
+										<div class="input-group-btn">
+											<button type="button" disabled="disabled" :disabled="live_filter.phrase===''" class="ocme-mfp-btn ocme-mfp-btn-default ocme-mfp-btn-sm" v-html="btnIconSearch" v-on:click="clearLiveFilter()"><i class="ocme-fa ocme-fa-filter"></i></button>
+										</div>
+								</div>
+
+								<div v-cloak class="text-center" v-if="!live_filter.loading && ! items.length && phrase != ''">
+									{{ text_no_values_matching_search_criteria }}
+								</div>
+							{% endif %}
+							
+							<div v-cloak class="text-center" v-if="!items.length && !live_filter.loading && live_filter.phrase==='' && phrase == ''">{{ text_no_values_available }}</div>
+
+							<vue-virtual-list
+								ref="scrollable"
+								class="ocme-mfp-f-scrollable-y"
+								data-key="id"
+								wrap-class="{{ condition.wrapValuesCssClasses() }}"
+								{% if condition.getConfig('setting.max_height') > 0 %} style="max-height: {{ condition.getConfig('setting.max_height') }}px" {% endif %}
+								item-class="ocme-mfp-f-value"
+								:item-class-add="wrapValueCssClasses"
+								:data-sources="items"
+								:data-component="itemComponent"
+								:extra-props="{ config: config, click: click, isActiveFilterValue: isActiveFilterValue, isWaiting: isWaiting, busy: busy }"
+								:bottom-threshold="25"
+								:keeps="{{ condition.getConfig('setting.max_items') + 5 }}"
+								v-on:tobottom="infiniteHandler"
+							>
+								<div class="{{ condition.wrapValuesCssClasses() }}">
+									{% if condition.hasAnyItemToDisplay() %}
+										{% for item in condition.getData('values.items') %}
+											{% if condition.canDisplayItem( item ) %}
+												<div class="{{ condition.wrapValueCssClasses( item ) }}">
+													<button class="ocme-mfp-f-value-body" type="button" v-on:click="toggleValue('{{ condition.getConfig('condition_type') }}', {{ condition.getConfig('id') }})">
+														{% if condition.withValueInput() %}
+															<span class="ocme-mfp-f-value-input"></span>
+														{% endif %}
+
+														{% if condition.withValueImage( item ) %}
+															<span class="ocme-mfp-f-value-image"><img src="{{ item.image }}" alt="{{ item.label }}" width="{{ item.image_width }}" height="{{ item.image_height }}" /></span>
+														{% endif %}
+
+														{% if condition.withValueColor( item ) %}
+															<span class="ocme-mfp-f-value-color" style="background-color: {{ item.color }}; width: {{ item.color_width }}px; height: {{ item.color_height }}px;"></span>
+														{% endif %}
+
+														{% if condition.withValueLabel( item ) %}
+															<span class="ocme-mfp-f-value-label">{{ item.label }}</span>
+														{% endif %}
+
+														{% if condition.withValueCountBadge() or ( condition.withValueInput() ) %}
+															<span class="ocme-mfp-f-value-append">
+																{% if not condition.withValueInput() and condition.isActiveValue( item ) %}
+																	<span class="ocme-mfp-f-value-remove-btn"><i class="ocme-fa ocme-fa-times"></i></span>
+																{% elseif condition.withValueCountBadge() %}
+																	<span class="ocme-mfp-f-value-count">{{ item.total_with_conditions is not null ? item.total_with_conditions : item.total }}</span>
+																{% endif %}
+															</span>
+														{% endif %}
+													</button>
+												</div>
+											{% endif %}
+										{% endfor %}
+									{% else %}
+										<div class="text-center">{{ text_no_values_available }}</div>
+									{% endif %}
+								</div>
+
+								{% if not condition.getConfig('values.complete') %}
+									<div v-cloak slot="footer" class="ocme-mfp-f-loading-container" v-show="showLoader()">
+										<div class="ocme-mfp-f-status-prompt">
+											<i class="ocme-mfp-f-loading-default"></i>
+										</div>
+									</div>
+								{% endif %}
+							</vue-virtual-list>
+
+							{% if condition.withMoreButton() %}
+								<button type="button" class="ocme-mfp-btn ocme-mfp-btn-link ocme-mfpf-f-btn" v-if="showMoreButton()" v-on:click="toggleShowValues()" v-html="labelBtnToggleShowValues">{{ text_show_more }} <i class="ocme-fa ocme-fa-angle-down"></i></button>
+							{% endif %}
+						{% elseif condition.isSelect() %}
+							<vue-select
+								ref="select"
+								append-to-body
+								:class="{ 'form-control': true, 'vs--selected': value }"
+								v-model="value"
+								:options="items"
+								placeholder="{{ text_select }}"
+								label="label"
+								:close-on-select="propCloseOnSelect"
+								:multiple="getConfig('setting.select.multiple') == '1'"
+								:calculate-position="calculatePosition"
+								:searchable="getConfig('setting.live_filter') == '1'"
+								:deselect-from-dropdown="propDeselectFromDropdown"
+								:dropdown-should-open="dropdownShouldOpen"
+								:max-height="propMaxHeight"
+								:selectable="selectable"
+
+								@open="onOpen"
+								@close="onClose"
+								@search="applyLiveFilter"
+								@input="input"
+							>
+								<template #option="{ label, id, total, total_with_conditions, image, image_width, image_height, color, color_width, color_height }">
+									<slot name="option" v-bind="{ label, id, total, total_with_conditions, image, image_width, image_height, color, color_width, color_height }">
+										<button class="ocme-mfp-f-value-body" type="button" :data-id="id">
+											<i :class="{ 'ocme-fa ocme-fa-check': ! isWaiting(id), 'ocme-mfp-f-spinner': isWaiting(id) }" v-if="getConfig('setting.select.multiple') == '1' && ( isSelected(id) || isWaiting(id) )"></i>
+
+											<span v-if="canDisplayImage(id)" class="ocme-mfp-f-value-image"><img :src="image" :alt="label" :width="image_width" :height="image_height" /></span>
+
+											<span v-if="canDisplayColor(id)" class="ocme-mfp-f-value-color" :style="'background-color:' + color + '; width:' + color_width + 'px; height:' + color_height + 'px;'"></span>
+
+											<span v-if="canDisplayLabel(id)" class="ocme-mfp-f-value-label" v-html="label"></span>
+
+											<span class="ocme-mfp-f-value-append" v-if="canDisplayCountBadge">
+												<span class="ocme-mfp-f-value-count" v-html="total_with_conditions !== null ? total_with_conditions : total"></span>
+											</span>
+										</button>
+									</slot>
+								</template>
+								<template #selected-option-container="{ option }">
+									<span class="vs__selected">
+										<span v-if="canDisplayImage(option.id)" class="ocme-mfp-f-selected-value-image"><img :src="option.image" :alt="option.label" :width="option.image_width" :height="option.image_height" /></span>
+
+										<span v-if="canDisplayColor(option.id)" class="ocme-mfp-f-selected-value-color" :style="'background-color:' + option.color + '; width:' + option.color_width + 'px; height:' + option.color_height + 'px;'"></span>
+
+										<span v-if="canDisplayLabel(option.id)" class="ocme-mfp-f-selected-value-label" v-html="option.label"></span>
+									</span>
+								</template>
+								<template #list-footer>
+									<div v-cloak class="ocme-mfp-f-loading-container" v-show="hasNextPage" ref="load">
+										<div class="ocme-mfp-f-status-prompt">
+											<i class="ocme-mfp-f-loading-default"></i>
+										</div>
+									</div>
+								</template>
+							</vue-select>
+						{% elseif condition.isTextInput() %}
+							{% if condition.withAutocomplete() %}
+								<ocme-autocomplete
+									v-model="pvalue"
+									:data="autocomplete_data"
+									slot-append-class="input-group-btn"
+									:input-group-class="{% if condition.withSearchButton() %}true{% else %}false{% endif %} || ( {% if condition.withAutocompleteClearButton() %}true{% else %}false{% endif %} && value != '' ) ? 'input-group' : ''"
+									:min-matching-chars="1"
+									:serializer="serializer"
+									:display-serializer="displaySerializer"
+									:show-all-results="true"
+									@change="autocomplete()"
+									@before="beforeAutocomplete()"
+									@hit="change"
+									@keyup.enter="apply()"
+								>
+									<template slot="append">
+										{% if condition.withSearchButton() %}
+											<button v-on:click="applyFilters()" type="button" class="ocme-mfp-btn ocme-mfp-btn-default ocme-mfp-f-search-btn" :disabled="autocomplete_busy">{{ condition.iconLeft('setting.search_button_icon', '<i :class="{ \'{icon}\': ! autocomplete_busy, \'ocme-mfp-f-spinner\': autocomplete_busy }"{styles}></i>') }}</button>
+										{% endif %}
+										{% if condition.withAutocompleteClearButton() %}
+											<button type="button" class="ocme-mfp-btn ocme-mfp-btn-default ocme-mfp-f-reset-btn" :disabled="autocomplete_busy" v-on:click="value = ''; apply()" v-if="value != ''"><i :class="{ 'ocme-fa': true, {% if condition.withSearchButton() %}'ocme-fa-times': true{% else %}'ocme-fa-times': ! autocomplete_busy, 'ocme-mfp-f-spinner': autocomplete_busy{% endif %} }"></i></button>
+										{% endif %}
+									</template>
+								</ocme-autocomplete>
+							{% else %}
+								{% if condition.withSearchButton() %}
+									<div class="input-group">
+								{% endif %}
+
+								<input type="text" class="form-control" v-model.trim="value" v-on:keydown="lazyApply" v-on:keyup.enter="applyFilters" v-on:blur="apply" />
+
+								{% if condition.withSearchButton() %}
+										<div class="input-group-btn">
+											<button type="button" class="ocme-mfp-btn ocme-mfp-btn-default" v-on:click="applyFilters()">{{ condition.iconLeft('setting.search_button_icon') }}</button>
+										</div>
+									</div>
+								{% endif %}
+							{% endif %}
+						{% endif %}
+
+						{% if not condition.isTextInput() and condition.withSearchButton() %}
+							<div class="ocme-mfp-f-search-button">
+								<button type="button" class="ocme-mfp-btn ocme-mfp-btn-default ocme-mfp-btn-xs" v-on:click="applyFilters()" :disabled="!changed||busy">
+									{{ condition.iconLeft('setting.search_button_icon') }} {{ text_search }}
+								</button>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</fieldset>
+		</{{ condition.componentName() }}>
+	{% endfor %}
+	{% if gkey %}
+			</div>
+		</div>
+	{% endif %}
+{% endfor %}

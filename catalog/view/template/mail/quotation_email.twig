@@ -1,0 +1,116 @@
+<style>
+body {font-family: 'Trebuchet MS', sans-serif;
+font-size:12px;font-weight:normal;}
+.container{max-width: 680px; margin:0 auto;}
+.logotype{background:#000;color:#fff;width:75px;height:75px;  line-height: 75px; text-align: center; font-size:11px;}
+.column-title{background:#eee;text-transform:uppercase;padding:15px 5px 15px 15px;font-size:11px}
+.column-detail{border-top:1px solid #eee;border-bottom:1px solid #eee;}
+.column-header{background:#d1eaf0;text-transform:uppercase;padding:15px;font-size:11px;border-right:1px solid #eee;}
+.row{padding:7px 14px;border-bottom:1px solid #eee;}
+.alert{background: #ffd9e8;padding:20px;margin:20px 0;line-height:22px;color:#333}
+.socialmedia{background:#eee;padding:20px; display:inline-block}
+</style>
+<div class="container">
+    <table width="100%" style="background:#000;">
+    <tr>
+      <td width="100%">
+<img src="https://profilewear.se/image/catalog/shop_information/e-mails/pw-logo-white-txt.png" style="height:30px;margin:10px 10px 7px 10px;">
+        <a href="https://profilewear.se" style="float: right; color: #fff; text-decoration: none; margin-top: 15px; margin-right: 15px;">Visit Profilewear.se</a>
+      </td>
+      <td></td>
+    </tr>
+  </table> 
+  <table width="100%" style="text-align:center;background:#d1eaf0;line-height: 20px;">
+    <tr>
+      <td>
+        <br><br>
+        <span style="font-size:22px;">Quotation</span>
+        <br><br><br>
+      </td>
+    </tr>
+  </table>
+  <table style="background:#f0f7f9;width:100%;">
+    <tr>
+      <td style="padding:20px;" width="50%">
+        <table style=" background:#fbddeb;padding:20px;" width="100%"><tr><td>
+          <span style="font-size:16px;">Contact details</span><br><br>
+          <table style="width:100%">
+            <tr>
+              <td>Company:</td>
+              <td style="text-align:right">{{custom_field}}<br><br></td>
+            </tr>
+            <tr>
+              <td>Name:</td>
+              <td style="text-align:right">{{firstname}} {{lastname}}<br><br></td>
+            </tr>            
+            <tr>
+              <td>E-mail:</td>
+              <td style="text-align:right">{{email}}<br><br></td>
+            </tr>
+            <tr>
+              <td>Phone nr:</td>
+              <td style="text-align:right">{{telephone}}<br><br></td>
+            </tr>          
+            </table>
+            
+          </td></tr>
+        </table>
+      </td>
+
+      <td style="padding:20px;" width="50%">
+        <table style="padding:10px;" width="100%"><tr><td>
+          <img src="https://profilewear.se/image/catalog/shop_information/e-mails/heart.png" width="25"><br><br>
+          <span style="font-size:16px;">Tack för din förfrågan!</span><br><br>
+          <table style="width:100%">
+            <tr>
+              <td><div style="line-height:18px;">Just nu kollar vi på din förfrågan och återkommer inom kort. Är det något speciellt som vi undrar över så kommer vi att höra av oss till dig.</div>
+              </td>
+            </tr>  
+            </table>
+          </td></tr>
+        </table>
+      </td>      
+    </tr>
+  </table>
+   <table width="100%" style="border-collapse: collapse;border:1px solid #f5f5f3;">
+     <tr>
+       <td width="40%" style="background:#f5f5f3;text-transform:uppercase;padding:15px;font-size:11px;">Article</td>
+       <td width="20%" style="background:#f5f5f3;text-transform:uppercase;padding:15px;font-size:11px;">Options</td>
+       <td width="20%" style="background:#f5f5f3;text-transform:uppercase;padding:15px;font-size:11px;">Price</td>
+       <td width="20%" style="background:#f5f5f3;text-transform:uppercase;padding:15px;font-size:11px;">Total</td>
+     </tr>
+    {% if order_products %}
+	{% for order_product in order_products %}
+     <tr>
+       <td style="padding:7px 14px;border-bottom:1px solid #eee;"><span style="color:#777;font-size:11px;">#{{ order_product.model }}</span><br>{{ order_product.name }}</td>
+       <td style="padding:7px 14px;border-bottom:1px solid #eee;">
+    {% for options in order_product.option %}
+       {% for product_option_value in options.product_option_value %}
+	   {% if product_option_value.selected =='selected' %}
+            {{product_option_value.name}}              
+            {% if not loop.last %}
+                             |
+              {% endif %}
+       {% endif %}
+	   {% endfor %}
+    {% endfor %}</td>
+       <td style="padding:7px 14px;border-bottom:1px solid #eee;">{{order_product.quantity}} <span style="color:#777">X</span> {{order_product.price}} SEK</td>
+       <td style="padding:7px 14px;border-bottom:1px solid #eee;">{{order_product.total}} KR</td>
+     </tr>
+     {% endfor %}
+     {% endif %}
+  </table>
+  <div style="background:#f5f5f3;text-transform:uppercase;padding:15px;text-align:right;font-size:11px;">
+    Sub-total: {{subtotal}} KR / Shipping Fee: {{shipping}} KR / TAX {25}%: {{tax}} KR<br><br><span style="font-size:14px;">TOTAL: {{total}} KR</span></div>
+  <br>
+  <div style="background:#FDF2C3;padding:30px;font-size:11px;">
+  <img src="https://profilewear.se/image/catalog/shop_information/e-mails/instagram.png" width="40"><br><br>
+    <span style="font-size:18px">Tips & erbjudanden</span><br><br>
+    <a style="color:#000;" href="https://linktr.ee/Profilewear.se">@profilewear.se</a>
+  
+  </div>
+  <br>
+  <div style="background:#fbddeb;text-align:center;">
+      <br><br><small>Swedish Profile Wear AB / Telefon 010-551 88 60 / E-post <a href="mailto:hej@profilewear.se" style="color:#000;">hej@profilewear.se</a><br><span style="color:#000"><?php echo date('Y-m-d h:i A') ?></span></small> <br><br>
+  </div>
+</div>

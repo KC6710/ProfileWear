@@ -1,0 +1,38 @@
+<form method="post" data-oc-toggle="ajax" data-oc-load="{{ cart }}" data-oc-target="#header-cart" class="wishlist-form search-result-item">
+  
+  <div class="product-list-item">
+      <div class="visual">
+      <div class="card-length">
+        <div class="tags">
+          <div class="tag1">
+            {% if tags %}
+                {% for i in 0..(tags|length - 1) %}
+                  <div class="tag2">
+                    <p>{{ tags[i].tag }}</p>
+                  </div>
+                {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        <a href="{{ href }}" style="color :black;text-decoration:none">
+        <div class="pic">
+          <img src="{{ thumb }}" alt="" />
+        </div>
+        </a>
+      </div>
+      </div>
+      <a href="{{ href }}" style="color :black;text-decoration:none">
+      <div class="detail">
+
+        <h6>{{ name }}</h6>
+        {% if not special %}
+          <p class="from-amount">From <b>{{ price }}</b></p>
+        {% else %}
+        <p class="from-amount">From <b>{{ special }}</b></p>
+        {% endif %}
+      </div>
+      </a>
+    </div>
+    <input type="hidden" name="product_id" value="{{ product_id }}"/>
+    <input type="hidden" name="quantity" value="{{ minimum }}"/>
+</form>

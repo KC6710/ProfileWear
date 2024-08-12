@@ -1,0 +1,201 @@
+{{ header }}
+
+<ul class="nav nav-tabs tabs-top">
+	<li><a href="{{ action_filter }}"><i class="fa fa-file"></i> {{ ocme.trans('module::global.text_modules') }}</a></li>
+	<li class="active"><a href="{{ action_filter_settings }}"><i class="fa fa-cog"></i> {{ ocme.trans('module::global.text_settings') }}</a></li>
+	<li><a href="{{ action_filter_indexation }}"><i class="fa fa-database"></i> {{ ocme.trans('module::global.text_indexation') }}</a></li>
+</ul>
+
+<div class="clearfix"></div>
+
+<div class="ocme-filter-settings">
+	<div class="row">
+		<div class="col-xs-2">
+			<div class="nav-tabs-wrapper">
+				<ul class="nav nav-tabs tabs-left">
+					<li class="nav-item {% if not oc_version4 %}active{% endif %}"><a class="nav-link {% if oc_version4 %}active{% endif %}" href="#tab-settings-general" data-bs-toggle="tab" data-toggle="tab">{{ ocme.trans('module::global.text_general') }}</a></li>
+					<li class="nav-item"><a class="nav-link" href="#tab-settings-ajax" data-bs-toggle="tab" data-toggle="tab">{{ ocme.trans('module::global.text_ajax') }}</a></li>
+					<li class="nav-item"><a class="nav-link" href="#tab-settings-javascript" data-bs-toggle="tab" data-toggle="tab">{{ ocme.trans('module::global.text_javascript') }}</a></li>
+					<li class="nav-item"><a class="nav-link" href="#tab-settings-styles" data-bs-toggle="tab" data-toggle="tab">{{ ocme.trans('module::global.text_style') }}</a></li>
+					<li class="nav-item"><a class="nav-link" href="#tab-settings-other" data-bs-toggle="tab" data-toggle="tab">{{ ocme.trans('module::global.text_other') }}</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-xs-10">
+			<div class="tab-content">
+				<div id="tab-settings-general" class="tab-pane active">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{ ocme.trans('module::global.text_include_option_prices') }}</label>
+						<div class="col-sm-10">
+							<select class="form-control" name="ocme_variables[filter][include_option_prices]">
+								<option value="0" {{ ocme.variable().store(ocme.request().get('store_id')).get('filter.include_option_prices') == '0' ? ' selected="selected"' : '' }}>{{ ocme.trans('module::global.text_no') }}</option>
+								<option value="1" {{ ocme.variable().store(ocme.request().get('store_id')).get('filter.include_option_prices') == '1' ? ' selected="selected"' : '' }}>{{ ocme.trans('module::global.text_yes') }}</option>
+								<option value="only_available" {{ ocme.variable().store(ocme.request().get('store_id')).get('filter.include_option_prices') == 'only_available' ? ' selected="selected"' : '' }}>{{ ocme.trans('module::global.text_yes_only_available') }}</option>
+							</select>
+							<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_include_option_prices_help') }}</div>
+						</div>
+					</div>
+				</div>
+				<div id="tab-settings-ajax" class="tab-pane">
+					<ul class="nav nav-tabs">
+						<li class="nav-item{{ ocme.oc().isV4() ? '' : ' active' }}"><a class="nav-link{{ ocme.oc().isV4() ? ' active' : '' }}" href="#tab-settings-ajax-selectors" data-bs-toggle="tab" data-toggle="tab">{{ ocme.trans('module::global.text_selectors') }}</a></li>
+						<li class="nav-item"><a class="nav-link" href="#tab-settings-ajax-hooks" data-bs-toggle="tab" data-toggle="tab">{{ ocme.trans('module::global.text_hooks') }}</a></li>
+					</ul>
+					<div class="tab-content">					
+						<div id="tab-settings-ajax-selectors" class="tab-pane active">
+							<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_filter_settings_selectors_guide') }}</div>
+
+							<div class="form-group">
+								<label class="control-label col-lg-2">{{ ocme.trans('module::global.text_main_selector') }}:</label>
+								<div class="control-content col-lg-10">
+									<div class="input-group">
+										<span class="input-group-addon">jQuery(</span>
+										<input type="text" name="ocme_variables[filter_global][configuration.javascript.main_selector]" class="form-control" value="{{ ocme.variable().get('filter_global.configuration.javascript.main_selector') }}" placeholder="{{ ocme.variable().get('config_global.configuration.javascript.main_selector') }}">
+										<span class="input-group-addon">).first()</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-lg-2">{{ ocme.trans('module::global.text_header_selector') }}:</label>
+								<div class="control-content col-lg-10">
+									<div class="input-group">
+										<span class="input-group-addon">jQuery(</span>
+										<input type="text" name="ocme_variables[filter_global][configuration.javascript.header_selector]" class="form-control" value="{{ ocme.variable().get('filter_global.configuration.javascript.header_selector') }}" placeholder="{{ ocme.variable().get('config_global.configuration.javascript.header_selector') }}">
+										<span class="input-group-addon">).first()</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-lg-2">{{ ocme.trans('module::global.text_pagination_selector') }}:</label>
+								<div class="control-content col-lg-10">
+									<div class="input-group">
+										<span class="input-group-addon">jQuery(</span>
+										<input type="text" name="ocme_variables[filter_global][configuration.javascript.pagination_selector]" class="form-control" value="{{ ocme.variable().get('filter_global.configuration.javascript.pagination_selector') }}" placeholder="{{ ocme.variable().get('config_global.configuration.javascript.pagination_selector') }}">
+										<span class="input-group-addon">).first()</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-lg-2">{{ ocme.trans('module::global.text_first_product_selector') }}:</label>
+								<div class="control-content col-lg-10">
+									<div class="input-group">
+										<span class="input-group-addon">jQuery(</span>
+										<input type="text" name="ocme_variables[filter_global][configuration.javascript.first_product_selector]" class="form-control" value="{{ ocme.variable().get('filter_global.configuration.javascript.first_product_selector') }}" placeholder="{{ ocme.variable().get('config_global.configuration.javascript.first_product_selector') }}">
+										<span class="input-group-addon">)</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-lg-2">{{ ocme.trans('module::global.text_breadcrumb_selector') }}:</label>
+								<div class="control-content col-lg-10">
+									<div class="input-group">
+										<span class="input-group-addon">jQuery(</span>
+										<input type="text" name="ocme_variables[filter_global][configuration.javascript.breadcrumb_selector]" class="form-control" value="{{ ocme.variable().get('filter_global.configuration.javascript.breadcrumb_selector') }}" placeholder="{{ ocme.variable().get('config_global.configuration.javascript.breadcrumb_selector') }}">
+										<span class="input-group-addon">)</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					
+						<div id="tab-settings-ajax-hooks" class="tab-pane">
+							<div class="ocme-bd-callout ocme-bd-callout-danger mb-25">{{ ocme.trans('module::global.text_please_be_careful') }}</div>
+							<div class="form-group">
+								<label class="col-lg-12">{{ ocme.trans('module::global.text_javascript_before_render') }}:</label>
+								<div class="control-content col-lg-12">
+									<div class="input-group">
+										<span class="input-group-addon">function() {</span>
+										<textarea rows="10" name="ocme_variables[filter_global_js_hook][before_render]" class="form-control">{{ ocme.variable().get('filter_global_js_hook.before_render') }}</textarea>
+										<span class="input-group-addon">}</span>
+									</div>
+									<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_javascript_before_render_help') }}</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-lg-12">{{ ocme.trans('module::global.text_javascript_after_render') }}:</label>
+								<div class="control-content col-lg-12">
+									<div class="input-group">
+										<span class="input-group-addon">function() {</span>
+										<textarea rows="10" name="ocme_variables[filter_global_js_hook][after_render]" class="form-control">{{ ocme.variable().get('filter_global_js_hook.after_render') }}</textarea>
+										<span class="input-group-addon">}</span>
+									</div>
+									<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_javascript_after_render_help') }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="tab-settings-javascript" class="tab-pane">
+					<div class="ocme-bd-callout ocme-bd-callout-danger mb-25">{{ ocme.trans('module::global.text_please_be_careful') }}</div>
+					<ul class="nav nav-tabs">
+						<li class="nav-item{{ ocme.oc().isV4() ? '' : ' active' }}"><a class="nav-link{{ ocme.oc().isV4() ? ' active' : '' }}" href="#tab-settings-javascript-hooks" data-bs-toggle="tab" data-toggle="tab">{{ ocme.trans('module::global.text_hooks') }}</a></li>
+					</ul>
+					<div class="tab-content">
+						<div id="tab-settings-javascript-hooks" class="tab-pane active">
+							<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_filter_settings_js_hooks_guide') }}</div>
+							
+							<div class="form-group">
+								<label class="col-lg-12">{{ ocme.trans('module::global.text_javascript_before_mount') }}:</label>
+								<div class="control-content col-lg-12">
+									<div class="input-group">
+										<span class="input-group-addon">function() {</span>
+										<textarea rows="10" name="ocme_variables[filter_global_js_hook][before_mount]" class="form-control">{{ ocme.variable().get('filter_global_js_hook.before_mount') }}</textarea>
+										<span class="input-group-addon">}</span>
+									</div>
+									<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_javascript_before_mount_help') }}</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-lg-12">{{ ocme.trans('module::global.text_javascript_mounted') }}:</label>
+								<div class="control-content col-lg-12">
+									<div class="input-group">
+										<span class="input-group-addon">function() {</span>
+										<textarea rows="10" name="ocme_variables[filter_global_js_hook][mounted]" class="form-control">{{ ocme.variable().get('filter_global_js_hook.mounted') }}</textarea>
+										<span class="input-group-addon">}</span>
+									</div>
+									<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_javascript_mounted_help') }}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="tab-settings-styles" class="tab-pane">
+					<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_filter_settings_style_guide') }}</div>
+					<div class="form-group">
+						<label class="col-lg-12">{{ ocme.trans('module::global.text_custom_css_styles') }}:</label>
+						<div class="control-content col-lg-12"><textarea rows="15" name="ocme_variables[filter_global_styles][custom_styles]" class="form-control">{{ ocme.variable().get('filter_global_styles.custom_styles') }}</textarea></div>
+					</div>
+				</div>
+				<div id="tab-settings-other" class="tab-pane">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{ ocme.trans('module::global.text_only_available') }}</label>
+						<div class="col-sm-10">
+							<select class="form-control" name="ocme_variables[filter_global][configuration.other.only_available]">
+								<option value="0" {{ ocme.variable().store(ocme.request().get('store_id')).get('filter_global.configuration.other.only_available') == '0' ? ' selected="selected"' : '' }}>{{ ocme.trans('module::global.text_no') }}</option>
+								<option value="1" {{ ocme.variable().store(ocme.request().get('store_id')).get('filter_global.configuration.other.only_available') == '1' ? ' selected="selected"' : '' }}>{{ ocme.trans('module::global.text_yes') }}</option>
+							</select>
+							<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_only_available_help') }}</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{ ocme.trans('module::global.text_only_available_option') }}</label>
+						<div class="col-sm-10">
+							<select class="form-control" name="ocme_variables[filter_global][configuration.other.only_available_option]">
+								<option value="0" {{ ocme.variable().store(ocme.request().get('store_id')).get('filter_global.configuration.other.only_available_option') == '0' ? ' selected="selected"' : '' }}>{{ ocme.trans('module::global.text_no') }}</option>
+								<option value="1" {{ ocme.variable().store(ocme.request().get('store_id')).get('filter_global.configuration.other.only_available_option') == '1' ? ' selected="selected"' : '' }}>{{ ocme.trans('module::global.text_yes') }}</option>
+							</select>
+							<div class="ocme-bd-callout ocme-bd-callout-info">{{ ocme.trans('module::global.text_only_available_options_help') }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+							
+{{ footer }}

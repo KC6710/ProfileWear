@@ -1,0 +1,211 @@
+{% if thisURL == 'extension/svea/module/svea/checkout' %}
+{% else %}
+{# IF SVEA CHECKOUT DONT SHOW THIS #}
+
+<div class="gap-div-30"></div>
+<div class="contact-box-green">
+        <h2>Behöver du hjälp?</h2>
+        <p>Då hoppas vi att vi kan hjälpa dig vidare! Du kan antingen chatta med oss i nedre högra hörnet, ringa oss eller skicka oss ett mail!</p>
+        <button style="margin-top: 20px" class="primaryButton">
+          Kontakta oss <img src="image/arrow-right.png">
+        </button>
+</div>
+<div class="gap-div-30"></div>
+<div class="trading">
+<div class="trading-title-div">
+<div class="title">
+<h2>Så här handlar du med tryck</h2>
+<p>Du får alltid en offert samt ett korrektur/skiss innan en order är bindande.</p>
+</div>
+<button onclick="location.href='/profilklader'" class="primaryButton d-lg-flex d-none">Börja välja kläder<img src="image/arrow-right.png"></button></div>
+
+<div class="trading-container">
+<div class="row gy-2 justify-content-between">
+<div class="col-12 col-md-12 col-lg-2 p-lg-2">
+<div class="trading-card">
+<div class="image-div"><img src="image/click-1.svg"></div>
+
+<div class="step-div">
+<h6>STEG&nbsp;01</h6>
+
+<h4>Välj artiklar &amp; lägg till profilering</h4>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 p-lg-2 d-sm-none d-lg-block">
+<div class="arrow-desktop"><img src="image/arrow-01.svg"></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 d-lg-none">
+<div class="arrow-mobile"><img src="image/arrow-bottom1.svg"></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-2 p-lg-2">
+<div class="trading-card">
+<div class="image-div"><img src="image/cart-1.svg"></div>
+
+<div class="step-div">
+<h6>STEG&nbsp;02</h6>
+
+<h4>Gå&nbsp;till varukorgen</h4>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 p-lg-2 d-sm-none d-lg-block">
+<div class="arrow-desktop"><img src="image/arrow-03.svg"></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 d-lg-none">
+<div class="arrow-mobile"><img src="image/arrow-bottom2.svg"></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-2 p-lg-2">
+<div class="trading-card">
+<div class="image-div"><img src="image/questionnaire-1.svg"></div>
+
+<div class="step-div">
+<h6>STEG&nbsp;03</h6>
+
+<h4>Fyll i dina uppgifter och beskriv önskad profilering</h4>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 p-lg-2 d-sm-none d-lg-block">
+<div class="arrow-desktop"><img src="image/arrow-01.svg"></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 d-lg-none">
+<div class="arrow-mobile"><img src="image/arrow-bottom1.svg"></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-2 p-lg-2">
+<div class="trading-card">
+<div class="image-div"><img src="image/exam-results-1.svg"></div>
+
+<div class="step-div">
+<h6>STEG&nbsp;04</h6>
+
+<h4>Skicka in din offertförfrågan</h4>
+</div>
+</div>
+</div>
+<button class="primaryButton d-lg-none d-sm-flex mt-5 mb-3" style="width: auto; margin-left: 13px !important">Börja välja kläder<img src="image/arrow-right.png"></button></div>
+</div>
+</div>
+
+<div class="main-body row gy-2">
+<h2 style="text-align: center">Senaste blogginläggen</h2>
+{% for blogpostitem in blogpost %}
+    <div class="col-12 col-md-4 col-lg-3 p-2">
+      <div class="blogg-post-item" style="background-image: url({{ blogpostitem.thumbnail }})"></div>
+        <a href="{{ blogpostitem.href }}">
+          <p class="blogg-post-item-title">{{ blogpostitem.title }}</p>
+          <p>{{ blogpostitem.description }}</p>
+        </a>
+    </div>
+  
+{% endfor %}
+  </div>    
+
+<div class="gap-div-30"></div>
+
+<div class="contact-box-green" style="background:none;border:4px solid #d1eaf0">
+<img src="https://www.reco.se/assets/images/logo.svg">
+<br>
+<iframe src="https://widget.reco.se/v2/widget/4038444?mode=HORIZONTAL_QUOTE&inverted=false&border=false" title="Profilewear.se - Omdömen på Reco" height="225" style="width:100%;border:0;display:block;overflow: hidden;" data-reactroot=""></iframe>
+
+</div>
+
+<div class="gap-div-30"></div>
+
+</main>
+<div class="main-footer">
+  <div class="row gy-2 justify-content-lg-around">
+    <div class="col-12 col-md-6 col-lg-3 p-2">
+        <h4>Offers</h4>
+        <p>Don't miss our newsletter</p>
+
+        <div class="input-group mb-3">
+            <input style="
+              padding: 13px 24px;
+              border: 1px solid #cdcdcd;
+              border-right: 0;
+            " type="text" class="form-control" placeholder="Enter the email address" aria-label="email" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" style="border: 1px solid #cdcdcd; border-left: 0;padding: 0.8125rem 1.5rem 0.8125rem 0;">
+                <img src="image/send.svg">
+            </button>
+        </div>
+        <div class="offer-desc">
+            <h4><a style="color :inherit;text-decoration:none" href="mailto: hej@profilewear.se">hej@profilewear.se</a></h4>
+        
+            <h4><a style="color :inherit;text-decoration:none" href="tel:010-551 88 60">010-551 88 60</a></h4>
+        </div>
+        <div class="right-icons">
+            <img src="image/facebook-1.svg">
+            <img src="image/instagram.svg">
+            <img src="image/linkedin.svg">
+        </div>
+                
+        <p class="extra extra-desktop">© 2023 Profilewear.se</p>
+    </div>
+    
+    <div class="mobile">
+      <hr>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-2 p-2 customer_service web">
+      <h4>{{ text_service }}</h4>
+      <ul class="list-unstyled">
+        <li><a href="{{ contact }}">{{ text_contact }}</a></li>
+        <li><a href="{{ return }}">{{ text_return }}</a></li>
+        {% if gdpr %}
+          <li><a href="{{ gdpr }}">{{ text_gdpr }}</a></li>
+        {% endif %}
+        <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
+      </ul>
+    </div>
+
+    {% if informations %}
+      <div class="col-12 col-md-6 col-lg-2 p-2 customer_service web">
+        <h4>{{ text_information }}</h4>
+        <ul class="list-unstyled">
+          {% for information in informations %}
+            <li><a href="{{ information.href }}">{{ information.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <div class="col-12 col-md-6 col-lg-3 p-2 story">
+        <h4>Vår story - den korta versionen</h4>
+        <p style="line-height:24px; font-size:14px;">
+            Profilewear.se hjälper dig som kund att fatta kloka och hållbara val när du ska profilera kläder och annan artikel. Sedan starten 2012 har vi med omsorg valt varumärken som ger dig som kund mycket värde. All förädling på textilier sker i Sverige både inhouse och hos partners som värdesätter miljö och hållbarhet.
+        </p>
+        <div id="reco--badge-yearsInRowBadge"></div><script src="https://widget.reco.se/yearsInRowBadge/4038444.js"></script><br>
+
+        <p class="extra extra-mobile" style="margin-top:55px;">© 2023 Profilewear.se</p>
+        
+    </div>
+  </div>
+</div>
+
+{# IF SVEA CHECKOUT END #}
+{% endif %}
+
+
+{{ cookie }}
+<script src="{{ bootstrap }}" type="text/javascript"></script>
+{% for script in scripts %}
+  <script src="{{ script.href }}" type="text/javascript"></script>
+{% endfor %}
+<script>
+  const showPassword = () => {
+    let input = document.getElementById("passwordField");
+    let type = input.getAttribute("type");
+    input.setAttribute("type", type === "text" ? "password" : "text");
+  };
+</script>
+</body></html>

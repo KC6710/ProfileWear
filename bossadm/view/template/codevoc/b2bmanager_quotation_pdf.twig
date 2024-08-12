@@ -1,0 +1,178 @@
+<style>
+
+@page {
+  margin: 0;
+}
+
+body {font-family: Helvetica, sans-serif;font-size:13px;}
+.container{max-width: 680px; margin:0 auto;}
+.logotype{background:#000;color:#fff;width:75px;height:75px;  line-height: 75px; text-align: center; font-size:11px;}
+.column-title{background:#f5f5f5;text-transform:uppercase;padding:15px 5px 15px 15px;font-size:11px}
+.column-detail{border-top:1px solid #f5f5f5;border-bottom:1px solid #f5f5f5;}
+.column-header{background:#f5f5f5;text-transform:uppercase;padding:15px;font-size:11px;}
+.row{padding:7px 14px;border-bottom:1px dashed #f5f5f5;}
+.alert{background: #ffd9e8;padding:20px;margin:20px 0;line-height:22px;color:#333}
+.socialmedia{background:#f5f5f5;padding:20px; display:inline-block}
+table{border-collapse: collapse;}
+
+.totals span {width:100px;display:inline-block;padding-right:10px}
+.totals div {background:#f5f5f5; padding:10px; margin-top:5px;}
+</style>
+
+<div style="width:100%;">
+  
+ <table width="100%" style="background:#F9D8E8;">
+    <tr>
+      <td style="padding:20px;">
+        <br>      
+        <div style="font-size:28px;font-weight:bold; padding-bottom:10px;float:left;">Offert</div><br>
+              <br><br>
+              Offert nr: {{quotation_id}}
+      </td>
+      <td style="padding:20px;">
+              <div style="float:right; padding-bottom:10px"> <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI1LjEuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxMDAgMTAwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggZD0iTTI5LjcsNTMuM2MtMC4zLTAuMy0wLjgtMC41LTEuMy0wLjVoLTEuOWMtMC4xLDAtMC4xLDAtMC4xLDAuMXYzLjZjMCwwLjEsMCwwLjEsMC4xLDAuMWgxLjljMC41LDAsMS0wLjIsMS4zLTAuNQoJCWMwLjMtMC4zLDAuNS0wLjgsMC41LTEuNEMzMC4xLDU0LjEsMzAsNTMuNiwyOS43LDUzLjN6Ii8+Cgk8cGF0aCBkPSJNNDQuNSw3NS42QzQ0LjUsNzUuNiw0NC41LDc1LjYsNDQuNSw3NS42TDQzLDgxLjdjMCwwLDAsMC4xLDAsMC4xYzAsMCwwLjEsMCwwLjEsMGgyLjhjMCwwLDAuMSwwLDAuMSwwYzAsMCwwLTAuMSwwLTAuMQoJCUw0NC41LDc1LjZDNDQuNiw3NS42LDQ0LjYsNzUuNiw0NC41LDc1LjZ6Ii8+Cgk8cGF0aCBkPSJNMTUuNCw1Ni44aDEuOGMwLjYsMCwxLTAuMiwxLjMtMC41YzAuMy0wLjQsMC41LTAuOCwwLjUtMS41YzAtMC42LTAuMi0xLjEtMC41LTEuNWMtMC4zLTAuNC0wLjgtMC42LTEuMy0wLjZoLTEuOAoJCWMtMC4xLDAtMC4xLDAtMC4xLDAuMXYzLjhDMTUuMyw1Ni44LDE1LjMsNTYuOCwxNS40LDU2Ljh6Ii8+Cgk8cGF0aCBkPSJNNTYuNiw3NC4yaC0xLjljLTAuMSwwLTAuMSwwLTAuMSwwLjF2My42YzAsMC4xLDAsMC4xLDAuMSwwLjFoMS45YzAuNSwwLDEtMC4yLDEuMy0wLjVjMC4zLTAuMywwLjUtMC44LDAuNS0xLjQKCQljMC0wLjYtMC4yLTEuMS0wLjUtMS40QzU3LjYsNzQuNCw1Ny4xLDc0LjIsNTYuNiw3NC4yeiIvPgoJPHBhdGggZD0iTTM5LjQsNjIuN2MwLjYsMCwxLjEtMC4yLDEuNC0wLjZjMC40LTAuNCwwLjUtMC45LDAuNS0xLjV2LTUuOWMwLTAuNi0wLjItMS4yLTAuNS0xLjVjLTAuNC0wLjQtMC44LTAuNi0xLjQtMC42CgkJYy0wLjYsMC0xLDAuMi0xLjQsMC42Yy0wLjQsMC40LTAuNSwwLjktMC41LDEuNXY1LjljMCwwLjYsMC4yLDEuMSwwLjUsMS41QzM4LjQsNjIuNSwzOC45LDYyLjcsMzkuNCw2Mi43eiIvPgoJPHBhdGggZD0iTTgyLjQsMEgxNy42QzcuOSwwLDAsNy45LDAsMTcuNnY2NC43QzAsOTIuMSw3LjksMTAwLDE3LjYsMTAwSDEwMFYxNy42QzEwMCw3LjksOTIuMSwwLDgyLjQsMHogTTcxLjgsNTAuNAoJCWMwLTAuMSwwLTAuMSwwLjEtMC4yYzAsMCwwLjEtMC4xLDAuMi0wLjFoOC42YzAuMSwwLDAuMSwwLDAuMiwwLjFjMCwwLDAuMSwwLjEsMC4xLDAuMnYyLjFjMCwwLjEsMCwwLjEtMC4xLDAuMgoJCWMtMC4xLDAuMS0wLjEsMC4xLTAuMiwwLjFoLTUuN2MtMC4xLDAtMC4xLDAtMC4xLDAuMXYzLjNjMCwwLjEsMCwwLjEsMC4xLDAuMWgzLjZjMC4xLDAsMC4xLDAsMC4yLDAuMWMwLDAuMSwwLjEsMC4xLDAuMSwwLjJ2Mi4xCgkJYzAsMC4xLDAsMC4xLTAuMSwwLjJjLTAuMSwwLTAuMSwwLjEtMC4yLDAuMWgtMy42Yy0wLjEsMC0wLjEsMC0wLjEsMC4xdjMuNGMwLDAuMSwwLDAuMSwwLjEsMC4xaDUuN2MwLjEsMCwwLjEsMCwwLjIsMC4xCgkJYzAsMC4xLDAuMSwwLjEsMC4xLDAuMnYyLjFjMCwwLjEsMCwwLjEtMC4xLDAuMmMtMC4xLDAuMS0wLjEsMC4xLTAuMiwwLjFoLTguNmMtMC4xLDAtMC4xLDAtMC4yLTAuMWMtMC4xLDAtMC4xLTAuMS0wLjEtMC4yVjUwLjR6CgkJIE01Ni40LDUwLjRjMC0wLjEsMC0wLjEsMC4xLTAuMmMwLDAsMC4xLTAuMSwwLjItMC4xaDIuNWMwLjEsMCwwLjEsMCwwLjIsMC4xYzAsMCwwLjEsMC4xLDAuMSwwLjJ2MTQuNGMwLDAuMSwwLDAuMS0wLjEsMC4yCgkJYy0wLjEsMC4xLTAuMSwwLjEtMC4yLDAuMWgtMi41Yy0wLjEsMC0wLjEsMC0wLjItMC4xYy0wLjEsMC0wLjEtMC4xLTAuMS0wLjJWNTAuNHogTTQ2LjIsNTAuNGMwLTAuMSwwLTAuMSwwLjEtMC4yCgkJYzAsMCwwLjEtMC4xLDAuMi0wLjFINTVjMC4xLDAsMC4xLDAsMC4yLDAuMWMwLjEsMCwwLjEsMC4xLDAuMSwwLjJ2Mi4xYzAsMC4xLDAsMC4xLTAuMSwwLjJjMCwwLjEtMC4xLDAuMS0wLjIsMC4xaC01LjcKCQljLTAuMSwwLTAuMSwwLTAuMSwwLjF2My4zYzAsMC4xLDAsMC4xLDAuMSwwLjFoMy41YzAuMSwwLDAuMSwwLDAuMiwwLjFjMCwwLjEsMC4xLDAuMSwwLjEsMC4ydjIuMWMwLDAuMSwwLDAuMS0wLjEsMC4yCgkJYzAsMC0wLjEsMC4xLTAuMiwwLjFoLTMuNWMtMC4xLDAtMC4xLDAtMC4xLDAuMXY1LjljMCwwLjEsMCwwLjEtMC4xLDAuMmMtMC4xLDAuMS0wLjEsMC4xLTAuMiwwLjFoLTIuNWMtMC4xLDAtMC4xLDAtMC4yLTAuMQoJCWMtMC4xLDAtMC4xLTAuMS0wLjEtMC4yVjUwLjR6IE0zNC41LDU0LjhjMC0xLDAuMi0xLjgsMC42LTIuNWMwLjQtMC43LDEtMS4zLDEuNy0xLjdjMC43LTAuNCwxLjYtMC42LDIuNi0wLjZjMSwwLDEuOCwwLjIsMi42LDAuNgoJCWMwLjgsMC40LDEuMywxLDEuNywxLjdjMC40LDAuNywwLjYsMS42LDAuNiwyLjV2NS43YzAsMS0wLjIsMS44LTAuNiwyLjVjLTAuNCwwLjctMSwxLjMtMS43LDEuN2MtMC44LDAuNC0xLjYsMC42LTIuNiwwLjYKCQljLTEsMC0xLjgtMC4yLTIuNi0wLjZjLTAuNy0wLjQtMS4zLTEtMS43LTEuN2MtMC40LTAuNy0wLjYtMS42LTAuNi0yLjVWNTQuOHogTTEyLjMsNTAuNGMwLTAuMSwwLTAuMSwwLjEtMC4yYzAsMCwwLjEtMC4xLDAuMi0wLjEKCQloNS4yYzAuOSwwLDEuNiwwLjIsMi4zLDAuNmMwLjcsMC40LDEuMiwwLjksMS41LDEuNmMwLjQsMC43LDAuNSwxLjUsMC41LDIuNGMwLDAuOS0wLjIsMS43LTAuNSwyLjNjLTAuNCwwLjctMC45LDEuMi0xLjUsMS42CgkJYy0wLjcsMC40LTEuNCwwLjYtMi4zLDAuNmgtMi4zYy0wLjEsMC0wLjEsMC0wLjEsMC4xdjUuNWMwLDAuMSwwLDAuMS0wLjEsMC4yYy0wLjEsMC4xLTAuMSwwLjEtMC4yLDAuMWgtMi41Yy0wLjEsMC0wLjEsMC0wLjItMC4xCgkJYy0wLjEsMC0wLjEtMC4xLTAuMS0wLjJWNTAuNHogTTI0LjIsODYuM2MwLDAuMi0wLjEsMC4yLTAuMywwLjJoLTIuNGMtMC4yLDAtMC4yLTAuMS0wLjMtMC4ybC0xLjctOC42YzAsMCwwLTAuMS0wLjEtMC4xCgkJYzAsMCwwLDAtMC4xLDAuMWwtMS42LDguNmMwLDAuMi0wLjEsMC4yLTAuMywwLjJoLTIuM2MtMC4xLDAtMC4yLTAuMS0wLjMtMC4ybC0zLjMtMTQuNHYtMC4xYzAtMC4xLDAuMS0wLjIsMC4yLTAuMmgyLjYKCQljMC4yLDAsMC4zLDAuMSwwLjMsMC4ybDEuNiw4LjJjMCwwLDAsMC4xLDAuMSwwLjFzMCwwLDAuMS0wLjFsMS42LTguMmMwLTAuMiwwLjEtMC4yLDAuMy0wLjJoMi40YzAuMiwwLDAuMiwwLjEsMC4zLDAuMmwxLjcsOC4yCgkJYzAsMCwwLDAuMSwwLjEsMC4xYzAsMCwwLDAsMC4xLTAuMWwxLjUtOC4yYzAtMC4yLDAuMS0wLjIsMC4zLTAuMmgyLjVjMC4yLDAsMC4zLDAuMSwwLjIsMC4zTDI0LjIsODYuM3ogTTI3LjksNTguOWgtMS4zCgkJYy0wLjEsMC0wLjEsMC0wLjEsMC4xdjUuOGMwLDAuMSwwLDAuMS0wLjEsMC4yYy0wLjEsMC4xLTAuMSwwLjEtMC4yLDAuMWgtMi41Yy0wLjEsMC0wLjEsMC0wLjItMC4xYy0wLjEsMC0wLjEtMC4xLTAuMS0wLjJWNTAuNAoJCWMwLTAuMSwwLTAuMSwwLjEtMC4yYzAsMCwwLjEtMC4xLDAuMi0wLjFoNS4yYzAuOCwwLDEuNiwwLjIsMi4yLDAuNmMwLjcsMC40LDEuMiwwLjksMS41LDEuNmMwLjQsMC43LDAuNSwxLjUsMC41LDIuMwoJCWMwLDAuOS0wLjIsMS43LTAuNiwyLjRjLTAuNCwwLjctMSwxLjItMS43LDEuNWMtMC4xLDAtMC4xLDAuMSwwLDAuMWwyLjQsNi4xYzAsMCwwLDAuMSwwLDAuMWMwLDAuMS0wLjEsMC4yLTAuMiwwLjJoLTIuNgoJCWMtMC4yLDAtMC4zLTAuMS0wLjMtMC4yTDI4LDU5QzI3LjksNTguOSwyNy45LDU4LjksMjcuOSw1OC45eiBNMzcuNiw3My45YzAsMC4xLDAsMC4xLTAuMSwwLjJjLTAuMSwwLjEtMC4xLDAuMS0wLjIsMC4xaC01LjcKCQljLTAuMSwwLTAuMSwwLTAuMSwwLjF2My4zYzAsMC4xLDAsMC4xLDAuMSwwLjFoMy42YzAuMSwwLDAuMSwwLDAuMiwwLjFjMCwwLjEsMC4xLDAuMSwwLjEsMC4yVjgwYzAsMC4xLDAsMC4xLTAuMSwwLjIKCQljLTAuMSwwLTAuMSwwLjEtMC4yLDAuMWgtMy42Yy0wLjEsMC0wLjEsMC0wLjEsMC4xdjMuNGMwLDAuMSwwLDAuMSwwLjEsMC4xaDUuN2MwLjEsMCwwLjEsMCwwLjIsMC4xYzAsMC4xLDAuMSwwLjEsMC4xLDAuMnYyLjEKCQljMCwwLjEsMCwwLjEtMC4xLDAuMmMtMC4xLDAuMS0wLjEsMC4xLTAuMiwwLjFoLTguNmMtMC4xLDAtMC4xLDAtMC4yLTAuMWMtMC4xLDAtMC4xLTAuMS0wLjEtMC4yVjcxLjljMC0wLjEsMC0wLjEsMC4xLTAuMgoJCWMwLDAsMC4xLTAuMSwwLjItMC4xaDguNmMwLjEsMCwwLjEsMCwwLjIsMC4xYzAsMCwwLjEsMC4xLDAuMSwwLjJWNzMuOXogTTUwLDg2LjVoLTIuNmMtMC4xLDAtMC4yLTAuMS0wLjMtMC4ybC0wLjUtMi4xCgkJYzAtMC4xLDAtMC4xLTAuMS0wLjFoLTRjLTAuMSwwLTAuMSwwLTAuMSwwLjFsLTAuNSwyLjFjMCwwLjEtMC4xLDAuMi0wLjMsMC4ySDM5Yy0wLjIsMC0wLjMtMC4xLTAuMi0wLjNsMy44LTE0LjQKCQljMC0wLjEsMC4xLTAuMiwwLjMtMC4ySDQ2YzAuMiwwLDAuMywwLjEsMC4zLDAuMmwzLjksMTQuNGwwLDAuMUM1MC4yLDg2LjQsNTAuMSw4Ni41LDUwLDg2LjV6IE02MS4zLDg2LjVoLTIuNgoJCWMtMC4yLDAtMC4zLTAuMS0wLjMtMC4ybC0yLjEtNS45YzAtMC4xLTAuMS0wLjEtMC4xLTAuMWgtMS4zYy0wLjEsMC0wLjEsMC0wLjEsMC4xdjUuOGMwLDAuMSwwLDAuMS0wLjEsMC4yCgkJYy0wLjEsMC4xLTAuMSwwLjEtMC4yLDAuMWgtMi41Yy0wLjEsMC0wLjEsMC0wLjItMC4xYy0wLjEsMC0wLjEtMC4xLTAuMS0wLjJWNzEuOGMwLTAuMSwwLTAuMSwwLjEtMC4yYzAsMCwwLjEtMC4xLDAuMi0wLjFoNS4yCgkJYzAuOCwwLDEuNiwwLjIsMi4yLDAuNmMwLjcsMC40LDEuMiwwLjksMS41LDEuNmMwLjQsMC43LDAuNSwxLjUsMC41LDIuM2MwLDAuOS0wLjIsMS43LTAuNiwyLjRjLTAuNCwwLjctMSwxLjItMS43LDEuNQoJCUM1OSw4MCw1OSw4MCw1OSw4MC4xbDIuNCw2LjFjMCwwLDAsMC4xLDAsMC4xQzYxLjUsODYuNCw2MS40LDg2LjUsNjEuMyw4Ni41eiBNNjEuNSw2NWMtMC4xLDAtMC4xLTAuMS0wLjEtMC4yVjUwLjQKCQljMC0wLjEsMC0wLjEsMC4xLTAuMmMwLDAsMC4xLTAuMSwwLjItMC4xaDIuNWMwLjEsMCwwLjEsMCwwLjIsMC4xYzAsMCwwLjEsMC4xLDAuMSwwLjJ2MTJjMCwwLjEsMCwwLjEsMC4xLDAuMWg1LjcKCQljMC4xLDAsMC4xLDAsMC4yLDAuMWMwLDAuMSwwLjEsMC4xLDAuMSwwLjJ2Mi4xYzAsMC4xLDAsMC4xLTAuMSwwLjJjLTAuMSwwLjEtMC4xLDAuMS0wLjIsMC4xaC04LjZDNjEuNiw2NS4xLDYxLjYsNjUsNjEuNSw2NXoKCQkgTTY2LDg2LjFjLTAuNCwwLjQtMC44LDAuNS0xLjQsMC41Yy0wLjUsMC0xLTAuMi0xLjMtMC41Yy0wLjQtMC40LTAuNS0wLjgtMC41LTEuM2MwLTAuNSwwLjItMC45LDAuNi0xLjNjMC40LTAuNCwwLjgtMC41LDEuMy0wLjUKCQljMC41LDAsMC45LDAuMiwxLjMsMC41YzAuNCwwLjQsMC42LDAuOCwwLjYsMS4zQzY2LjYsODUuMyw2Ni40LDg1LjcsNjYsODYuMXogTTc2LjUsODUuNWMtMC45LDAuOC0yLDEuMS0zLjUsMS4xCgkJYy0xLDAtMS44LTAuMi0yLjUtMC41Yy0wLjctMC4zLTEuMy0wLjgtMS43LTEuNWMtMC40LTAuNi0wLjYtMS40LTAuNi0yLjJ2LTAuNmMwLTAuMSwwLTAuMSwwLjEtMC4yYzAsMCwwLjEtMC4xLDAuMi0wLjFoMi40CgkJYzAuMSwwLDAuMSwwLDAuMiwwLjFjMCwwLjEsMC4xLDAuMSwwLjEsMC4ydjAuNGMwLDAuNSwwLjIsMC45LDAuNiwxLjJjMC40LDAuMywwLjksMC41LDEuNCwwLjVjMC42LDAsMS0wLjEsMS4zLTAuNAoJCWMwLjMtMC4zLDAuNC0wLjYsMC40LTEuMWMwLTAuMy0wLjEtMC42LTAuMy0wLjhjLTAuMi0wLjItMC40LTAuNS0wLjgtMC43Yy0wLjMtMC4yLTAuOC0wLjUtMS41LTAuOGMtMC45LTAuNC0xLjUtMC44LTIuMS0xLjIKCQljLTAuNS0wLjQtMS0wLjgtMS40LTEuNGMtMC40LTAuNi0wLjYtMS4zLTAuNi0yLjFjMC0xLjIsMC40LTIuMiwxLjMtM2MwLjktMC43LDItMS4xLDMuNC0xLjFjMSwwLDEuOCwwLjIsMi41LDAuNQoJCWMwLjcsMC40LDEuMywwLjksMS43LDEuNWMwLjQsMC43LDAuNiwxLjQsMC42LDIuM3YwLjRjMCwwLjEsMCwwLjEtMC4xLDAuMmMtMC4xLDAtMC4xLDAuMS0wLjIsMC4xSDc1Yy0wLjEsMC0wLjEsMC0wLjItMC4xCgkJYy0wLjEtMC4xLTAuMS0wLjEtMC4xLTAuMnYtMC40YzAtMC41LTAuMi0wLjktMC41LTEuM2MtMC40LTAuMy0wLjgtMC41LTEuNC0wLjVjLTAuNSwwLTAuOSwwLjEtMS4yLDAuNGMtMC4zLDAuMy0wLjQsMC42LTAuNCwxLjEKCQljMCwwLjMsMC4xLDAuNiwwLjMsMC45YzAuMiwwLjIsMC40LDAuNSwwLjgsMC43YzAuNCwwLjIsMC45LDAuNSwxLjYsMC45bDAuNSwwLjNjMC44LDAuNSwxLjUsMC45LDEuOSwxLjJjMC41LDAuMywwLjgsMC44LDEuMiwxLjMKCQljMC4zLDAuNSwwLjUsMS4xLDAuNSwxLjhDNzcuOCw4My43LDc3LjMsODQuOCw3Ni41LDg1LjV6IE04OC40LDczLjljMCwwLjEsMCwwLjEtMC4xLDAuMmMtMC4xLDAuMS0wLjEsMC4xLTAuMiwwLjFoLTUuNwoJCWMtMC4xLDAtMC4xLDAtMC4xLDAuMXYzLjNjMCwwLjEsMCwwLjEsMC4xLDAuMUg4NmMwLjEsMCwwLjEsMCwwLjIsMC4xYzAsMC4xLDAuMSwwLjEsMC4xLDAuMlY4MGMwLDAuMSwwLDAuMS0wLjEsMC4yCgkJYy0wLjEsMC0wLjEsMC4xLTAuMiwwLjFoLTMuNmMtMC4xLDAtMC4xLDAtMC4xLDAuMXYzLjRjMCwwLjEsMCwwLjEsMC4xLDAuMWg1LjdjMC4xLDAsMC4xLDAsMC4yLDAuMWMwLDAuMSwwLjEsMC4xLDAuMSwwLjJ2Mi4xCgkJYzAsMC4xLDAsMC4xLTAuMSwwLjJjLTAuMSwwLjEtMC4xLDAuMS0wLjIsMC4xaC04LjZjLTAuMSwwLTAuMSwwLTAuMi0wLjFjLTAuMSwwLTAuMS0wLjEtMC4xLTAuMlY3MS45YzAtMC4xLDAtMC4xLDAuMS0wLjIKCQljMCwwLDAuMS0wLjEsMC4yLTAuMWg4LjZjMC4xLDAsMC4xLDAsMC4yLDAuMWMwLDAsMC4xLDAuMSwwLjEsMC4yVjczLjl6Ii8+CjwvZz4KPC9zdmc+Cg==" width="80px;" style="padding-right:10px;padding-bottom:10px;"><br></div>        
+      </td>      
+    </tr>
+  </table><br>  
+
+  <table width="100%" style="font-size:14px;padding:20px;">
+    <tr>
+      <td>{{quotation_other_detail.vatnr}} / {{firstname}} {{lastname}}</td>
+      <td align="right">{{date_added}}</td>
+    </tr>
+  </table><br>
+  
+  <table width="100%" style="padding:20px;">
+    <tr>
+      <td width="50%">
+        <table>
+          <tr>
+            <td style="vertical-align: text-top;">
+             <div style="background: #ffd9e8 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAAsTAAALEwEAmpwYAAALdElEQVR4nO1decxfRRW9StkUAxK2KmBDcIOCCEIBN6gkQFkU2QIUJUWCIIsxGpb6R7ESidZqCaRhq5UQMMRIaRugpaWLCEGLYowKMbaktCqyuCCKyuI933vPfP2+e986M/ctc5KTkNLeOW/u/ObN3LlzH1FEREREREREREREz7ADczLzJObnmTOZc5k3MRcy7065MP2zuenfuTD9N5NTGxEdABw1jXktcylzI/MNR9yY2oTt4ykOilZgAvMQ5hXMB5n/JncOL+KrzHXM65jHMLfz/KwRKd7M/Agl0/XfKJzDiwgtt1MyGN7k7ekHjPcwZzOfJntnF3ED82vMd/voiKFhCnMx83Vq7piXmZuYT1Iyfa9gLkq5Iv2zJ9O/87KD9qD5XuZhzntlADiKkvd6nY7/K3MZcx7zIuZU5jtraNiT+YnUxrzUZt3XDv7tx2poGBwOZz5M1X/Zy5lXUjJjbOVR34S0jasoGaD/rKh1LcUZQcTOzJuZr1G5jvwPJVP3p5nbGujNgNX/qZRM9dBURjuecT7z7QZ6WwesmGcwn6NynYf39KXMXSzEFmBX5mXMx6ncszzL/CwNeNcwifljKtdZK5lHm6isB6w7HqJyz7aGubeNTDuczHyBijsH79kjjDS6wJHMJVS8i8HC9TQjjUGxDfM7VNwhmOqnGGn0ASxuf075z4w+mcPc2kijd7yL+Rjld8JfmJeQ35W8FfBMWL/g157XB48y9zLS6A0HMDdT/oPfwdzDSmBATGTeSfl98QxzfyuBroGp/HnSH/bvzHPM1NlhOvMl0vvlRUrOPToNnKnnBUt+TT0a6TWAM44nSO+fVyiJdXQS5zL/S/rDIRgSj1GJtmfeQno/oQ87N0Pil685H6vdr9hJay0uJz0SivyDzswE2PL8g/TRPMNOWuuBdYEWUsartPVrAuTQYfEiPQAObabZSesMkFSChbEWMPqAnbR8YJ+vbfUwI3zYTlrngF+6lpOALWLr4gSIXj1CsmBMacfbSessMBNoeY4IqG1jJ208EN7VFnzn2cnqPM4mfWH4TUNdW+BE0mP7XzLU1RcgNK79uD5pqGsEk0hf9M23k9U7IFlG6mNEWM2OkpHIoJ3n/4JikMclECz6Jcl9vYqMkkrOVwQhvv0+C0E9B9LMtaTUc0OLQQ7fnxUx00OLGRDOJLnP/0SBcwy1d9IdIUUMFNpR8o2hBBxK8tYE09PEUCIGDORMIHFmbP/DJ0GyqLS8/UtCNB4xAmQfSz5Y7bvho5WGkQrdxzSutgJ9reUYftRnw9J1LQQk+pTA2RUgW1oaAA/4anCK0uASXw1GFOI+kn1yqI/GliiNxVM+OyD3QvLJPa4bQu6aFO9f4bqhiMqQbiDBV/u6bOTrQiNgl65rtQm4eu5qsYYr7JJvZjmyP1KW5WmhgXWuGhgY4PzfUZLw4er1Ke0I1pOjMwJt63epC+MDQ+b8rA8R0DnIgd0vkuwjJ7PMAsEwsnx2dWF8QBjr/IxIo9unoe3dSE4mvbmh3ZEjXSlBcVFTwwOD5vyMtzpoY7FgF0mkjQpoTBWMgqc0MTowFDkf5W22d9DO6Yr9RrWJZgsGsXixLMvSJYRyPqV2/iW0cU0Toz8RDC5rJHM4COn8DCuFdtbWNYZ6uNLC4srGMvsPC+cDM4W2kFr+1jrGpgnGwFjmLB9Wzge0A6Jj6xi7VjCEVeUEF0p7CkvnA/CNlDc4u46xpYKh+P7XYe38DMuFtu+tY2iTYOi7bjT2Dm1xPnC90P6GqkZ2EIyAFzmT2R+0yfnAxYKG16tqOEAwAsbTvy3RNucD2ung+6sYOUkx8g6XSjuONjo/0yXpqVSb4ULBAO74D7au7Ri01fkAfCTVFrigipGvCgY2OZXZXbTZ+Rn+QON1XVXFgHTf/7duNXYSXXA+8BSN1zanigGpbNlP3WrsHLrifADZWmP13VTFwPcFAyvdauwUuuR8YBWN17iwioG7BAM+k0B2pCT3sI3omvMBRP7G6ryrioGQA+BtzJ+lbbbtelkXnQ80HgChXgHovNHTVZsGQVedDzR+BYRYBMLRPxTaacMg6LLzgcaLwLmCAdfbwBuENjJ+j+zWBF13PiBtA79VxYCUWeI6EITY9B+Fdixngj44H5ACQZUyuaRQMMKLrkPBbRoEfXG+k1CwdhhU5xOsRWjDIOiL8wEnh0HacfBUl0pHwXIQ9Mn5AGoMS89RqXSflhBysUulY2AxCPrmfOALNP45KieEABsFQ75TwkIOgj46H5BSwtbXMWSVFBpiEPTV+YCzpFApLRwpxyHSwn0Ogj47H76RLvPWSgvXLoaEqgjmYxD02fmA04sh2tWwSpklDeFyEPTd+YCUyVX7ahggXQ5d3lhmNbgYBENwPiAVjFrTxKB0PRyfLwv9LYAmg2Aozteuh89qYlSrD3RqE6M1UWcQDMX5wBkkP2OjOkH4pUuXDWttKxygyiAYkvMBqZAnilA1/rrYbYJhfAF096aGa6LMIJhEw3K+ViSqUg6AhqMEw+BlLozXxIHM5xRdoPbRxT46H9DKxDn51CyOFzcIxh93YbwBimaCoTgfkApF/p4cHt9LuwHQ1+lgWVQZBH11vnb6N8tlI/hilVQs+iGXjdREmUHQV+cDq2j88zovFg1IqcZgG8rF5w2CPjtfC/3+yEdjhymNLfXRWA1Ig6DPzgfwdRDJJ14+GAEsExrDdHO4rwYrYvQg6LvzMfNKzr/PZ6MfVxrFZ03bUj0MW0TEAvrsfAS78Hleb1u/PKxVGo7l48NB2/cHucD7IearQuMIGccSMv6BD0eiXuPY/odPPhhKxHxBAHhnKAEDxg9I7vvrQ4rAh4qfVYQE/5L1gHAWyX2Oj0fvFFrMeYoYFJOqVJIsohTw5TYp3w88x0IQ4sxrFEHYFfR5FR4ab2H+ivSFn1n1tr2ZLyjCGn+vJuL/kI7kQZyI7mmoawQnkHxOAH7ZUFdfgFu9Ut+iz0821LUFUIJMEznDUFfXMZ30H9c3DHWNA6KAD5MsFPvTT9lJ6ywwsyLzSurTR5lb20mTsRfzGZIFI0PHe4iyR0BfaVlNuLPp45q+E+xH+qIQD3SCnbTO4ETSnf88dWCLjatjiAVor4Pz7aS1HgiiScmdIO5jtCH3ohTy3l9Y1FxhJ621uJz0BR8GRaUKH20AolPaIMjiBDFYlAR5tH1+5vyzzdQ1RN77DPwNc7KZOnu8l5KoqdY/vVg3IZUsL4f/JTKKZRsD73s8u9YvL1KH3vlF2J/0LWJGHCVPtBIYEMiZ0I50R2/1Wr/arwrECR6h/AdHogNuHFmXivUBBMuQySPdtRxNBNRau89vCkSvULJUW+1mRL7bEUYafQBT+ROU/8zok+uoPbmVXoHFIYIaeR2S/Rqsbx81ARyPW7tFAx5rpM5t85oCR8mrqHgQgLiB1KWBgOtaq6ncs+E83/xI1wpIZPgMJSlNZToLlyARMNnNQmwBoAnapIuaEnF/Abuf+Ck+SvLZbmS+RuU6D8GRxczTKXy5mtFAIAuVOTDN5wW9RhPhcCRw7migt/VAyvlqKteRGVEXB9Po1ZTcUPK5iIJtLE5npm1KNXmKpvuDPerrDXAcej9V69yM2GbhCht+ZahtjG/p1nnHYtt6TGoDtnDVTEvKLCKuax1ZQ8PggRkBH6sqWkWXIcKqmyn5mgY+qbIitb0o/e916f/bTPnh67KE5nuYhzjvlQECd92voaTocVPH+CYqc8wiD/fzIxLgFzWPysURQhERzNspeWXEVX0gYEGGwYDcggeZr1A4h2PFj1cGIndw+raenzWiBFAP9zhK6hmhmskGcufw9alN2D6WGtTejQgL7NORp4gz9c9RUuj625TUz1vAvDvlgvTP5qR/B38XoVmcyFnGGSIiIiIiIiIiIiLc43+XUjoh3whQzQAAAABJRU5ErkJggg==) no-repeat;width: 50px;height: 50px;margin-right: 10px;background-position: center;background-size: 25px;"></div>   
+            </td>
+            <td style="line-height:20px;">
+              <strong>Betalning</strong><br>
+              {% if payment_firstname %}
+              {{payment_firstname}} {{payment_lastname}}<br>
+              {{payment_address_1}}<br>
+              {{payment_address_2}} <br>
+              {{payment_country}}
+              {% else %}
+              <em>Inga uppgifter inlagda.</em>
+              {% endif %}
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td width="50%">
+        <table>
+          <tr>
+            <td style="vertical-align: text-top;">
+             <div style="background: #ffd9e8 url(data:image/png;base64,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);width: 50px;height: 50px;margin-right: 10px;background-position: center;background-size: 42px;"></div>  
+            </td>
+            <td style="line-height:20px;">
+              <strong>Leverans</strong><br>
+              Leveransmetod: {{shipping_method}}<br>
+              {% if shipping_firstname %}
+              {{shipping_firstname}} {{shipping_lastname}}<br>
+              {{shipping_address_1}}<br>
+              {{shipping_address_2}} {{shipping_city}}<br>
+              {{shipping_country}}
+              {% endif %}              
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table><br>
+
+   <table width="100%" style="border-collapse: collapse;padding:20px;">
+     <tr>
+       <td width="40%" class="column-header">Artikel</td>
+       <td width="20%" class="column-header"></td>
+       <td width="10%" class="column-header">A-Pris</td>
+       <td width="5%" class="column-header">%</td>
+       <td width="15%" class="column-header">Pris</td>
+       <td width="20%" class="column-header">Totalt</td>
+     </tr>
+    {% if order_products %}
+	{% for order_product in order_products %}
+     <tr>
+       <td class="row"><span style="color:#777;font-size:11px;">#{{ order_product.model }}</span><br>{{order_product.name}}</td>
+       <td class="row">{{order_product.quantity}} x
+       {% for options in order_product.option %}
+       {# {% if count %}  #}
+       {% for product_option_value in options.product_option_value %}
+	   {% if product_option_value.selected =='selected' %}
+            {{product_option_value.name}}              
+            {% if not loop.last %}
+                 |
+              {% endif %}
+       {% endif %}
+	   {% endfor %}
+       {# {% endif %} #}
+       {% endfor %}</td>
+       <td class="row">{{order_product.org_price}} kr</td>
+       <td class="row">
+       {% if order_product.price_discount_percentage > 0 %}
+          {{order_product.price_discount_percentage}}%
+        {% endif %}
+       </td>
+       <td class="row">{{order_product.price}} kr</td>
+       <td class="row">{{order_product.total}} kr</td>
+     </tr>
+     {% endfor %}
+     {% endif %}  
+  </table>
+  <!--
+  <div style="background:#f5f5f5;padding:10px;text-align:right;">Total articles cost: 4500.00 kr</div>
+  -->
+    
+   {# <table width="100%" style="border-collapse: collapse;">
+     <tr>
+       <td width="40%" class="row"><span style="color:#777;font-size:11px;">#64000L</span><br>Softstyle Lady Fit</td>
+       <td width="20%" class="row">4 x Black | Large</td>
+       <td width="10%" class="row">100 SEK</td>
+       <td width="5%" class="row">25%</td>
+       <td width="15%" class="row">75 SEK</td>
+       <td width="20%" class="row">300 SEK</td>
+     </tr>
+     <tr>
+       <td class="row"><span style="color:#777;font-size:11px;">#64000L</span><br>Softstyle Lady Fit</td>
+       <td class="row">4 x Black | Large</td>
+       <td class="row">100 SEK</td>
+       <td class="row">25%</td>
+       <td class="row">75 SEK</td>
+       <td class="row">300 SEK</td>
+     </tr>   
+  </table>
+  <div style="background:#f5f5f5;padding:10px;text-align:right;">Total print cost: 4500.00 kr</div>
+  <br><br> #}
+
+  <table width="100%" style="border-top:dashed 1px #eee;border-collapse: collapse; padding:20px;">
+  <tr>
+    <td style="border-right:10px solid #fff;" width="70%"></td>
+    <td class="totals" style="line-height:20px;text-align:right;">
+      <br>
+      {% set sub_total = 0 %}
+      {% if quotation_totals %}
+		{% for total in quotation_totals %}
+        {% if total.title == 'Sub-Total' %}
+        {% set sub_total = total.text %}
+        {% endif %}
+        {% if total.title == 'Shipping' %}
+          Frakt: <span>{{total.text}} kr</span><br>
+          {% elseif total.title == 'Tax' %}
+          Moms 25%: <span>{{total.text}} kr</span><br>
+          {% else %}
+          {{total.title}}: <span>{{total.text}} kr</span><br>
+        {% endif %}
+        {% endfor %}
+      {% endif %}
+      <div>Totalt exkl. moms:<br><div style="font-size:18px;padding:0;font-weight:bold;">{{ sub_total }} kr</div></div>
+    </td>
+  </tr>
+</table>
+         
+  
+</div><!--wrapper-->

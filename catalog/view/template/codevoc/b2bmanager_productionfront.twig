@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <META NAME="ROBOTS" CONTENT="NOINDEX, FOLLOW">
+    <META NAME="ROBOTS" CONTENT="INDEX, NOFOLLOW">
+    <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    <meta http-equiv="refresh" content="180">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css">
+
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.2/vue.js"></script>
+    <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+    <script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+    <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.5/plugin/weekOfYear.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.js"></script>
+
+    <style>
+    body{background:#131217;color:#adbcdb}
+    .productionheader{border-bottom:1px solid #575f70;padding:10px;color:#575f70;margin-bottom:15px}
+    .productionheader h5 span{padding:5px;font-size:18px}
+    ul.production-list{list-style:none;margin:0;padding:0}
+    ul.production-list li{font-size:10px;color:#fff;background-color:#393a42;padding:5px 10px;margin-bottom:1rem;border:0;border-radius:.25rem}
+    ul.production-list li .heading{border-bottom:1px solid #818393;padding-bottom:4px;margin-bottom:4px}
+    ul.production-list li .heading .title{background:#282932;border-radius:50px;padding:4px 12px;color:#bfbfbf;font-weight:700}
+    ul.production-list li .heading .orderid{border:2px solid #282932;border-radius:50px;padding:4px 12px;color:#bfbfbf;font-weight:700;margin-left:5px;margin-top:2px;color:#919aad}
+    ul.production-list li .heading .duration{border:2px solid #282932;border-radius:50px;padding:4px 12px;color:#bfbfbf;font-weight:700;margin-left:5px;margin-top:2px;color:#919aad}
+    ul.production-list li .delivery-date{color:#ccc}
+    ul.production-list li .badged{padding:2px 5px;border:1px solid #ccc;border-left:5px solid #ccc;border-radius:3px;margin-right:4px;margin-bottom:4px;color:#bfbfbf}
+    ul.production-list li .print-method.badged{border-color:#c436b6}
+    ul.production-list li .arrival-article.badged,ul.production-list li .arrival-print.badged{border-color:#ccc}
+    ul.production-list li .arrival-article.badged .fa-minus-circle,ul.production-list li .arrival-print.badged .fa-minus-circle{color:#b50000}
+    ul.production-list li .arrival-article.badged .fa-check-circle,ul.production-list li .arrival-print.badged .fa-check-circle{color:lime}
+    ul.production-list li .heading{display:inline-block;width:100%}
+    ul.production-list li .title{font-size:14px}
+    ul.production-list li .desc{display:inline-block;width:100%}
+    ul.production-list li .bottom{display:inline-block;width:100%}
+    ul.production-list li.delivery-normal{border-left:5px solid green;}
+    ul.production-list li.delivery-medium{border-left:5px solid orange;}
+    ul.production-list li.delivery-hot{border-left:5px solid red;background:#4c2c2c}
+    ul.production-list.priority li{border-top:2px solid #801111;border-right:2px solid #801111;border-bottom:2px solid #801111}
+    ul.production-list.completed li{padding:0;background:#222227;margin-bottom:4px}
+    ul.production-list.completed .heading{border:0;padding:0;margin:4px 4px 0}
+    ul.production-list.completed .heading .title{font-size:10px;margin:0;color:#697284}
+    ul.production-list.completed .heading .orderid{font-size:8px;margin-top:3px;padding:2px 6px;color:#697284}
+    .file{padding: 2px 5px;border: 1px solid #8ee0ad;border-left: 5px solid #8ee0ad;border-radius: 3px;margin-right: 4px;margin-bottom: 4px;display: inline-block;}
+    .file a{color: #bfbfbf;}
+    .file i{color: #8ee0ad;}
+    </style>
+
+
+</head>
+<body>
+  <div id="app">
+    <div class="container-fluid">
+      <div class="productionheader">
+        <button type="button" @click="setView('production')">PRODUCTION</button>
+        <button type="button" @click="setView('calendar')">CALENDAR</button>
+        <h5 class="float-right"><i class="fa fa-calendar-alt"></i> W. {{ 'now' | date('W - d/m') }}</span></h5>
+      </div>
+      <div class="holder">
+        <div class="row" v-show="view == 'calendar'">
+          <div class="col-sm-12">
+            <div id='calendar'></div>
+          </div>
+        </div>
+        <div class="row" v-show="view == 'production'">
+          <div class="col-sm-3">
+            <h3>New</h3>
+            <draggable tag="ul" class="production-list" :list="items.new" group="people" @change="log($event, 'New')">
+              <li v-for="item in items.new" :class="{
+                'delivery-normal': calculateDeliveryDateDifference(item.delivery_date) >= 7,
+                'delivery-medium': calculateDeliveryDateDifference(item.delivery_date) <= 6 && calculateDeliveryDateDifference(item.delivery_date) > 4,
+                'delivery-hot': calculateDeliveryDateDifference(item.delivery_date) <= 4,
+              }">
+                <div class="heading">
+                  <div class="title float-left">${ item.name }</div><div class="float-left orderid">#${ item.order_id }</div><div class="float-left duration" v-if="item.duration"><i class="fa fa-clock"></i> ${item.duration}/h</div>
+                  <div class="delivery-date float-right"><i class="fa fa-calendar"></i> ${item.delivery_date | formatDate}</div>
+                </div>
+                <div class="desc">
+                  <div class="print-supplier float-left badged" v-for="supplier in item.suppliers" :style="{'border-color': supplier.colorcode ? supplier.colorcode : 'inherit'}">${supplier.name}</div>
+                  <div class="print-method float-left badged" v-for="method in item.methods" :style="{'border-color': method.colorcode ? method.colorcode : 'inherit'}">${method.name}</div>
+                  <div v-if="showPrintArticles(item.suppliers)">
+                    <div class="arrival-article float-left badged" v-if="item.item_arrival == 'Yes'"><i class="fa fa-check-circle"></i> Kläder</div>
+                    <div class="arrival-article float-left badged" v-else><i class="fa fa-minus-circle"></i> Kläder</div>
+                    <div class="arrival-article float-left badged" v-if="item.print_arrival == 'Yes'"><i class="fa fa-check-circle"></i> Tryck</div>
+                    <div class="arrival-article float-left badged" v-else><i class="fa fa-minus-circle"></i> Tryck</div>
+                  </div>
+                  <div class="file" v-if="item.file"><a v-bind:href="item.file" target="_blank"><i class="fa fa-file-image"></i> Korrektur</a></div>
+                </div>
+                <p class="attention-text">${item.attention}</p>
+              </li>
+            </draggable>
+          </div>
+          <div class="col-sm">
+            <h3>In progress</h3>
+            <draggable tag="ul" class="production-list" :list="items.progress" group="people" @change="log($event, 'Progress')">
+              <li v-for="item in items.progress" :class="{
+                'delivery-normal': calculateDeliveryDateDifference(item.delivery_date) >= 7,
+                'delivery-medium': calculateDeliveryDateDifference(item.delivery_date) <= 6 && calculateDeliveryDateDifference(item.delivery_date) > 4,
+                'delivery-hot': calculateDeliveryDateDifference(item.delivery_date) <= 4,
+              }">
+                <div class="heading">
+                  <div class="title float-left">${ item.name }</div><div class="float-left orderid">#${ item.order_id }</div><div class="float-left duration" v-if="item.duration"><i class="fa fa-clock"></i> ${item.duration}/h</div>
+                  <div class="delivery-date float-right"><i class="fa fa-calendar"></i> ${item.delivery_date | formatDate}</div>
+                </div>
+                <div class="desc">
+                  <div class="print-supplier float-left badged" v-for="supplier in item.suppliers" :style="{'border-color': supplier.colorcode ? supplier.colorcode : 'inherit'}">${supplier.name}</div>
+                  <div class="print-method float-left badged" v-for="method in item.methods" :style="{'border-color': method.colorcode ? method.colorcode : 'inherit'}">${method.name}</div>
+                  <div v-if="showPrintArticles(item.suppliers)">
+                    <div class="arrival-article float-left badged" v-if="item.item_arrival == 'Yes'"><i class="fa fa-check-circle"></i> Articles</div>
+                    <div class="arrival-article float-left badged" v-else><i class="fa fa-minus-circle"></i> Articles</div>
+                    <div class="arrival-article float-left badged" v-if="item.print_arrival == 'Yes'"><i class="fa fa-check-circle"></i> Print</div>
+                    <div class="arrival-article float-left badged" v-else><i class="fa fa-minus-circle"></i> Print</div>
+                  </div>
+                  <div class="file" v-if="item.file"><a v-bind:href="item.file" target="_blank"><i class="fa fa-file-image"></i> Korrektur</a></div>                  
+                </div>
+                <p class="attention-text">${item.attention}</p>
+              </li>
+            </draggable>
+
+            <h3>Rest</h3>
+            <draggable tag="ul" class="production-list" :list="items.rest" group="people" @change="log($event, 'Rest')">
+              <li v-for="item in items.rest" :class="{
+                'delivery-normal': calculateDeliveryDateDifference(item.delivery_date) >= 7,
+                'delivery-medium': calculateDeliveryDateDifference(item.delivery_date) <= 6 && calculateDeliveryDateDifference(item.delivery_date) > 4,
+                'delivery-hot': calculateDeliveryDateDifference(item.delivery_date) <= 4,
+              }">
+                <div class="heading">
+                  <div class="title float-left">${ item.name }</div><div class="float-left orderid">#${ item.order_id }</div><div class="float-left duration" v-if="item.duration"><i class="fa fa-clock"></i> ${item.duration}/h</div>
+                  <div class="delivery-date float-right"><i class="fa fa-calendar"></i> ${item.delivery_date | formatDate}</div>
+                </div>
+                <div class="desc">
+                  <div class="print-supplier float-left badged" v-for="supplier in item.suppliers" :style="{'border-color': supplier.colorcode ? supplier.colorcode : 'inherit'}">${supplier.name}</div>
+                  <div class="print-method float-left badged" v-for="method in item.methods" :style="{'border-color': method.colorcode ? method.colorcode : 'inherit'}">${method.name}</div>
+                  <div v-if="showPrintArticles(item.suppliers)">
+                    <div class="arrival-article float-left badged" v-if="item.item_arrival == 'Yes'"><i class="fa fa-check-circle"></i> Articles</div>
+                    <div class="arrival-article float-left badged" v-else><i class="fa fa-minus-circle"></i> Articles</div>
+                    <div class="arrival-article float-left badged" v-if="item.print_arrival == 'Yes'"><i class="fa fa-check-circle"></i> Print</div>
+                    <div class="arrival-article float-left badged" v-else><i class="fa fa-minus-circle"></i> Print</div>
+                  </div>
+                  <div class="file" v-if="item.file"><a v-bind:href="item.file" target="_blank"><i class="fa fa-file-image"></i> Korrektur</a></div>                  
+                </div>
+                <p class="attention-text">${item.attention}</p>
+              </li>
+            </draggable>
+
+            <h6>Completed</h6>
+            <ul class="production-list completed">
+            <draggable tag="ul" class="production-list" :list="items.completed" group="people" @change="log($event, 'Completed')">
+              <li v-for="item in items.completed">
+                <div class="heading">
+                  <div class="title float-left">${ item.name }</div><div class="float-left orderid">#${item.order_id}</div>
+                </div>
+              </li>
+            </draggable>
+          </div>
+          <div class="col-sm-3">
+            <h3>Priority</h3>
+            <draggable tag="ul" class="production-list priority" :list="items.priority" group="people" @change="log($event, 'Priority')">
+              <li v-for="item in items.priority" :class="{
+                'delivery-normal': calculateDeliveryDateDifference(item.delivery_date) >= 7,
+                'delivery-medium': calculateDeliveryDateDifference(item.delivery_date) <= 6 && calculateDeliveryDateDifference(item.delivery_date) > 4,
+                'delivery-hot': calculateDeliveryDateDifference(item.delivery_date) <= 4,
+              }">
+                <div class="heading">
+                  <div class="title float-left">${ item.name }</div><div class="float-left orderid">#${ item.order_id }</div><div class="float-left duration" v-if="item.duration"><i class="fa fa-clock"></i> ${item.duration}/h</div>
+                  <div class="delivery-date float-right"><i class="fa fa-calendar"></i> ${item.delivery_date | formatDate}</div>
+                </div>
+                <div class="desc">
+                  <div class="print-supplier float-left badged" v-for="supplier in item.suppliers" :style="{'border-color': supplier.colorcode ? supplier.colorcode : 'inherit'}">${supplier.name}</div>
+                  <div class="print-method float-left badged" v-for="method in item.methods" :style="{'border-color': method.colorcode ? method.colorcode : 'inherit'}">${method.name}</div>
+                  <div v-if="showPrintArticles(item.suppliers)">
+                    <div class="arrival-article float-left badged" v-if="item.item_arrival == 'Yes'"><i class="fa fa-check-circle"></i> Articles</div>
+                    <div class="arrival-article float-left badged" v-else><i class="fa fa-minus-circle"></i> Articles</div>
+                    <div class="arrival-article float-left badged" v-if="item.print_arrival == 'Yes'"><i class="fa fa-check-circle"></i> Print</div>
+                    <div class="arrival-article float-left badged" v-else><i class="fa fa-minus-circle"></i> Print</div>
+                  </div>
+                  <div class="file" v-if="item.file"><a v-bind:href="item.file" target="_blank"><i class="fa fa-file-image"></i> Korrektur</a></div>                  
+                </div>
+                <p class="attention-text">${item.attention}</p>
+              </li>
+            </draggable>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = window.calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          editable: true,
+          firstDay: 1,
+          locale: 'sv',
+          weekNumbers: true,
+          dayCellContent: function(info, create) {
+            var events = calendar.getEvents().filter(function(event) {
+              return event.start.setHours(0, 0, 0, 0) === info.date.setHours(0, 0, 0, 0);
+            });
+            var totalHours = 0
+            $.each(events, function(k, v) {
+              if('eventDuration' in v.extendedProps && v.extendedProps.eventDuration)
+                totalHours += parseFloat(v.extendedProps.eventDuration)
+            })
+            var hours = totalHours.toFixed(2)
+            var minutes = (hours * 60 ).toFixed(2)
+            if(parseFloat(hours) > 0)
+              return `${info.dayNumberText} (Time: ${hours}h / ${minutes}mins)`
+            return `${info.dayNumberText}`
+          },
+          eventDrop: function( obj ) {
+              $.ajax({
+                  url: 'index.php?route=codevoc/b2bmanager_productionfront/changeProductionDeliveryDate&token={{ token }}',
+                  dataType: 'json',
+                  type: 'post',
+                  data: {
+                      date: `${obj.event.start.getFullYear()}-${obj.event.start.getMonth()+1}-${obj.event.start.getDate()}`,
+                      id: obj.event.id,
+                  },
+                  success: function(response) {
+                     calendar.render();
+                  },
+                  error: function(error) {
+                      console.log(error)
+                      alert("Unable to update production date.")
+                      obj.revert()
+                  }
+              });
+          },
+          events: function(info, successCallback, failureCallback) {
+            $.ajax({
+                url: 'index.php?route=codevoc/b2bmanager_productionfront.fullcalendardata&token={{ token }}',
+                dataType: 'json',
+                type: 'post',
+                data: {
+                    start: (info.start.getTime() / 1000),
+                    end: (info.end.getTime() / 1000),
+                },
+                success: function(response) {
+                    var events = [];
+                    if(!!response){
+                        $.map( response, function( r ) {
+                            events.push({
+                                id: r.id,
+                                title: r.title,
+                                start: r.start,
+                                editable: true,
+                                eventDuration: r.duration,
+                                //backgroundColor: backgroundColor,
+                                //textColor: textColor,
+                            });
+                        });
+                    }
+                    successCallback(events);
+                }
+            });
+          }
+        });
+        calendar.render();
+      });
+
+    </script>
+  <script>
+    dayjs.extend(window.dayjs_plugin_weekOfYear)
+    var app = new Vue({
+      el: '#app',
+      delimiters: ['${', '}'],
+      data: {
+        view: 'production',
+        items: {
+          new:[],
+          priority:[],
+          progress:[],
+          completed:[],
+          rest:[],
+        },
+      },
+      mounted: function() {
+        this.getData();
+      },
+      filters: {
+        formatDate: function(value) {
+          return 'W.'+dayjs(value).week()+' '+dayjs(value).format('DD/MM')
+        }
+      },
+      computed: {
+        newItemsSortOrder: function() {
+          let result = []
+          this.items.new.forEach(function(item, index) {
+            result.push({
+              production_id: item.production_id,
+              sort_index: index
+            })
+          })
+          return result
+        },
+        progressItemsSortOrder: function() {
+          let result = []
+          this.items.progress.forEach(function(item, index) {
+            result.push({
+              production_id: item.production_id,
+              sort_index: index
+            })
+          })
+          return result
+        },
+        priorityItemsSortOrder: function() {
+          let result = []
+          this.items.priority.forEach(function(item, index) {
+            result.push({
+              production_id: item.production_id,
+              sort_index: index
+            })
+          })
+          return result
+        },
+        completedItemsSortOrder: function() {
+          let result = []
+          this.items.completed.forEach(function(item, index) {
+            result.push({
+              production_id: item.production_id,
+              sort_index: index
+            })
+          })
+          return result
+        },
+        restItemsSortOrder: function() {
+          let result = []
+          this.items.rest.forEach(function(item, index) {
+            result.push({
+              production_id: item.production_id,
+              sort_index: index
+            })
+          })
+          return result
+        },
+      },
+      methods: {
+        getData: function() {
+          var self = this
+          axios.get('index.php?route=codevoc/b2bmanager_productionfront.getData&token={{ token }}')
+            .then(function(response){
+              self.items.new = Array.from(response.data.new)
+              self.items.priority = Array.from(response.data.priority)
+              self.items.progress = Array.from(response.data.progress)
+              self.items.completed = Array.from(response.data.completed)
+              self.items.rest = Array.from(response.data.rest)
+            })
+        },
+        log(event, type) {
+          var formdata = new FormData();
+          formdata.append('status', type);
+          var elements = []
+          switch(type) {
+            case 'New':
+              elements = JSON.stringify(Array.from(this.newItemsSortOrder))
+              break;
+            case 'Progress':
+              elements = JSON.stringify(Array.from(this.progressItemsSortOrder))
+              break;
+            case 'Completed':
+              elements = JSON.stringify(Array.from(this.completedItemsSortOrder))
+              break;
+            case 'Priority':
+              elements = JSON.stringify(Array.from(this.priorityItemsSortOrder))
+              break;
+            case 'Rest':
+              elements = JSON.stringify(Array.from(this.restItemsSortOrder))
+              break;
+          }
+          formdata.append('elements', elements)
+
+          if('added' in event) {
+            formdata.append('sort_order', event.added.newIndex);
+            formdata.append('production_id', event.added.element.production_id);
+            axios.post('index.php?route=codevoc/b2bmanager_productionfront/updateStatus&token={{ token }}', formdata)
+          }else if('moved' in event) {
+            formdata.append('sort_order', event.moved.newIndex);
+            formdata.append('production_id', event.moved.element.production_id);
+            axios.post('index.php?route=codevoc/b2bmanager_productionfront/updateStatus&token={{ token }}', formdata)
+          }
+        },
+        showPrintArticles(suppliers) {
+          return suppliers.find(function(supplier) {
+            return supplier.name.indexOf('Zamvi') == -1
+              && supplier.name.indexOf('Tryckhuset') == -1
+              && supplier.name.indexOf('Noll33') == -1
+          })
+        },
+        calculateDeliveryDateDifference(deliveryDate) {
+          var currentDate = dayjs()
+          var deliveryDate = dayjs(deliveryDate)
+
+          return Math.ceil(deliveryDate.diff(currentDate, 'day', true))
+        },
+        setView(view) {
+          this.view = view
+          if(view == 'calendar') {
+            setTimeout(function () {
+              window.calendar.render();
+            }, 100);
+          }
+        }
+      }
+    })
+
+
+  </script>
+</body>
+</html>

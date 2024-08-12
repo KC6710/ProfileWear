@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html dir="{{ direction }}" lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8" />
+  <title>Purchased list print</title>
+  <base href="{{ base }}" />
+  <link href="view/stylesheet/bootstrap.css" rel="stylesheet" media="all" />
+  <script type="text/javascript" src="view/javascript/jquery/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="view/javascript/bootstrap/js/bootstrap.min.js"></script>
+  <link href="view/javascript/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+  <link type="text/css" href="view/stylesheet/pw4_bootstrap_3.css" rel="stylesheet" media="all" />
+  <link type="text/css" href="view/stylesheet/stylesheet.css" rel="stylesheet" media="all" />
+</head>
+<body>
+<style type="text/css">
+body{font-size:10px !important;}
+h1,h2,h3{font-size: 11px !important}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {padding: 3px 2px;}
+.panel-body {
+    padding: 0;
+}
+.table-bordered {
+    border: 0;
+}
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+    border: 0;
+    border-bottom: 1px solid #999;
+}
+.marked{border:1px solid #666;padding:2px 4px;}
+
+</style>
+  <div class="container-fluid">
+  <br>
+    <div class="pull-right">
+      <span style="margin-right: 15px">
+        <strong>Receiver: </strong> {{ purchase_info.purchase_receiver_name }}
+      </span>
+      <span>
+        <i class="fa fa-calendar"></i>&nbsp; Inköpsdag <b>{{ date(purchase_info.created_at) | date('l') }}</b> @ {{ date(purchase_info.created_at) | date('Y-m-d') }}
+      </span>
+    </div>
+    <h3>Inköpslista</h3>
+    <hr>
+  {% for order in purchase_info.orders %}
+  <div style="page-break-after: always;">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-list"></i>&nbsp;Order id #{{ order.order_id }}</h3>
+      <i class="fa fa-user space-left"></i>&nbsp;{{ order.full_name }} <i class="fa fa-envelope space-left"></i>&nbsp;{{ order.email }}
+      <div class="pull-right">
+        <span class="marked"> {{ order.order_type }}</span>
+        {% if order.quotation_id %}
+          <span class="marked">Offertnr: {{ order.quotation_id }}</span>
+        {% endif %}      
+      </div>
+    </div>
+    <div class="panel-body">
+      <form action="#" method="post" enctype="multipart/form-data" id="form-stock-status">
+        <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <td align="center" width="5%"></td>
+          <td align="center" width="5%">I</td>
+          <td align="center" width="5%">R</td>
+          <td width="10%">Artnr</td>
+          <td width="35%">Namn</td>
+          <td width="25%">Alternativ</td>
+          <td width="10%">Leverantör</td>
+        </tr>
+      </thead>
+      <tbody>
+      {% for product in order.products %}
+      <tr>
+        <td align="center"><div style="border:1px dotted;width:15px;height:15px;"></div></td>
+        <td align="center"><input type="checkbox" {{ product.purchased ? 'checked' : '' }} disabled></td>
+        <td align="center"><input type="checkbox" {{ product.pending ? 'checked' : '' }} disabled></td>
+        <td>{{ product.model }}</td>
+        <td>{{ product.name }}</td>
+        <td>
+          {{ product.quantity }} x
+          <span style="border:1px solid #333;padding:2px 6px;">{% set options = [] %}
+          {% for option in product.options %}
+          {% set options = options|merge([option.value]) %}
+          {% endfor %}
+          {{ options|join(" | ") }}
+          </span>
+        </td>
+        <td>{{ product.supplier_name }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+      </table>
+      {% if order.comment %}
+      <div class="comment-area"><i class="fa fa-comment"></i><span>{{ order.comment | nl2br }}</span></div>
+      {% endif %}
+        </div><!-- table-responsive -->
+      </form>
+    </div><!-- panel-body -->
+  </div><!-- panel panel-default -->
+  </div><!-- page-break -->
+  {% endfor %}
+
+
+  </div><!--container-fluid-->
+</div><!--content-->
+<style type="text/css">
+.comment-area{border:1px solid #ccc;border-radius:2px;padding:5px;margin-top:-10px;display: flex;}
+.comment-area span {margin-left: 5px;}
+</style>
+{{ footer }}

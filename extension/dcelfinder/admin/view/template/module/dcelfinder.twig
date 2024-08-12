@@ -1,0 +1,303 @@
+{% if view == 'module' %}
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="float-end">
+				<button type="submit" form="form-module" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-save"></i></button>
+				<a data-bs-toggle="tooltip" title="{{ button_show_js_modal }}" class="btn btn-warning show-modify-modal"><i class="fa fa-cog"></i></a>
+				<a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a></div>
+			<h1>{{ heading_title }}</h1>
+			<ol class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ol>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="card">
+			<div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+			<div class="card-body">
+				<ul class="nav nav-tabs">
+					<li class="nav-item"><a href="#tab-general" data-bs-toggle="tab" class="nav-link active">{{ tab_general }}</a></li>
+					<li class="nav-item"><a href="#tab-filemanager" data-bs-toggle="tab" class="nav-link">{{ tab_filemanager }}</a></li>
+				</ul>
+				<div class="tab-content">
+					<div id="tab-general" class="tab-pane active">
+						<form id="form-module" action="{{ save }}" method="post" data-oc-toggle="ajax">
+							<div class="row mb-3">
+								<label for="input-status" class="col-sm-2 col-form-label">{{ entry_status }}</label>
+								<div class="col-sm-10">
+									<div class="form-check form-switch form-switch-lg">
+										<input type="hidden" name="module_dcelfinder_status" value="0"/>
+										<input type="checkbox" name="module_dcelfinder_status" value="1" id="input-status" class="form-check-input"{% if module_dcelfinder_status %} checked{% endif %}/>
+									</div>
+								</div>
+							</div>
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input-click">{{ entry_click }}</label>
+								<div class="col-sm-10">
+									<select name="module_dcelfinder_click" id="input-click" class="form-select">
+										<option value="1" {{ module_dcelfinder_click == '1' ? 'selected="selected"' : '' }}>{{ text_click }}</option>
+										<option value="2" {{ module_dcelfinder_click == '2' ? 'selected="selected"' : '' }}>{{ text_dbl_click }}</option>
+									</select>
+								</div>
+							</div>
+							<legend>{{ text_watermark }}</legend>
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label">{{ entry_status }}</label>
+								<div class="col-sm-10">
+									<div class="form-check form-switch form-switch-lg">
+										<input type="hidden" name="module_dcelfinder_watermark[status]" value="0"/>
+										<input type="checkbox" name="module_dcelfinder_watermark[status]" value="1" id="input-status" class="form-check-input"{% if module_dcelfinder_watermark.status %} checked{% endif %}/>
+									</div>
+								</div>
+							</div>
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label">{{ entry_image }}</label>
+								<div class="col-sm-10">
+									<div id="image" class="card image">
+										<img src="{{ thumb }}" alt="" title="" id="thumb-image" data-oc-placeholder="{{ placeholder }}" class="card-img-top"/>
+										<input type="hidden" name="module_dcelfinder_watermark[image]" value="{{ module_dcelfinder_watermark.image }}" id="input-image"/>
+										<div class="card-body">
+											<button type="button" data-oc-toggle="image" data-oc-target="#input-image" data-oc-thumb="#thumb-image" class="btn btn-primary btn-sm btn-block"><i class="fa-solid fa-pencil"></i> {{ button_edit }}</button>
+											<button type="button" data-oc-toggle="clear" data-oc-target="#input-image" data-oc-thumb="#thumb-image" class="btn btn-warning btn-sm btn-block"><i class="fa-regular fa-trash-can"></i> {{ button_clear }}</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label">{{ entry_transparency }}</label>
+								<div class="col-sm-3">
+									<input type="text" class="form-control" name="module_dcelfinder_watermark[transparency]" value="{{ module_dcelfinder_watermark.transparency }}">
+									<p class="form-text">{{ help_transparency }}</</p>
+								</div>
+							</div>
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label">{{ entry_distance }}</label>
+								<div class="col-sm-10">
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="row">
+												<div class="col-sm-3">
+													<input type="text" class="form-control" name="module_dcelfinder_watermark[horizontal_px]" value="{{ module_dcelfinder_watermark.horizontal_px }}">
+												</div>
+												<label class="col-sm-3 col-form-label" style="text-align:center">{{ text_px_from }}</label>
+												<div class="col-sm-3">
+													<select name="module_dcelfinder_watermark[horizontal_selection]" class="form-select">
+														{% if module_dcelfinder_watermark.horizontal_selection == 'right' %}
+														<option value="right" selected="selected">{{ text_right }}</option>
+														<option value="left">{{ text_left }}</option>
+														{% else %}
+														<option value="right">{{ text_right }}</option>
+														<option value="left" selected="selected">{{ text_left }}</option>
+														{% endif %}
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="row">
+												<div class="col-sm-3">
+													<input type="text" class="form-control" name="module_dcelfinder_watermark[vertical_px]" value="{{ module_dcelfinder_watermark.vertical_px }}">
+												</div>
+												<label class="col-sm-3 col-form-label" style="text-align:center">{{ text_px_from }}</label>
+												<div class="col-sm-3">
+													<select name="module_dcelfinder_watermark[vertical_selection]" class="form-select">
+														{% if module_dcelfinder_watermark.vertical_selection == 'bottom' %}
+														<option value="bottom" selected="selected">{{ text_bottom }}</option>
+														<option value="top">{{ text_top }}</option>
+														{% else %}
+														<option value="bottom">{{ text_bottom }}</option>
+														<option value="top" selected="selected">{{ text_top }}</option>
+														{% endif %}
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div id="tab-filemanager" class="tab-pane">
+						<div id="dc-elfinder"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="modify-modal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">{{ text_modify_js }}</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row mb-3 clearfix">
+					<div class="col-sm-12">{{ text_files_note }}</div>
+				</div>
+				<div class="row mb-3 clearfix common-js">
+					<div class="col-sm-12"><strong>common.js</strong></div>
+					<div class="col-sm-12"><input value="{{ common_js }}" type="text" name="js_files[common]" class="form-control" /></div>
+				</div>
+				<div class="row mb-3 clearfix ckeditor-js">
+					<div class="col-sm-12"><strong>ckeditor.js</strong><br></div>
+					<div class="col-sm-12"><input value="{{ ckeditor_js }}" type="text" name="js_files[ckeditor]" class="form-control" /></div>
+				</div>
+				<div class="row mb-3 clearfix">
+					<div class="col-sm-12"><a data-loading-text="<i class='fa fa-spin fa-spinner'></i>" id="modifyfiles-btn" class="btn btn-danger">{{ text_modify_js }}</a></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript"><!--
+$(function() {
+	{% if not js_modified %}$('#modify-modal').modal('show');{% endif %}
+
+	var activeTab = null;
+
+	$('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+		activeTab = $(e.target).attr('href');
+
+		if (activeTab == '#tab-filemanager') {
+			$('#dc-elfinder').elfinder({
+				url : '{{ elfinder_url }}'
+			});
+		} else {
+			$('#dc-elfinder').remove();
+			location.reload();
+			$('#tab-filemanager').append('<div id="dc-elfinder"></div>');
+		}
+	});
+
+	$('body').on('click', '.show-modify-modal', function() {
+		$('#modify-modal').modal('show');
+	});
+
+	$(document).on('click', '#modifyfiles-btn', function() {
+		var t = $(this);
+
+		$.ajax({
+			url: 'index.php?route=extension/dcelfinder/module/dcelfinder.modifyfiles&user_token=' + getURLVar('user_token'),
+			type: 'post',
+			data: $('#modify-modal input[type=\'text\']'),
+			dataType: 'json',
+			success: function(json) {
+				$('#modify-modal div[class^="text-"]').remove();
+
+				for (i in json['common']['info']) {
+					$('#modify-modal .common-js').append('<div class="text-info col-sm-12">' + json['common']['info'][i] + '</div>');
+				}
+
+				for (i in json['common']['error']) {
+					$('#modify-modal .common-js').append('<div class="text-danger col-sm-12">' + json['common']['error'][i] + '</div>');
+				}
+
+				for (i in json['common']['success']) {
+					$('#modify-modal .common-js').append('<div class="text-success col-sm-12">' + json['common']['success'][i] + '</div>');
+				}
+
+				for (i in json['ckeditor']['info']) {
+					$('#modify-modal .ckeditor-js').append('<div class="text-info col-sm-12">' + json['ckeditor']['info'][i] + '</div>');
+				}
+
+				for (i in json['ckeditor']['error']) {
+					$('#modify-modal .ckeditor-js').append('<div class="text-danger col-sm-12">' + json['ckeditor']['error'][i] + '</div>');
+				}
+
+				for (i in json['ckeditor']['success']) {
+					$('#modify-modal .ckeditor-js').append('<div class="text-success col-sm-12">' + json['ckeditor']['success'][i] + '</div>');
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				console.log(thrownError + '\r\n' + xhr.statusText + '\r\n' + xhr.responseText);
+			}
+		});
+	});
+});
+//--></script>
+{{ footer }}
+{% elseif view == 'head' %}
+<script type="text/javascript" data-elfinder-url="{{ elfinder_url }}">
+function dcElfinder(element) {
+	var targetInput = element.attr('data-oc-target');
+	var targetThumb = element.attr('data-oc-thumb');
+
+	$('<div id="dc-elfinder-dialog" />').dialogelfinder({
+		url : $('[data-elfinder-url]').data('elfinder-url'),
+		width: '80%',
+		height: '600px',
+		onlyMimes: ['image'],
+		getFileCallback: function(file) {
+			var file = file[0] ? file[0] : file;
+
+			$(targetThumb).attr('src', file['url']);
+
+			$(targetInput).val(decodeURI(file['url'].replace('{{ dir_image_url }}', '')));
+
+			$('#dc-elfinder-dialog').remove();
+		}
+	});
+}
+
+{% if elfinder_click == 1 %}
+$(document).on('click', '.ui-selectee', function() {
+	$(this).dblclick();
+});
+{% endif %}
+</script>
+{% elseif view == 'product' %}
+<script type="text/javascript">
+if (!$('#add-bulk-additional-images').length) {
+	$('#tab-image #product-image thead td:last-child').append('<a class="btn btn-info" title="{{ button_add_bulk }}" data-bs-toggle="tooltip" id="add-bulk-additional-images"><i class="fa fa-magic"></i></a>');
+}
+
+$(document).on('click', '#add-bulk-additional-images', function() {
+	if ($('[data-elfinder-url]').length) {
+		$('<div id="dc-elfinder-dialog" />').dialogelfinder({
+			url : $('[data-elfinder-url]').data('elfinder-url'),
+			width: '80%',
+			height: '600px',
+			onlyMimes: ['image'],
+			commandsOptions: {
+				getfile: {
+					multiple: true
+				}
+			},
+			getFileCallback: function(file) {
+				var urls = $.map(file, function(f) {
+					return f.url;
+				});
+
+				for(i in urls) {
+					var imageFullUrl = decodeURI(urls[i]);
+					var imageInputUrl = imageFullUrl.replace('{{ dir_image_url }}', '');
+
+					html = '<tr id="product-image-row-' + image_row + '">';
+					html += '  <td><div class="card image">';
+					html += '    <img src="' + imageFullUrl + '" alt="" title="" id="thumb-image-' + image_row + '" data-oc-placeholder="{{ placeholder }}" class="card-img-top"/> <input type="hidden" name="product_image[' + image_row + '][image]" value="' + imageInputUrl + '" id="input-product-image-' + image_row + '"/>';
+					html += '    <div class="card-body">';
+					html += '      <button type="button" data-oc-toggle="image" data-oc-target="#input-product-image-' + image_row + '" data-oc-thumb="#thumb-image-' + image_row + '" class="btn btn-primary btn-sm btn-block"><i class="fa-solid fa-pencil"></i> {{ button_edit }}</button>';
+					html += '      <button type="button" data-oc-toggle="clear" data-oc-target="#input-product-image-' + image_row + '" data-oc-thumb="#thumb-image-' + image_row + '" class="btn btn-warning btn-sm btn-block"><i class="fa-regular fa-trash-can"></i> {{ button_clear }}</button>';
+					html += '    </div>';
+					html += '  </div></td>';
+					html += '  <td class="text-start"><input type="text" name="product_image[' + image_row + '][sort_order]" value="0" placeholder="{{ entry_sort_order }}" class="form-control"/></td>';
+					html += '  <td class="text-end"><button type="button" onclick="$(\'#product-image-row-' + image_row + '\').remove();" data-bs-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa-solid fa-minus-circle"></i></button></td>';
+					html += '</tr>';
+
+					$('#product-image tbody').append(html);
+
+					image_row++;
+				}
+				$('#dc-elfinder-dialog').remove();
+			}
+		});
+	}
+});
+</script>
+{% endif %}

@@ -1,0 +1,20 @@
+<?php
+namespace Opencart\Admin\Model\Codevoc;
+class B2bmanagerUnifaun extends \Opencart\System\Engine\Model {
+  public function getOrderInfo($order_id) {
+    $query = $this->db->query("SELECT * FROM `". DB_PREFIX ."order` WHERE order_id = '" . (int)$order_id . "'");
+    return $query->row;
+  }
+	public function saveUnifaunShippmentDetails($order_id, $data) {
+		$this->db->query("INSERT INTO " . DB_PREFIX . "codevoc_unifaun SET order_id = '" . (int)$order_id . "', shippment_id = '" . $data['shippment_id'] . "', tracking_no = '" . $data['tracking_no'] . "', pdf_id = '" . $data['pdf_id'] . "', weight = '" . (float)$data['weight'] . "', service_type = '" . $data['service_type'] . "'");
+	}
+
+  public function addOrderHistory($order_id, $data) {
+    $this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$order_id . "', order_status_id = '" . $data['order_status_id'] . "', notify = '0', comment = '" . $data['comment']. "', date_added = '" . date('Y-m-d H:i:s')."'");
+  }
+
+	public function getUnifaunPdfs($order_id) {
+		$unifaun_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "codevoc_unifaun` WHERE order_id = '" . (int)$order_id . "'");
+		return $unifaun_query->rows;
+	}
+}

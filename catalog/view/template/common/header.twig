@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html dir="{{ direction }}" lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{{ title }}</title>
+  <base href="{{ base }}"/>
+  {% if description %}
+    <meta name="description" content="{{ description }}"/>
+  {% endif %}
+  {% if keywords %}
+    <meta name="keywords" content="{{ keywords }}"/>
+  {% endif %}
+  <script src="{{ jquery }}" type="text/javascript"></script>
+  <link href="{{ bootstrap }}" type="text/css" rel="stylesheet" media="screen"/>
+  <link href="{{ icons }}" type="text/css" rel="stylesheet"/>
+  <link href="{{ stylesheet }}" type="text/css" rel="stylesheet"/>
+  <link href="catalog/view/stylesheet/general.css" type="text/css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet">
+  <script type="text/javascript" src="catalog/view/javascript/jquery/datetimepicker/moment.min.js"></script>
+  <script type="text/javascript" src="catalog/view/javascript/jquery/datetimepicker/moment-with-locales.min.js"></script>
+  <script type="text/javascript" src="catalog/view/javascript/jquery/datetimepicker/daterangepicker.js"></script>
+  <script type="text/javascript" src="catalog/view/javascript/ajaxsearch.js"></script>
+  <script type="text/javascript" src="catalog/view/javascript/printcodes.js"></script>
+  <link href="catalog/view/javascript/jquery/datetimepicker/daterangepicker.css" rel="stylesheet" type="text/css"/>
+  <script src="catalog/view/javascript/common.js" type="text/javascript"></script>
+  {% for style in styles %}
+    <link href="{{ style.href }}" type="text/css" rel="{{ style.rel }}" media="{{ style.media }}"/>
+  {% endfor %}
+  {% for script in scripts %}
+    <script src="{{ script.href }}" type="text/javascript"></script>
+  {% endfor %}
+  {% for link in links %}
+    <link href="{{ link.href }}" rel="{{ link.rel }}"/>
+  {% endfor %}
+  {% for analytic in analytics %}
+    {{ analytic }}
+  {% endfor %}
+  <style>
+  
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  {# .right-icons{background:rgb(0, 178, 255);color:#fff;} #}
+
+  .badge {
+    padding-left: 9px;
+    padding-right: 9px;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+  }
+
+  .label-warning[href],
+  .badge-warning[href] {
+    background-color: #c67605;
+  }
+  .content_box{
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap:10px;
+  }
+  .menu_name{
+    color:black;
+  }
+  .card_box_mobile{
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    border-radius: 30px;
+    background-color: #f6f6f6;
+    margin-bottom: 0px;
+    cursor: pointer;
+    padding-right: 30%;
+    min-width: 261px;
+    margin-top: 10px;
+  }
+  .image-mobile{
+    width: 50%;
+    border-radius: 35px;
+  }
+  #search-input-mobile{
+    height:40px;
+    font-size:12px;
+    margin: 0 0 0 -20px
+  }
+  .mobile-close{
+    width: 25px;
+    margin: 0 -40px 0px 0px;
+  }
+  .mobile-search{
+    width: 25px;
+    margin: 0 0 0 -32px;
+  }
+  </style>
+</head>
+<body>
+<div id="alert" class="toast-container position-fixed top-0 end-0 p-3"></div>
+{% if thisURL == 'extension/svea/module/svea/checkout' %}
+<div class="checkout-header">
+  <div class="row py-2 px-2">
+    <div class="col-sm-2"><a href="{{ home }}"><img class="pw-logotype" src="{{ logo }}" title="{{ name }}" alt="{{ name }}" style="margin-right: 20px"></a></div>
+    <div class="col-sm-8 align-self-center" style="text-align:center"><img class="paymenticons" src="https://profilewear.se/catalog/view/theme/pwtmpl/image/paymenticons.svg"></div>
+    <div class="col-sm-2 align-self-center" style="text-align:center"><a href="{{ home }}" class="btnLink btnSmall black float-right"><i class="fa fa-angle-left"></i> Fortsätt handla</a></div>
+  </div>
+</div>
+<style type="text/css">
+#blogposts, .main-footer{display:none;}
+</style>
+{% else %}
+
+{% if thisURL is empty or thisURL == 'common/home'%}
+<div class="root_page_header_section">
+{% endif %}
+
+  <div class="main-body main-header d-flex align-items-center justify-content-between" style="position:relative;">
+    <div>
+      <nav class="navbar navbar-expand-lg p-0">
+        {% if logo %}
+          <a href="{{ home }}"><img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" style="margin-right: 20px;width: 90%;"/></a>
+        {% else %}
+          <h1><a href="{{ home }}">{{ name }}</a></h1>
+        {% endif %}
+        {% for menuItem in header_menu %}
+        <button class="navbar-toggler dropdown_button" type="button" data-bs-toggle="collapse" data-bs-target="#printwear" aria-controls="printwear" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="{{menuItem.name}}">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <button class="btn dropdown-toggle header_dropdown_menu_button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{menuItem.name}}
+              </button>
+              <div class="dropdown-menu header_dropdown_menu" id="{{menuItem.name}}menu">
+                <h4 class="mb-4">{{menuItem.name}}</h4>
+                <div class="content_wrapper">
+                  <div class="cw_left">
+                    <div class="content_box">
+                        {% for dropdown_data in menuItem.dropdown_data %}
+                        <a href="{{dropdown_data.url}}"><div class="card_box">
+                          <div class="image_box">
+                            <img src="{{dropdown_data.image}}">
+                          </div>
+                          <p class="link_name">{{dropdown_data.name}}</p>
+                        </div></a>
+                        {% endfor %}
+                    </div>
+                  </div>
+                  <div class="cw_right">
+                    <div class="candy_box">
+                      <h2>Billiga profilkläder?</h2>
+                      <p>Våra mest prisvärda profilkläder</p>
+                      <button onclick="window.location.href='{{SITE_URL}}billiga'">Handla nu</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        {% endfor %}
+        <button class="navbar-toggler dropdown_button" type="button" data-bs-toggle="collapse" data-bs-target="#customerservice" aria-controls="customerservice" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="customerservice">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <button class="btn dropdown-toggle header_dropdown_menu_button" data-bs-toggle="dropdown" aria-expanded="false">
+                Kundservice
+              </button>
+              <div class="dropdown-menu header_dropdown_menu">
+                <h4 class="mb-4">Kundservice</h4>
+                <div class="content_wrapper">
+                  <div class="cw_left">
+                    <div class="content_box">
+                      <div class="card_box">
+                        <div class="image_box">
+                          <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+                        </div>
+                        <p class="link_name">Link Name</p>
+                      </div>
+                      <div class="card_box">
+                        <div class="image_box">
+                          <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+                        </div>
+                        <p class="link_name">Link Name</p>
+                      </div>
+                      <div class="card_box">
+                        <div class="image_box">
+                          <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+                        </div>
+                        <p class="link_name">Link Name</p>
+                      </div>
+                      <div class="card_box">
+                        <div class="image_box">
+                          <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+                        </div>
+                        <p class="link_name">Link Name</p>
+                      </div>
+                    </div>
+                    <div class="content_box">
+                      <div class="card_box">
+                        <div class="image_box">
+                          <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+                        </div>
+                        <p class="link_name">Link Name</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="cw_right">
+                    <div class="candy_box">
+                      <h2>Billiga profilkläder?</h2>
+                      <p>Våra mest prisvärda profilkläder</p>
+                      <button onclick="window.location.href='{{SITE_URL}}billiga'">Handla nu</button>
+                    </div>
+                  </div>
+                </div>
+            </div></li>
+          </ul>
+        </div>       
+      </nav>
+  </div>
+
+  <div class="right-icons">
+      <img src="image/searchIcon.svg" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" style="margin-left: 30px; cursor: pointer" class="header_right_icon">
+      <img src="image/favoriteIcon.svg" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightFavourites" aria-controls="offcanvasRightFavourites" style="margin-left: 30px; cursor: pointer" class="header_right_icon">
+      <a href="{{ shopping_cart }}" data-bs-toggle="tooltip" data-bs-placement="bottom" class="header_cart_button cart_icon" aria-label="Visa varukorg({{ cart_items }})" data-bs-original-title="Visa varukorg({{ cart_items }})">
+          <img src="image/shoppingCartIcon.svg" data-bs-toggle="offcanvas" {#data-bs-target="#offcanvasRight"#} aria-controls="offcanvasRightCart" class="header_right_icon">
+          {% if cart_items %}
+          <span class='badge badge-warning' id='lblCartCount'> {{ cart_items }} </span>
+          {% endif %}
+      </a>
+      {% if not logged %}
+        <a href="{{ login }}"  style="margin-left: 30px;"><img src="image/account-circle-icon.svg" style="cursor: pointer" class="header_right_icon"></a>
+      {% else %}
+        <a href="{{ account }}"  style="margin-left: 30px;"><img src="image/account-circle-icon.svg" style="cursor: pointer" class="header_right_icon"></a>
+      {% endif %}
+
+      <div class="search-drawer">
+        <div class="offcanvas offcanvas-end main-drawer" style="width: 50%" tabindex="-1" id="offcanvasRightFavourites" aria-labelledby="offcanvasRightLabel">
+          <div class="offcanvas-header d-flex align-items-center justify-content-between px-2 px-xl-5">
+            <h4 style="margin: 0">Favourites</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          
+          <div class="d-flex flex-column justify-content-between offcanvas-body color-main px-2 px-xl-5">
+            <div class="row" id="wishlist">
+                {{ list }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+      <div class="search-drawer">
+        <div class="offcanvas offcanvas-end main-drawer" style="width: 60%" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+          <div class="offcanvas-header p-0">
+            <div class="input-group mb-5 drawer-input">
+              <span class="input-group-text search">
+                <img data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" src="image/search48.svg">
+              </span>
+              <input type="text" id="search-input" placeholder="Search"  class="offcanvas-title form-control"><span class="input-group-text close">
+                <img data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" src="image/close.svg">
+              </span>
+            </div>
+          </div>
+          <div class="offcanvas-body px-5">
+            <h5 id="recent_searches">Nyligen sökning</h5>
+            <div class="recent-searches">
+            </div>
+            <div id="ajax-search-products-results">
+            </div>
+            <hr>
+            <br>
+            <div id="ajax-search-categories-results">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+  </div>
+{######################################### MOBILE HEADER #}
+<div class="main-body header-mobile">
+  <div>
+    
+    <a href="{{ home }}"><img class="pw-logotype" src="{{ logo }}" title="{{ name }}" alt="{{ name }}" style="margin-right: 20px"></a>
+    <div class="offcanvas offcanvas-start main-drawer mobile_side_bar_drawer" tabindex="-1" id="offcanvasLeft" aria-labelledby="offcanvasLeftLabel" style="width: 300px; overflow: hidden;">
+      <div class="offcanvas-header mobile_side_bar_drawer_header">
+        <div style="flex: 1"></div>
+          <button type="button" class="btn-close header_button" data-bs-dismiss="offcanvas" aria-label="Close" onclick="subMenuClose()"></button>
+      </div>
+
+      <div class="offcanvas-header mobile_side_bar_sub_header">
+        <div style="flex: 1; display:flex;align-items:center; width: 100%">
+          <button type="button" class="header_button" style="border:none; border-right: 1px solid rgb(236, 236, 236); background-color: transparent" onclick="subMenuClose()">
+            <img style="width: 18px" src="image/keyboard-arrow-left.svg">
+            </button>
+            <p id="header_name"></p>
+          </div>
+          <button type="button" class="btn-close header_button" data-bs-dismiss="offcanvas" aria-label="Close" onclick="subMenuClose()"></button>
+      </div>
+  
+      <div class="offcanvas-body p-0 main_side_menu_item">
+        <div id="sidebar" class="border rounded">
+          <div class="nav flex-column py-3">
+            {% for menuItem in header_menu %}
+              <a href="#sub_item_{{menuItem.id}}" class="btn mobile_side_bar_button nav-link collapsed" data-bs-toggle="collapse" role="button">
+                <span class="menu_name">{{menuItem.name}}</span><img src="image/keyboard-arrow-right.svg">
+              </a>
+              <div class="collapse ps-2" id="sub_item_{{menuItem.id}}" data-bs-parent="#sidebar">
+                {% for dropdown_data in menuItem.dropdown_data %}
+                <a href="{{dropdown_data.url}}">
+                  <div class="card_box_mobile">
+                    <div class="image_box">
+                      <img class="image-mobile" src="{{dropdown_data.image}}">
+                    </div>
+                    <p class="link_name">{{dropdown_data.name}}</p>
+                  </div>
+                </a>
+                {% endfor %}
+              </div>
+            {% endfor %}
+
+            <a href="#sub_item_customer_service" class="btn mobile_side_bar_button nav-link collapsed" data-bs-toggle="collapse" role="button">
+              <span class="menu_name">Customer Service</span><img src="image/keyboard-arrow-right.svg">
+            </a>
+            <div class="collapse ps-2" id="sub_item_customer_service" data-bs-parent="#sidebar">
+                <a href="javascript:void(0);">
+                  <div class="card_box_mobile">
+                    <div class="image_box">
+                      <img class="image-mobile" src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+                    </div>
+                    <p class="link_name">Link Name</p>
+                  </div>
+                </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="offcanvas-body p-0 sub_item" id="sub_item_customer_service">
+         <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+          <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+          <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+          <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+          <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+          <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+          <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+          <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+          <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+          <div class="card_box_mobile">
+            <div class="image_box">
+              <img src="image/catalog/shop_information/kategori_v2/category-no-image.jpg">
+            </div>
+            <p class="link_name">Link Name</p>
+          </div>
+        </div>
+    </div>
+        <div class="offcanvas offcanvas-end main-drawer mobile_side_bar_drawer" style="width: 60%" tabindex="-1" id="offcanvasRightSearch" aria-labelledby="offcanvasRightSearchLabel">
+          <div class="offcanvas-header p-0">
+            <div class="input-group mb-5 drawer-input">
+              <span class="input-group-text search">
+                <img class="mobile-search" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightSearch" aria-controls="offcanvasRightSearch" src="image/search48.svg">
+              </span>
+              <input type="text" id="search-input-mobile" placeholder="Search"  class="offcanvas-title form-control">
+              <span class="input-group-text close" style="margin: 0 -15px 0px 0px;background: transparent;">
+                <img class="mobile-close" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightSearch" aria-controls="offcanvasRightSearch" src="image/close.svg">
+              </span>
+            </div>
+          </div>
+          <div class="offcanvas-body px-5">
+            <h5 id="recent_searches_mobile">Nyligen sökning</h5>
+            <div class="recent-searches-mobile">
+            </div>
+            <div id="ajax-search-products-results-mobile">
+            </div>
+            <hr>
+            <br>
+            <div id="ajax-search-categories-results-mobile">
+            </div>
+          </div>
+        </div>
+  </div>
+
+ <div class="right-icons">
+      <img src="image/searchIcon.svg" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightSearch" aria-controls="offcanvasRightSearch" style="margin-left: 30px; cursor: pointer" class="header_right_icon">
+      <img src="image/favoriteIcon.svg" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightFavourites" aria-controls="offcanvasRightFavourites" style="margin-left: 30px; cursor: pointer" class="header_right_icon">
+      <a href="{{ shopping_cart }}" data-bs-toggle="tooltip" data-bs-placement="bottom" class="header_cart_button cart_icon" aria-label="Visa varukorg({{ cart_items }})" data-bs-original-title="Visa varukorg({{ cart_items }})">
+          <img src="image/shoppingCartIcon.svg" data-bs-toggle="offcanvas" {#data-bs-target="#offcanvasRight"#} aria-controls="offcanvasRightCart" class="header_right_icon">
+          {% if cart_items %}
+          <span class='badge badge-warning' id='lblCartCount'> {{ cart_items }} </span>
+          {% endif %}
+      </a>
+      {% if not logged %}
+        <a href="{{ login }}"  style="margin-left: 30px;"><img src="image/account-circle-icon.svg" style="cursor: pointer" class="header_right_icon"></a>
+      {% else %}
+        <a href="{{ account }}"  style="margin-left: 30px;"><img src="image/account-circle-icon.svg" style="cursor: pointer" class="header_right_icon"></a>
+      {% endif %}
+      <img src="image/menu-nav.svg" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLeft" aria-controls="offcanvasLeft" style="margin-left: 30px; cursor: pointer" class="header_right_icon">
+
+  </div>
+      
+
+</div>
+
+{# END ################################### MOBILE HEADER #}
+
+
+
+{% if thisURL is empty or thisURL == 'common/home'%}
+{############ Start page content #################}
+<div class="main-body rphs_body">
+      <div class="rphsb_left">
+        <h1>Teamkänsla på kontoret</h1>
+        <p>Muggar med tryck.</p>
+        <button>Handla nu</button>
+      </div>
+      <div class="rphsb_right">
+        <img src="https://pw4.profilewear.se/image/catalog/shop_information/startpage/cups.jpg">
+      </div>
+    </div>
+{############ Start page content #################}    
+</div> <!--<div class="root_page_header_section">-->
+<main class="main-body home-main">
+<div class="row gy-lg-2 justify-content-around">
+<div class="col-12 col-md-12 col-lg-7 p-2">
+<div class="main-banner">
+<div class="banner-btns">
+<p>T-SHIRTS</p>
+</div>
+
+<div class="banner-btns">
+<p>TRÖJOR</p>
+</div>
+
+<div class="banner-btns">
+<p>PIKÉER</p>
+</div>
+
+<div class="banner-btns">
+<p>JACKOR</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-5 p-2">
+<div class="banner-content">
+<h2>KLÄDER MED TRYCK</h2>
+
+<p>Beställ profilkläder med tryck till ditt&nbsp;företag, hos oss hittar du alltid profilerade kläder för ditt företag med högkvalitativa tryck till förmånliga priser.</p>
+<a href="/" class="primaryButton" style="margin-top: 20px">Börja söka dina profilkläder här<img src="image/arrow-right.png" /></a></div>
+</div>
+</div>
+
+<div class="main_banner_bottom_container mt-2">
+<div class="main_banner_card" style="background-image: url(image/caps.png)">
+<div class="banner_btns">
+<p>HUVUDBONAD</p>
+</div>
+</div>
+
+<div class="main_banner_card" style="background-image: url(image/rain.png)">
+<div class="banner_btns">
+<p>REGNKLÄDER</p>
+</div>
+</div>
+
+<div class="main_banner_card" style="background-image: url(image/sports.png)">
+<div class="banner_btns">
+<p>TRÄNINGSKLÄDER</p>
+</div>
+</div>
+
+<div class="main_banner_card" style="background-image: url(image/sunglasses.png)">
+<div class="banner_btns">
+<p>RAIN WEAR</p>
+</div>
+</div>
+</div>
+
+<div class="gap-div-80">&nbsp;</div>
+
+<div class="row gy-2 justify-content-around">
+<div class="col-6 col-md-3 col-lg-3 p-2">
+<div class="boxes"><img src="image/chat-1.png" />
+<h5>Välkommen till&nbsp;god atmosfär</h5>
+</div>
+</div>
+
+<div class="col-6 col-md-3 col-lg-3 p-2">
+<div class="boxes"><img src="image/t-shirt.svg" />
+<h5>Vi kan tryck på kläder</h5>
+</div>
+</div>
+
+<div class="col-6 col-md-3 col-lg-3 p-2">
+<div class="boxes"><img src="image/sketching.svg" />
+<h5>Offert &amp; korrektur inom 4 timmar</h5>
+</div>
+</div>
+
+<div class="col-6 col-md-3 col-lg-3 p-2">
+<div class="boxes"><img src="image/approve.svg" />
+<h5>Personlig kontroll av varje uppdrag</h5>
+</div>
+</div>
+</div>
+
+<hr class="mt-5" />
+<div class="gap-div">&nbsp;</div>
+
+<div class="row gy-2 justify-content-around">
+<div class="col-12 p-2">
+<div class="slide" id="carouselExampleAutoplaying">
+<div class="carousel-inner">
+<div class="carousel-item active">
+<div class="client-says">
+<h2>Vad våra kunder säger...</h2>
+
+<div class="client-said">
+<p><span>Annette Black sa</span>Snygga tröjor och tryck. Bra bemötande. Tjejens modell var dock lite mindre än "vanligt", passade men hade hellre gått upp en storlek om det stod så..</p>
+</div>
+
+<div class="review-box">
+<div class="d-flex">
+<div class="client-image"><img src="image/annette.png" /></div>
+
+<div class="client-datail">
+<h5>Annette Black</h5>
+
+<p>Some Dummy Company</p>
+</div>
+</div>
+
+<div class="testimonial-buttons"><button class="testimonial-carousel-button" onclick="previousSlide('carouselExampleAutoplaying')"><img src="./image/keyboard-arrow-left.svg" /></button><button class="testimonial-carousel-button" onclick="nextSlide('carouselExampleAutoplaying')"><img src="./image/keyboard-arrow-right.svg" /></button></div>
+</div>
+</div>
+</div>
+
+<div class="carousel-item">
+<div class="client-says">
+<h2>What our client says...</h2>
+
+<div class="client-said">
+<p><span>Annette Black said</span>Stylish sweaters and prints. Good treatment. However, the girl's model was a little smaller than "usual", fit but would have rather gone up a size if it said so.</p>
+</div>
+
+<div class="review-box">
+<div class="d-flex">
+<div class="client-image"><img src="image/annette.png" /></div>
+
+<div class="client-datail">
+<h5>Annette Black</h5>
+
+<p>Some Dummy Company</p>
+</div>
+</div>
+
+<div class="testimonial-buttons"><button class="testimonial-carousel-button" onclick="previousSlide('carouselExampleAutoplaying')"><img src="./image/keyboard-arrow-left.svg" /></button><button class="testimonial-carousel-button" onclick="nextSlide('carouselExampleAutoplaying')"><img src="./image/keyboard-arrow-right.svg" /></button></div>
+</div>
+</div>
+</div>
+
+<div class="carousel-item">
+<div class="client-says">
+<h2>What our client says...</h2>
+
+<div class="client-said">
+<p><span>Annette Black said</span>Stylish sweaters and prints. Good treatment. However, the girl's model was a little smaller than "usual", fit but would have rather gone up a size if it said so.</p>
+</div>
+
+<div class="review-box">
+<div class="d-flex">
+<div class="client-image"><img src="image/annette.png" /></div>
+
+<div class="client-datail">
+<h5>Annette Black</h5>
+
+<p>Some Dummy Company</p>
+</div>
+</div>
+
+<div class="testimonial-buttons"><button class="testimonial-carousel-button" onclick="previousSlide('carouselExampleAutoplaying')"><img src="./image/keyboard-arrow-left.svg" /></button><button class="testimonial-carousel-button" onclick="nextSlide('carouselExampleAutoplaying')"><img src="./image/keyboard-arrow-right.svg" /></button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="gap-div">&nbsp;</div>
+
+<div class="row gx-5 justify-content-around">
+<div class="col-12 col-md-12 col-lg-7 fatigues-col">
+<div class="fatigues d-flex">
+<div class="fatigues-info">
+<h2>Arbetskläder</h2>
+
+<h6 class="mb-4">Skyddskläder med tryck till företag</h6>
+
+<p class="mb-4">Skyddande profilkläder kan vara av olika slag, skyddskläder med tryck till mer fysiskt krävande arbeten hittar du under kategorin arbetskläder..</p>
+
+<p class="mb-3">Skyddskläder med reflexer för hög synlighet i mörker hittar du under kategorin varselkläder när du ska handla arbetskläder med tryck.</p>
+
+<div class="btn-container d-flex align-items-center mb-md-2 mb-lg-5">
+<div class="banner-btns">
+<p>ARBETSKLÄDER</p>
+</div>
+
+<div class="banner-btns">
+<p>VARSELKLÄDER</p>
+</div>
+</div>
+<a href="/" class="primaryButton mt-2 mt-lg-5">Alla skyddskläder<img src="image/arrow-right.png" /></a></div>
+
+<div class="fatigue-banner"><img src="image/man-with-his-arms-crossed-white-background-copy-1.png" /></div>
+</div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-5">
+<div class="headgear">
+<div class="headgear-info">
+<h2>Huvudbonad med profilering</h2>
+
+<h6 class="mb-4">Profilkläder som huvudbonad med tryck eller brodyr</h6>
+
+<p class="mb-4">Beställ mössor med tryck eller kepsar med tryck till era profilkläder som huvudbonad. Här hittar du även annan huvudbonad för märkning, såsom hattar, haldsukar och pannband för profilering bland annat.</p>
+
+<p class="mb-3">Profilering med tryck eller brodyr kan köpas till separat med valfri märkningsmetod.</p>
+</div>
+
+<div class="profiling">
+<div class="btn-container d-flex flex-column align-items-start">
+<div class="banner-btns mb-2" style="z-index: 999">
+<p>MÖSSOR MED BRODYR &amp;&nbsp;TRYCK</p>
+</div>
+
+<div class="banner-btns mb-2" style="z-index: 999">
+<p>KEPSAR MED TRYCK &amp; BRODYR</p>
+</div>
+
+<div class="banner-btns mb-md-2 mb-lg-5" style="z-index: 999">
+<p>HATTAR</p>
+</div>
+<a href="/" class="primaryButton mt-4" style="z-index: 999">Spana in alla produkter<img src="image/arrow-right.png" /></a></div>
+</div>
+
+<div class="bg-caps"><img src="image/set-two-trucker-hats-with-mesh-back-copy-1.png" /></div>
+</div>
+</div>
+</div>
+
+<div class="gap-div">&nbsp;</div>
+
+<div class="row gy-2 justify-content-between">
+<div class="col-12 col-lg-5 col-xl-5 p-2 fatigues-col">
+<div class="environment"><img src="image/icon.svg" style="width: 64px; height: 64px" />
+<h2>Miljö &amp; Hållbarhet</h2>
+
+<h6>Vårt arbete för hållbara lösningar - tillsammans!</h6>
+
+<p>Som ett växande tryckeri inom profil- och textilbranschen så är vi väl medvetna om att vi har ett stort ansvar för att ta hand om vår miljö och våra medmänniskor på den enda planeten vi har. Vi har alltid haft som målsättning att utveckla vår näringsverksamhet med hållbara lösningar och ta ett socialt ansvar, både på global och lokal nivå.</p>
+
+<p>Sen vår start 2012, har vi kommit väldigt långt med utvecklingen av vårt varaktiga hållbarhetsarbete inom drift, tjänste- och produktutbud.</p>
+<a href="/" class="primaryButton mt-4">Lär dig mer<img src="image/arrow-right.png" /></a></div>
+</div>
+
+<div class="col-12 col-lg-7 col-xl-7 p-2">
+<div class="jerseys"><!-- <div class="banner">
+        </div> -->
+<div class="info">
+<div class="info-div">
+<h2>Klasströjor</h2>
+
+<h6>Stort sortiment av skoltröjor</h6>
+
+<p>Vi har alla klasströjor med tryck! Förutom att välja och skapa ett eget motiv så är det lika viktigt att välja rätt tröja till er skolklass. Här hos oss finner du många olika skoltröjor, allt ifrån klass t-shirts till klasshoodies bland annat. Vi erbjuder också miljövänliga val, med våra ekologiska klasströjor så att man kan göra ett hållbart val. Dessutom tillhandahåller vi även en av världens mest miljövänliga tryck på klasströjor! Vi levererar till hela Sverige, så alla skolor är välkomna att beställa klasströjor online från oss med snabb leverans och billig frakt.</p>
+
+<p>Hos oss kan du alltid lita på att vi levererar klasströjor av hög klass på era villkor!</p>
+<a href="/" class="primaryButton mt-4">Visa produkter<img src="image/arrow-right.png" /></a></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="gap-div">&nbsp;</div>
+
+<div class="profile-clothing">
+<div class="title">
+<h2 style="text-align: center">Profilkläder från populära varumärken</h2>
+</div>
+<!-- <div class="gap-div"></div> -->
+
+<div class="brands web"><img src="image/image-2.png" /> <img src="image/image-3.png" style="margin-left: 64px" /> <img src="image/image-4.png" style="margin-left: 64px; margin-right: 64px" /> <img src="image/image-5.png" /></div>
+
+<div class="brands web"><img src="image/image-6.png" /> <img src="image/image-7.png" style="margin-left: 64px" /> <img src="image/image-8.png" style="margin-left: 64px" /> <img src="image/image-9.png" style="margin-left: 64px; margin-right: 64px" /> <img src="image/image-10.png" /></div>
+
+<div class="carousel slide mobile pointer-event" data-bs-interval="3000" data-bs-ride="carousel" data-bs-touch="true" id="carousel3">
+<div class="carousel-inner">
+<div class="carousel-item active">
+<div class="carousel-inner-div"><img src="image/image-2.png" /> <img src="image/image-3.png" style="margin-left: 64px" /> <img src="image/image-4.png" style="margin-left: 64px; margin-right: 64px" /></div>
+</div>
+
+<div class="carousel-item">
+<div class="carousel-inner-div"><img src="image/image-5.png" /> <img src="image/image-6.png" /> <img src="image/image-7.png" style="margin-left: 64px" /></div>
+</div>
+
+<div class="carousel-item">
+<div class="carousel-inner-div"><img src="image/image-8.png" style="margin-left: 64px" /> <img src="image/image-9.png" style="margin-left: 64px; margin-right: 64px" /> <img src="image/image-10.png" /></div>
+</div>
+</div>
+</div>
+<button class="outlinedButton mt-4" onclick="window.location.href='product-listing.html'" style="border: 2px solid !important">Se alla varumärken för våra profilkläder&nbsp;<img src="image/arrow-right.svg" /></button></div>
+
+<div class="gap-div">&nbsp;</div>
+
+<div class="row gy-2 justify-content-between">
+<div class="col-12 col-md-12 col-lg-6 py-4">
+<div class="profile-products">
+<h2>Profilprodukter med tryck</h2>
+
+<p>Passa på att komplettera dina profilkläder med billiga profilprodukter med tryck på samma gång. Här finns ett stort utbud av populära profilprodukter till förmånliga priser. Du kan välja att handla med tryck likaväl som utan.</p>
+
+<div class="btn-container">
+<div class="banner-btns">
+<p>Termosmuggar</p>
+</div>
+
+<div class="banner-btns">
+<p>Vattenflaskor</p>
+</div>
+
+<div class="banner-btns">
+<p>Reklampennor</p>
+</div>
+</div>
+
+<div class="btn-container">
+<div class="banner-btns">
+<p>Anteckningsblock</p>
+</div>
+
+<div class="banner-btns">
+<p>Nyckelband</p>
+</div>
+
+<div class="banner-btns">
+<p>Tryck för hem &amp; kök</p>
+</div>
+</div>
+
+<div class="btn-container">
+<div class="banner-btns" style="margin-bottom: 30px">
+<p>Tryck på leksaker &amp; spel</p>
+</div>
+</div>
+<button class="outlinedButton mt-lg-4 mt-sm-1">Se alla produkter&nbsp;<img src="image/arrow-right-green.svg" /></button></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-6 py-4">
+<div class="soft-hoodie">
+<div class="content">
+<p>B&amp;C - Soft Hoodie</p>
+<button class="outlinedButton">Checka in nu<img src="image/arrow-right.svg" /></button></div>
+</div>
+</div>
+</div>
+
+<div class="gap-div-80" style="height: 68px">&nbsp;</div>
+
+<div class="review-section">
+<div class="review-div">
+<div class="row gy-2 justify-content-between">
+<div class="carousel slide pointer-event" data-bs-ride="carousel" data-bs-touch="true" id="carousel2">
+<div class="carousel-inner">
+<div class="carousel-item">
+<div class="carousel-inner-div">
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ball-grey.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ball-grey.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="carousel-item active">
+<div class="carousel-inner-div">
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ball-grey.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ball-grey.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4 col-xl-2 p-2">
+<div class="review-card">
+<div class="ratings"><img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /> <img src="image/ratings.png" /></div>
+
+<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+
+<div class="name">
+<h6>Auktion A</h6>
+
+<p>4 dagar</p>
+</div>
+
+<div class="verified"><img src="image/verified.png" />
+<p>Verified Kund</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button class="carousel-control-prev" data-bs-slide="prev" data-bs-target="#carousel2" onclick="hideButton()" type="button"><span class="visually-hidden">Previous</span></button><button class="carousel-control-next" data-bs-slide="next" data-bs-target="#carousel2" onclick="showButton()" type="button"><span class="visually-hidden">Next</span></button></div>
+<!-- <button onclick="nextSlide('carousel2')">
+        <h1 style="color: black;">Next</h1>
+      </button> --></div>
+</div>
+
+<div class="points">
+<div class="d-flex align-items-center">
+<h4>4.7<span>/5</span></h4>
+
+<p>Las <b>115 </b>upprikitga kundomdomen</p>
+</div>
+<img src="./image/reco.png" style="width: 100px" /></div>
+</div>
+
+<div class="gap-div-80">&nbsp;</div>
+
+<div class="trading">
+<div class="trading-title-div">
+<div class="title">
+<h2>Hur du handlar med tryck</h2>
+
+<p>Du får en skiss och offert innan du lägger din beställning</p>
+</div>
+<a href="/" class="primaryButton d-lg-flex d-none">Börja välja kläder<img src="image/arrow-right.png" /></a></div>
+
+<div class="trading-container">
+<div class="row gy-2 justify-content-between">
+<div class="col-12 col-md-12 col-lg-2 p-lg-2">
+<div class="trading-card">
+<div class="image-div"><img src="image/click-1.svg" /></div>
+
+<div class="step-div">
+<h6>STEG&nbsp;01</h6>
+
+<h4>Välj artiklar &amp; klicka profilering</h4>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 p-lg-2 d-sm-none d-lg-block">
+<div class="arrow-desktop"><img src="image/arrow-01.svg" /></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 d-lg-none">
+<div class="arrow-mobile"><img src="image/arrow-bottom1.svg" /></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-2 p-lg-2">
+<div class="trading-card">
+<div class="image-div"><img src="image/cart-1.svg" /></div>
+
+<div class="step-div">
+<h6>STEG&nbsp;02</h6>
+
+<h4>Gå&nbsp;till varukorgen</h4>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 p-lg-2 d-sm-none d-lg-block">
+<div class="arrow-desktop"><img src="image/arrow-03.svg" /></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 d-lg-none">
+<div class="arrow-mobile"><img src="image/arrow-bottom2.svg" /></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-2 p-lg-2">
+<div class="trading-card">
+<div class="image-div"><img src="image/questionnaire-1.svg" /></div>
+
+<div class="step-div">
+<h6>STEG&nbsp;03</h6>
+
+<h4>Fyll i dina uppgifter och beskriv önskad profilering</h4>
+</div>
+</div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 p-lg-2 d-sm-none d-lg-block">
+<div class="arrow-desktop"><img src="image/arrow-01.svg" /></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-1 d-lg-none">
+<div class="arrow-mobile"><img src="image/arrow-bottom1.svg" /></div>
+</div>
+
+<div class="col-12 col-md-12 col-lg-2 p-lg-2">
+<div class="trading-card">
+<div class="image-div"><img src="image/exam-results-1.svg" /></div>
+
+<div class="step-div">
+<h6>STEG&nbsp;04</h6>
+
+<h4>Skicka in din offertförfrågan</h4>
+</div>
+</div>
+</div>
+<a href="/" class="primaryButton d-lg-none d-sm-flex mt-5 mb-3" style="width: auto; margin-left: 13px !important">Börja välja kläder<img src="image/arrow-right.png" /></a></div>
+</div>
+</div>
+
+<div class="gap-div">&nbsp;</div>
+
+<div class="profile_card_container">
+<div class="profile_card" style="background-image: url(image/man1.png)">
+<div class="banner_btns">
+<p>Profilkläder med tryck</p>
+</div>
+</div>
+
+<div class="profile_card" style="background-image: url(image/girl1.png)">
+<div class="banner_btns">
+<p>Profilkläder</p>
+</div>
+</div>
+
+<div class="profile_card" style="background-image: url(image/man2.png)">
+<div class="banner_btns">
+<p>Arbetskläder</p>
+</div>
+</div>
+
+<div class="profile_card" style="background-image: url(image/man3.png)">
+<div class="banner_btns">
+<p>Varselkläder</p>
+</div>
+</div>
+
+<div class="profile_card" style="background-image: url(image/man4.png)">
+<div class="banner_btns">
+<p>Yrkeskläder</p>
+</div>
+</div>
+
+<div class="profile_card" style="background-image: url(image/man5.png)">
+<div class="banner_btns">
+<p>Idrottskläder</p>
+</div>
+</div>
+</div>
+
+<div class="profile-clothing references">
+<div class="title">
+<h2 style="text-align: center">Våra referenser</h2>
+
+<p>Vi strävar efter genomarbetade leveranser av textilier med profilering och gör vårt bästa för att möta våra kunders behov</p>
+</div>
+
+<div class="row web m-auto w-75" style="margin-bottom: 56px !important">
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/ahlens.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/booz.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/lindex.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/ikea.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/ica.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/meds.png" /></div>
+</div>
+
+<div class="row web justify-content-between" style="margin-bottom: 56px !important; width: 90%">
+<div class="col-12 col-md-4 col-lg-1"><img src="image/logos/sellpy.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-1"><img src="image/logos/mobila.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-1"><img src="image/logos/skane.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-1"><img src="image/logos/stockholm.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-1"><img src="image/logos/svt.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-1"><img src="image/logos/footway.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-1"><img src="image/logos/svenska.png" /></div>
+</div>
+
+<div class="row web m-auto w-75" style="margin-bottom: 56px !important">
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/karolinska.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/chalmers.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/lunds.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/linkopings.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/stockholms2.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/radda.png" /></div>
+</div>
+
+<div class="row web justify-content-between m-auto w-50">
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/uppsala.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/happyplug.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/imaz.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/falck.png" /></div>
+
+<div class="col-12 col-md-4 col-lg-2"><img src="image/logos/friskis.png" /></div>
+</div>
+
+<div class="carousel slide mobile pointer-event" data-bs-interval="3000" data-bs-ride="carousel" data-bs-touch="true" id="carouselRefrences">
+<div class="carousel-inner">
+<div class="carousel-item active">
+<div class="carousel-inner-div d-flex justify-content-between"><img src="image/logos/ahlens.png" /> <img src="image/logos/booz.png" /> <img src="image/logos/lindex.png" /></div>
+</div>
+
+<div class="carousel-item">
+<div class="carousel-inner-div d-flex justify-content-between"><img src="image/logos/ikea.png" /> <img src="image/logos/ica.png" /> <img src="image/logos/meds.png" /></div>
+</div>
+
+<div class="carousel-item">
+<div class="carousel-inner-div d-flex justify-content-between"><img src="image/logos/sellpy.png" /> <img src="image/logos/mobila.png" /> <img src="image/logos/skane.png" /></div>
+</div>
+
+<div class="carousel-item">
+<div class="carousel-inner-div d-flex justify-content-between"><img src="image/logos/stockholm.png" /> <img src="image/logos/svt.png" /> <img src="image/logos/footway.png" /></div>
+</div>
+
+<div class="carousel-item">
+<div class="carousel-inner-div d-flex justify-content-between"><img src="image/logos/svenska.png" /> <img src="image/logos/karolinska.png" /> <img src="image/logos/chalmers.png" /></div>
+</div>
+
+<div class="carousel-item">
+<div class="carousel-inner-div d-flex justify-content-between"><img src="image/logos/lunds.png" /> <img src="image/logos/linkopings.png" /> <img src="image/logos/stockholms2.png" /></div>
+</div>
+
+<div class="carousel-item">
+<div class="carousel-inner-div d-flex justify-content-between"><img src="image/logos/radda.png" /> <img src="image/logos/happyplug.png" /> <img src="image/logos/imaz.png" /></div>
+</div>
+
+<div class="carousel-item">
+<div class="carousel-inner-div d-flex justify-content-between"><img src="image/logos/falck.png" /> <img src="image/logos/friskis.png" /></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+
+
+{% endif %}
+
+{% endif %}
+

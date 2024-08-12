@@ -1,0 +1,16 @@
+#container {
+    background: #f6f6f6 !important;
+}
+#footer{display: none;}
+.b2b-table-list .card-body{padding:0px;}
+.b2b-table table{width:100%}
+.b2b-table a{color:black;}
+.b2b-table .btn-primary{color:white!important;}
+.b2b-table table tr, .b2b-table table th, .b2b-table table td{padding:0px;margin:0px}
+.b2b-table table th,.b2b-table table td{border-bottom: 1px solid #ccc;padding: 5px;}
+.b2b-table table tr:hover{background:#eee;}
+.b2b-table table .form-group{padding: 0px;}
+.b2b-table .txt-company {
+    font-size: 12px; font-weight: bold;
+    text-decoration: none;
+}

@@ -1,0 +1,94 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="float-end">
+                <a href="{{ add }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus"></i></a>                
+                <button type="button" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger" onclick="confirm('{{ text_confirm }}') ? $('#form-shortcodes').submit() : false;"><i class="fa-regular fa-trash-can"></i></button>
+            </div>
+            <h1>{{ heading_title }}</h1>
+            <ol class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    <div class="container-fluid">
+       {% if success %}
+            <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fa fa-list"></i> {{ heading_title }}</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-shortcodes">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\').prop('checked', this.checked);" /></td>
+                                    <td class="text-left">{% if sort == 'admin_name' %}
+                                            <a href="{{ sort_admin_name }}" class="{{ order|lower }}">{{ column_admin_name }}</a>
+                                        {% else %}
+                                            <a href="{{ sort_admin_name }}">{{ column_admin_name }}</a>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-left">{% if sort == 'name' %}
+                                            <a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_name }}</a>
+                                        {% else %}
+                                            <a href="{{ sort_name }}">{{ column_name }}</a>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-left">{% if sort == 'type' %}
+                                            <a href="{{ sort_type }}" class="{{ order|lower }}">{{ column_type }}</a>
+                                        {% else %}
+                                            <a href="{{ sort_type }}">{{ column_type }}</a>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-right">{{ column_action }}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               {% if shortcodes %}
+                                    {% for shortcode in shortcodes %}
+                                        <tr>
+                                            <td class="text-center">{% if shortcode.id in selected %}
+                                                    <input type="checkbox" name="selected[]" value="{{ shortcode.id }}" checked="checked" />
+                                                {% else %}
+                                                    <input type="checkbox" name="selected[]" value="{{ shortcode.id }}" />
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ shortcode.admin_name }}
+                                            </td>
+                                            <td>
+                                                [{{ shortcode.name }}]
+                                            </td>
+                                            <td>
+                                                {{ shortcode.type }}
+                                            </td>
+                                            <td class="text-right"><a href="{{ shortcode.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td class="text-center" colspan="4">{{ text_no_results }}</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+                <div class="row">
+                    <div class="col-sm-6 text-left">{{ pagination }}</div>
+                    <div class="col-sm-6 text-right">{{ results }}</div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+{{ footer }}

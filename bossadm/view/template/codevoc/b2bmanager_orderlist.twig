@@ -1,0 +1,585 @@
+{{header}}{{column_left}}
+<div id="content" style="padding-left: 20px;">
+<!-- B2Bmanager Module--> 
+<style>
+#container{background:#fff;}
+.view-tab{
+   position: absolute!important;
+   inset: 0px 0px auto auto!important;
+   margin: 0px!important;
+   transform: translate(0px, 30px)!important;
+}
+
+.btn-print{
+    background-color: #f5c9fd;
+    border-radius: 20px;
+    border-color: #c400ff;
+}
+
+.btn-print span{
+    color: #c400ff;
+}
+
+.btn-print:hover{
+    background-color: #ffffff;
+    border-radius: 20px;
+    border-color: #c400ff;
+}
+.btn-plain{
+    background-color: #00f0ff54;
+    border-radius: 20px;
+    border-color: #00f0ff;
+    color: #0518ff;
+}
+.btn-plain:hover{
+    background-color: #ffffff;
+    border-radius: 20px;
+    border-color: #00f0ff;
+    color: #0518ff;
+}
+.btn-prod{
+    background-color: #ffae0057;
+    border-radius: 20px;
+    border-color: #ffae00;
+}
+.btn-prod span{
+    color: #8b4803;
+}
+.btn-prod:hover{
+    background-color: #ffffff;
+    border-radius: 20px;
+    border-color: #ffae00;
+}
+.btn-purchase{
+    background-color: #e8e9fd;
+    border-radius: 20px;
+    border-color: #020885;
+}
+.btn-purchase span{
+    color: #020885;
+}
+.btn-purchase:hover{
+    background-color: #ffffff;
+    border-radius: 20px;
+    border-color: #020885;
+}
+</style>
+<div class="page-header">
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-2">
+            <h1>
+               <font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Order</font></font>
+            </h1>
+         </div>
+         <div class="col-6">
+            <form class="float-left">
+               <div class="input-group">
+                  <div class="input-group-text">Sök</div>
+                  <input type="text" class="form-control"   name="filter_search" value="{{ filter_search }}" id="input-search">
+                  <button type="button" id="button-filter" class="btn btn-primary"><i class="fa fa-search"></i></button>
+               </div>
+            </form>
+         </div>
+         <div class="col-4">
+            <div class="float-end">
+               <a href="{{ add }}" class="btn btn-primary" aria-label="Add New" data-bs-original-title="Add New"><i class="fa-solid fa-plus"></i> Create</a>
+            </div>
+         </div>
+      </div>
+
+      {% if order_detected == 'true' %}
+         <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> Order skapades #{{ order_data_order_id }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+         </div>   
+      {% endif %}
+      {% if error_warning %}
+         <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+         </div>
+         {% endif %}
+         {% if success %}
+         <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+         </div>
+      {% endif %}
+   </div>
+</div>
+<div class="container-fluid">
+   <div class="row">
+        <div class="col-sm-5">
+            <div class="btn-group float-right btn-group-justified mb-3 b2b-action-btn" role="group" aria-label="Basic example">
+                <a {% if filter_order_status_id == '' %}class="btn btn-primary active" {% else %} class="btn btn-light" {% endif %} href="index.php?route=codevoc/b2bmanager_order&user_token={{ user_token }}"> {{text_all}}</a>
+                <a {% if filter_order_status_id =='2' %} class="btn btn-primary active" {% else %} class="btn btn-light" {% endif %} href="index.php?route=codevoc/b2bmanager_order&user_token={{ user_token }}&filter_order_status_id=2"> {{text_processing}}</a>
+                <a {% if filter_order_status_id =='3' %} class="btn btn-primary active" {% else %} class="btn btn-light" {% endif %} href="index.php?route=codevoc/b2bmanager_order&user_token={{ user_token }}&filter_order_status_id=3"> {{text_sent}}</a>
+                <input type="hidden" id="filter_quotation_status_id" name="filter_quotation_status_id" value="{{filter_quotation_status_id}}" />
+            </div>
+        </div>
+        <div class="col-sm-2" style="text-align:right; padding-right: 0;">
+            {# <button type="submit" class="btn btn-primary" id="button-shipping" form="form-order" formaction="{{ shipping }}" formtarget="_blank" data-toggle="tooltip" title="{{ button_shipping_print }}"><i class="fa fa-print"></i> {{text_print}}</button> #}
+            <button id="btn-generate-purchase-order" type="button" data-toggle="tooltip" title="Generate Purchase Order" class="btn btn-success"><i class="fa fa-hospital"></i> Skapa inköp</button>
+        </div>
+        <div class="col-sm-5" style="text-align:right;">
+               <select id="order-status"class="form-select" style="width: 35%;display: inline;" onchange="viewOrderStatus();">
+                  <option selected='selected' disabled><b>Order status</b></option>
+                {% for order_status in order_statuses %}
+                  {% if filter_order_status_id == order_status.order_status_id %}
+                    <option value="{{order_status.order_status_id}}" selected="selected">{{order_status.name}}</option>
+                  {% else %}
+                  <option value="{{order_status.order_status_id}}">{{order_status.name}}</option>
+                  {% endif %}
+                {% endfor %}
+               </select>
+            <select class="form-select" style="width: 35%;display: inline;" id="assignee_id" onchange="viewAssignee();">
+               <option selected='selected' disabled><b>Tilldelad</b></option>
+                {% if assigneeFilter == '' %}
+                    <option value="0" selected='selected'>All</option>
+                {% else %}
+                    <option value="0">All</option>
+                {% endif %}
+
+                {% for system_user in system_users %}
+                    {% if system_user.user_id == assigneeFilter %}
+                        <option value="{{system_user.user_id}}" selected='selected'>{{system_user.username}}</option>
+                    {% else %}
+                        <option value="{{system_user.user_id}}">{{system_user.username}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <div class="dropdown pull-right mx-2" style="width: 28%;display: inline;">
+               <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Visar {{ limit }} <i class="fa fa-angle-down"></i>
+               </button>
+               <ul class="dropdown-menu dropdown-menu-end view-tab">
+                  <li><a {% if limit =='10' %} class="dropdown-item bg-primary text-light" {% else %} class="dropdown-item" {% endif %} onclick="viewResults('10');">10</a></li>
+                  <li><a {% if limit =='20' %} class="dropdown-item bg-primary text-light" {% else %} class="dropdown-item" {% endif %} onclick="viewResults('20');">20</a></li>
+                  <li><a {% if limit =='50' %} class="dropdown-item bg-primary text-light" {% else %} class="dropdown-item" {% endif %} onclick="viewResults('50');">50</a></li>
+                  <li><a {% if limit =='100' %} class="dropdown-item bg-primary text-light" {% else %} class="dropdown-item" {% endif %} onclick="viewResults('100');">100</a></li>
+                  <li><a {% if limit =='500' %} class="dropdown-item bg-primary text-light" {% else %} class="dropdown-item" {% endif %} onclick="viewResults('500');">500</a></li>                  
+               </ul>
+            </div>
+            <input type="hidden" id="filter_order_status_id" name="filter_order_status_id" value="{{filter_order_status_id}}" />
+        </div>
+      </div>
+   </div>
+
+   <div class="row mb-3 b2b-table-list">
+      <div class="col col-md-12">
+         <div class="card">
+            <div class="card-header">
+               <i class="fa-solid fa-list"></i> Order
+            </div>
+            <div class="card-body b2b-table">
+               <form method="post" action="" enctype="multipart/form-data" id="form-order">
+                     <table>
+                        <thead>
+                           <tr>
+                              <th scope="col" width="11%"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></th>
+                              <th scope="col" width="14%">{{column_customer}}</th>
+                              <th scope="col" width="27%"></th>
+                              <th scope="col" width="8%">{{column_total}}</th>
+                              <th scope="col" width="12%">Tilldelad</th>
+                              <th scope="col" width="15%">{{column_status}}</th>
+                              <th scope="col" width="9%">{{column_date_added}}</th>
+                              <th scope="col" width="7%">{{column_action}}</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           {% if orders %}
+                           {% for order in orders %}
+                           <tr>
+                              <th class="align-middle" scope="row">{% if order.order_id in selected %}
+                                 <input type="checkbox" name="selected[]" value="{{ order.order_id }}" checked="checked" />
+                                 {% else %}
+                                 <input type="checkbox" name="selected[]" value="{{ order.order_id }}" />
+                                 {% endif %}
+                                 <input type="hidden" name="shipping_code[]" value="{{ order.shipping_code }}" />
+                                 <span>#{{ order.order_id }}</span>
+                                 <i class="btn btn-sm fa fa-copy copy-button" data-bs-toggle="tooltip" data-bs-title="Copy to clipboard" style="color:grey" data-copyname="{{order.order_id}}"></i>
+                              </th>
+                              <td class="align-middle" {% if order.order_status =='Avbeställd' %} style="text-decoration: line-through;" {% endif %}>
+                                 <a href="{{ order.edit }}" class="txt-link">
+                                    {% if order.companyname %}<span class="txt-company"><i class="fa fa-briefcase"></i> {{order.companyname}}</span><br>{% endif %} <span class="highlight">{{ order.customer }}</span>
+                                 </a>
+                                 </td>
+                              <td class="align-middle">
+                                 {% if order.order_type == 'Quotation' %}
+                                    <a class="btn btn-sm btn-print" href="{{ order.quotation_link }}"><span class="order-type"><b>PRINTED #{{ order.quotation_id }}</b></span></a>
+                                 {% else %}
+                                    <span class="order-type btn btn-sm btn-plain"><b>PLAIN</b></span>
+                                 {% endif %}
+
+                                 {% if order.production > 0 %}
+                                    <a href="{{ order.production_url }}" class="btn btn-sm btn-prod"><span class="order-type"><b>PROD #{{ order.production }}</b></span></a>
+                                 {% endif %}   
+                                 {% if order.purchase > 0 %}
+                                    <a href="{{ order.purchase_url }}" class="btn btn-sm btn-purchase"><span class="order-type"><b>P #{{ order.purchase }}</b></span></a>
+                                 {% endif %}                         
+                              </td>
+                              <td class="align-middle" {% if order.order_status =='Avbeställd' %} style="text-decoration: line-through;" {% endif %}><b>{{ order.total }}</b></td>
+                              <td class="align-middle">
+                                 <div class="form-group">
+                                    <div class="input-group">
+                                       <select  class="form-select-sm" id="assignee_status_id" name="assignee" style="max-width:80px">
+                                          <option value="" selected="selected">{{ text_select }}</option>
+                                          {% for system_user in system_users %}
+                                             {% if system_user.user_id == order.assignee %}
+                                                <option value="{{system_user.user_id}}" selected="selected">{{system_user.username}}</option>
+                                             {% else %}
+                                                <option value="{{system_user.user_id}}">{{system_user.username}}</option>
+                                             {% endif %}
+                                          {% endfor %}
+                                       </select>
+                                       <div class="input-group-addon border border-dark btn btn-outline-secondary btn-sm btn-save-assignee" data-order-id="{{ order.order_id }}"><i class="fa fa-check"></i></div>
+                                    </div>
+                                 </div>
+                              </td>
+                              <td class="align-middle">
+                                 {% if order.order_status =='Mottagen' %}
+                                    {% set statusClass = 'order-status-pending' %}
+                                 {% elseif order.order_status =='Behandlas' %}
+                                    {% set statusClass = 'order-status-processing' %}
+                                 {% elseif order.order_status =='Skickad' %}
+                                    {% set statusClass = 'order-status-completed' %}
+                                 {% else %}
+                                    {% set statusClass = ' ' %}
+                                 {% endif %}  
+                                 <div class="form-group">
+                                    <div class="input-group">                      
+                                       <select style="width:60%;" class="form-select-sm {{ statusClass }}" id="inputGroupSelect01">
+                                          <option selected='selected' disabled><b>Order status</b></option>
+                                       {% for order_status in order_statuses %}
+                                          {% if order_status.name == order.order_status  %}
+                                          <option value="{{order_status.order.order_id}}" selected="selected">{{order_status.name}}</option>
+                                          {% else %}
+                                          <option value="{{order_status.order_status_id}}">{{order_status.name}}</option>
+                                          {% endif %}
+                                       {% endfor %}
+                                       </select>
+                                       <div class="input-group-addon btn border border-dark btn-outline-secondary btn-sm btn-save-order-status" data-order-id="{{ order.order_id }}"><i class="fa fa-check"></i></div>
+                                    </div>
+                                 </div>
+                              </td>
+                              <td class="align-middle" {% if order.order_status =='Avbeställd' %} style="text-decoration: line-through;" {% endif %}>
+                              {{ order.date_added }} 
+                              {% if order.order_type == 'Quotation' and order.order_status =='Behandlas' and date(order.date_added) < date("-14 days") %}
+                                 <span class="dateLate"><i class="fa fa-flag"></i> +10 dagar</span>
+                              {% elseif order.order_status =='Behandlas' and date(order.date_added) < date("-7 days") %}  
+                                 <span class="dateLate"><i class="fa fa-flag"></i> +5 dagar</span>
+                              {% endif %}  
+                              </td>
+                              <td class="align-middle">
+                                 <div class="btn-group" role="group" aria-label="actions">
+                                    <a class="btn btn-primary btn-sm" href="{{ order.edit }}"><i class="fa fa-edit"></i> Edit</a>
+                                    <div class="btn-group dropdown"  role="group">
+                                       <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                                       </button>
+                                       <ul class="dropdown-menu dropdown-menu-end">
+                                          <li><a class="dropdown-item" href="javascript:void(0)" onclick="deleteOrder(' {{ order.order_id }} ')"><i class="fa fa-trash"></i> Delete</a></li>
+                                          <li><a class="dropdown-item" href="{{ order.shipping }}" target="_blank"><i class="fa fa-print"></i> Print delivery note</a></li>
+                                       </ul> 
+                                    </div>       
+                                 </div>
+                              </td>
+                           </tr>
+                           {% endfor %}
+                           {% else %}
+                           <tr>
+                              <td class="text-center" colspan="7">{{ text_no_results }}</td>
+                           </tr>
+                           {% endif %}
+                        </tbody>
+                     </table>
+               </form>
+               
+               <div class="row">
+                  <div class="col-sm-6 text-left">{{ pagination }}</div>
+                  <div class="col-sm-6 text-right">{{ results }}</div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+{{footer}}
+<script type="text/javascript">
+
+$('#button-filter').on('click', function() {
+	url = '';
+
+
+	var filter_search = $('input[name=\'filter_search\']').val();
+
+	if (filter_search) {
+		url += '&filter_search=' + encodeURIComponent(filter_search);
+	}
+
+	var filter_order_status_id = $('[name=\'filter_order_status_id\']').val();
+	if (filter_order_status_id != '')
+	{
+		url += '&filter_order_status_id=' + encodeURIComponent(filter_order_status_id);
+	}
+
+	location = 'index.php?route=codevoc/b2bmanager_order&user_token={{ user_token }}' + url;
+});
+
+$(".btn-save-order-status").on("click", function() {
+
+ if(confirm("Vill du ändra status på offerten?")) {
+
+    var order_id = $(this).data('order-id')
+    var btn = $(this)
+    var status = $(this).closest('td').find('select').val()
+
+    if(status) {
+       $.ajax({
+         url: 'index.php?route=codevoc/b2bmanager_order.updateOrderStatus&user_token={{user_token}}&order_id=' + order_id,
+         type: 'post',
+         dataType: 'html',
+         data: {
+            status: status,
+         },
+	      beforeSend: function() {
+			   $(btn).button('loading');
+	      },
+		   complete: function() {
+            $(btn).button('reset');
+	      },
+         success: function (data) {
+	 		   if (data.error){
+            	alert(data.error);
+               return;
+            }
+            	var sendmail_delivery = false
+					if(status == 5){
+							if(confirm("Vill du skicka leveransbekräftelse? Om lagerupphämtning välj avbryt/cancel = inget mail skickas.")) {
+									sendmail_delivery = true
+							}
+					}
+					if(sendmail_delivery) {
+							$.ajax({
+									url: 'index.php?route=codevoc/b2bmanager_order.sendmail_delivery&user_token={{ user_token }}&order_id='+order_id,
+									type: 'post',
+									dataType: 'html',
+							});
+					}
+            $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Status changed successfully <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+         },
+         error: function(data){
+            alert("Unable to update status")
+            console.log(data)
+         }
+     	});
+    }
+ }
+});
+
+function deleteOrder(order_id){
+
+   if(confirm('Vill du kopiera offert #'+order_id)){
+      $.ajax({
+         url: 'index.php?route=codevoc/b2bmanager_order.deleteOrder&user_token={{user_token}}&order_id=' + order_id,
+         type: 'post',
+         dataType: 'html',
+         data:{},
+         success: function (data) {
+	 		   if (data.error){
+            	alert(data.error);
+               return;
+            }
+            $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Order deleted. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+         },
+         error: function(data){
+            alert("Unable to update status")
+            console.log(data)
+         }
+     	});
+   }
+}
+
+   function viewResults(limit){
+      const currentUrl = window.location.href;
+
+      // Check if the "limit" parameter already exists in the current URL
+      if (currentUrl.includes('limit=')) {
+         // If it exists, update its value with the newLimit
+         const updatedUrl = currentUrl.replace(/limit=\d+/, `limit=${limit}`);
+         window.location.href = updatedUrl;
+      } else {
+         // If it doesn't exist, add the "limit" parameter to the current URL
+         const delimiter = currentUrl.includes('?') ? '&' : '?';
+         const updatedUrl = `${currentUrl}${delimiter}limit=${limit}`;
+         window.location.href = updatedUrl;
+      }
+   }
+
+   function viewOrderStatus(){
+      const currentUrl = window.location.href;
+      var id = $('#order-status').val();
+      // Check if the "limit" parameter already exists in the current URL
+      if (currentUrl.includes('filter_order_status_id=')) {
+         // If it exists, update its value with the newLimit
+         const updatedUrl = currentUrl.replace(/filter_order_status_id=\d+/, `filter_order_status_id=${id}`);
+         window.location.href = updatedUrl;
+      } else {
+         // If it doesn't exist, add the "limit" parameter to the current URL
+         const delimiter = currentUrl.includes('?') ? '&' : '?';
+         const updatedUrl = `${currentUrl}${delimiter}filter_order_status_id=${id}`;
+         window.location.href = updatedUrl;
+      }
+   }
+
+function viewAssignee()
+{
+   const currentUrl = window.location.href;
+   var id = $('#assignee_id').val()
+   if(id == '0') {
+      const updatedUrl = currentUrl.replace(/&assignee=\d+/, "");
+      window.location.href = updatedUrl;
+   }
+
+    // Check if the "limit" parameter already exists in the current URL
+    if (currentUrl.includes('assignee=')) {
+      // If it exists, update its value with the newLimit
+      const updatedUrl = currentUrl.replace(/assignee=\d+/, `assignee=${id}`);
+      window.location.href = updatedUrl;
+    } else {
+      // If it doesn't exist, add the "limit" parameter to the current URL
+      const delimiter = currentUrl.includes('?') ? '&' : '?';
+      const updatedUrl = `${currentUrl}${delimiter}assignee=${id}`;
+      window.location.href = updatedUrl;
+    }
+}
+
+   $("#btn-generate-purchase-order").on("click", function(){
+         var selected = $('input[name^=\'selected\']:checked');
+         if (selected.length <= 0) {
+         alert("Inga orders är valda. Välj dem order du önskar köpa inköp")
+         return;
+         }
+
+         var selectedOrders = []
+         for (i = 0; i < selected.length; i++) {
+         selectedOrders.push(parseInt($(selected[i]).prop("value")))
+         }
+         
+         $.ajax({
+         url: 'index.php?route=codevoc/b2bmanager_purchase.generatePurchaseOrder&user_token={{ user_token }}',
+         dataType: 'json',
+         method: 'POST',
+         data: {
+            orders: selectedOrders
+         },
+         beforeSend: function() {          
+            $("#btn-generate-purchase-order").button('loading');
+         },
+         complete: function() {
+            $("#btn-generate-purchase-order").button('reset');
+         },
+         success: function(json) {
+            $('.alert-dismissible').remove();
+      
+            if (json['error']) {
+               $('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+            }
+      
+            if (json['success']) {
+               if(confirm("Inköp skapats. Vill du gå till inköpet nu?")) {
+               window.location = unescape(json['purchase_url'])
+               }
+            }
+         },
+         error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+         }
+         });
+   });
+
+   $(".btn-save-assignee").on("click", function() {
+
+ if(confirm("Vill du ändra mottagaren av offerten?")) {
+
+    var order_id = $(this).data('order-id')
+    var btn = $(this)
+    var assignee_id = $(this).closest('td').find('select').val();
+    if(assignee_id) {
+       $.ajax({
+         url: 'index.php?route=codevoc/b2bmanager_order.updateAssignee&user_token={{user_token}}&order_id=' + order_id,
+         type: 'post',
+         dataType: 'html',
+         data: {
+            assignee_id: assignee_id,
+         },
+	      beforeSend: function() {
+			   $(btn).button('loading');
+	      },
+		   complete: function() {
+            $(btn).button('reset');
+	      },
+         success: function (data) {
+	 		   if (data.error){
+            	alert(data.error);
+               return;
+            }
+            $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Assignee updated successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+         },
+         error: function(data){
+            alert("Unable to update status")
+            console.log(data)
+         }
+     	});
+    }
+ }
+})
+
+      $('input[name^=\'selected\']').on('change', function() {
+   	$('#button-shipping,#button-delete').prop('disabled', true);
+   	var selected = $('input[name^=\'selected\']:checked');
+   	
+   	if (selected.length) {
+   $('#button-delete').prop('disabled', false);
+   }
+   
+   	for (i = 0; i < selected.length; i++) {
+   		if ($(selected[i]).parent().find('input[name^=\'shipping_code\']').val()) {
+   			$('#button-shipping').prop('disabled', false);
+   
+   			break;
+   		}
+   	}
+   
+   });
+   
+   $('#button-shipping, #button-delete').prop('disabled', true);
+   
+   $('input[name^=\'selected\']:first').trigger('change');
+   
+   // IE and Edge fix!
+   $('#button-shipping').on('click', function(e) {
+   	$('#form-order').attr('action', this.getAttribute('formAction'));
+   });
+
+     document.addEventListener('DOMContentLoaded', function () {
+    const copyButtons = document.querySelectorAll('.copy-button');
+
+    copyButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        const copyName = button.dataset.copyname;
+
+        // Create a temporary textarea element
+        const textarea = document.createElement('textarea');
+        textarea.value = copyName; // Set the value to the customer name
+
+        // Append the textarea to the document
+        document.body.appendChild(textarea);
+
+        // Copy the content to the clipboard
+        textarea.select();
+        document.execCommand('copy');
+
+        // Remove the temporary textarea
+        document.body.removeChild(textarea);
+      });
+    });
+  });
+</script>

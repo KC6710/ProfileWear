@@ -1,0 +1,410 @@
+{{ header }}
+<main id="product-category" class="main-body searchresults-main">
+  <div class="product-header">
+    {% for breadcrumb in breadcrumbs %}
+      <h6>{{ breadcrumb.text }}</h6>
+      {% if not loop.last %}
+        <div class="bg-pink"></div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div class="main-banner mb-2 row" style="background: {{background_color}}!important;">
+    {% if thumb %}
+    <div class="col-4  d-none d-lg-block">
+      <img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}"/>
+    </div>
+    {% endif %}
+    <div class="inner-desc col-8">
+      <h2>{{ heading_title }}</h2>
+      {% if manufacturerDescription %}
+
+      {% set trimmedDescription = manufacturerDescription | slice(0, 300) ~ (manufacturerDescription|length > 300 ? '...' : '') %}
+
+      <p class="mb-4">
+          {{ trimmedDescription }}
+      </p>
+      {% endif %}
+      <button
+        class="primaryButtonWhite d-none d-lg-flex"
+        data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop"
+      >
+        Read more <img src="image/arrow-right-green.svg" />
+      </button>
+      <button
+        class="primaryButton d-block d-lg-none"
+        data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop"
+      >
+        Read more <img src="image/arrow-right-green.svg" />
+      </button>
+    </div>
+  </div>
+
+  <div class="bar d-none d-lg-flex mb-4">
+    <div class="d-flex align-items-center">
+      
+      <h5>Check out the products</h5>
+      <p>{{ product_total }} products</p>
+    </div>
+    <div class="sort-div">
+      <p>{{ text_sort }} :</p>
+      <select class="form-select" id="input-sort" style="border: none" aria-label="Default select example" onchange="location = this.value;">
+        {% for sorts in sorts %}
+          <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="bar-mobile d-lg-none mb-4">
+    <div class="d-flex align-items-center w-30" style="border-right: 1px solid #cdcdcd">
+      <p class="justify-content-center">250 products</p>
+    </div>
+    <div class="sort-div w-30" style="border-left: 1px solid #cdcdcd">
+      <select class="form-select" id="input-sort" style="border: none" aria-label="Default select example" onchange="location = this.value;">
+        {% for sorts in sorts %}
+          <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="row">{{ column_left }}
+    <div id="content" class="col">{{ content_top }}
+      {% if products %}
+        <div id="product-list" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4">
+          {% for product in products %}
+            <div class="col-6 col-md-4 col-lg-4 col-xl-3 px-2">{{ product }}</div>
+          {% endfor %}
+        </div>
+        <div class="row">
+          <div class="col-sm-6 text-start">{{ pagination }}</div>
+          <div class="col-sm-6 text-end">{{ results }}</div>
+        </div>
+      {% else %}
+        <p>{{ text_no_results }}</p>
+        <div class="text-end"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+      {% endif %}
+      {{ content_bottom }}</div>
+    {{ column_right }}</div>
+  </div>
+  <div class="gap-div"></div>
+  <div class="need-help">
+      <h1>Need Help? We Are Happy To Help You</h1>
+      <div class="need-help-row">
+          <div class="need-help-box">
+              <img src="./image/call-icon.svg">
+              <div>
+                  <p>CALL US AT</p>
+                  
+                  <h5> <a style="color :inherit;text-decoration:none" href="tel:010-551 88 60">010-551 88 60</a></h5>
+              </div>
+
+          </div>
+          <div class="need-help-box">
+              <img src="./image/email-icon.svg">
+              <div>
+                  <p>DROP US A MAIL AT</p>
+                  <h5><a style="color :inherit;text-decoration:none" href="mailto: hej@profilewear.se">hej@profilewear.se</a></h5>
+              </div>
+
+          </div>
+      </div>
+  </div>
+  <div class="gap-div"></div>
+  <div class="faqs" style="padding-inline: null">
+    <h3 style="display : block; margin-bottom: undefined">Some More Information For You</h3>
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+            T-Shirts With Print
+          </button>
+        </h2>
+        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+            Shirts with own print
+          </button>
+        </h2>
+        <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <p>
+              A shirt with a print can look many different ways, for
+              example, it can be a regular t-shirt, a stylish polo shirt or
+              a regular classic college shirt. In addition, you can choose
+              between different materials for your printed sweaters, such as
+              cotton in sweatshirts or polyester in fleece sweaters, among
+              others. Not only that, the choices are endless as there are
+              many different models of shirts for printing. In addition, you
+              can choose unisex if you want to have your own shirts with
+              prints that suit all genders, and there are also customized
+              men's and women's shirts with different fits, not to mention
+              baby and children's shirts. When you want to print your own
+              prints on sweaters, it is most common to choose screen
+              printing, in combination with a cheap cotton sweater.
+              <br>
+              <br>
+              If you want to print on shirts made of other materials, then
+              another printing method may be more suitable - for example
+              transfer printing on polyester sweaters. When it comes to the
+              optimal size and placement of your own print on sweaters, it
+              can vary - for example, for hoodies with print when you have
+              to take into account that the back for prints on hoodies is
+              partially obscured by the hood and needs a lower print
+              placement if back print is desired.
+              <br>
+              <br>
+              In some contexts, slightly more stylish shirts with prints are
+              required for companies, then you can instead consider a shirt
+              with embroidery as marking instead of regular prints -
+              especially when it comes to printed piques.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+            Headwear With Print
+          </button>
+        </h2>
+        <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
+            Caps With Own Print
+          </button>
+        </h2>
+        <div id="flush-collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFive" aria-expanded="false" aria-controls="flush-collapseFive">
+            Caps With Embroidery
+          </button>
+        </h2>
+        <div id="flush-collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseSix" aria-expanded="false" aria-controls="flush-collapseSix">
+            Hats With Print
+          </button>
+        </h2>
+        <div id="flush-collapseSix" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseSeven" aria-expanded="false" aria-controls="flush-collapseSeven">
+            Headband &amp; Sweatband With print
+          </button>
+        </h2>
+        <div id="flush-collapseSeven" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseEight" aria-expanded="false" aria-controls="flush-collapseEight">
+            Jackets with print
+          </button>
+        </h2>
+        <div id="flush-collapseEight" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseNine" aria-expanded="false" aria-controls="flush-collapseNine">
+            Pants with own print
+          </button>
+        </h2>
+        <div id="flush-collapseNine" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTen" aria-expanded="false" aria-controls="flush-collapseTen">
+            Shirts with print
+          </button>
+        </h2>
+        <div id="flush-collapseTen" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseEleven" aria-expanded="false" aria-controls="flush-collapseEleven">
+            Aprons with own print
+          </button>
+        </h2>
+        <div id="flush-collapseEleven" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTweleve" aria-expanded="false" aria-controls="flush-collapseTweleve">
+            Linen with print
+          </button>
+        </h2>
+        <div id="flush-collapseTweleve" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+            in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+            sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal more-info-modal" id="staticBackdrop" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-modal="true" role="dialog" style="display: none;">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <button style="font-size: 10px; display: flex; margin-left: auto" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-wrapper">
+              <img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="categ-img"/>
+              <div class="content">
+                <h5>{{ heading_title }}</h5>
+                {{ manufacturerDescription }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</main>
+{{ footer }}
+<script>
+    const wishlistForms = document.querySelectorAll('.wishlist-form');
+
+    wishlistForms.forEach((wishlistForm) => {
+        wishlistForm.addEventListener('submit', function (event) {
+            {# event.preventDefault(); // Prevent the form submission #}
+            
+            // Perform your AJAX request or form submission logic here
+
+            const wishlistButton = wishlistForm.querySelector('.wishlist-button');
+            const wishlistImage = wishlistButton.querySelector('img');
+
+            const addToWishlistImage = 'image/wishlist.svg';
+            const removeFromWishlistImage = 'image/wishlist1.svg';
+
+            if (wishlistButton.contains(wishlistImage) && wishlistImage.src.includes(addToWishlistImage)) {
+                // If the image is the "Add to wishlist" image, change to "Remove from wishlist" image
+                wishlistImage.src = removeFromWishlistImage;
+                wishlistImage.alt = 'Remove from wishlist';
+                wishlistButton.title = '{{ button_remove }}';
+                wishlistButton.formAction = wishlistButton.dataset.addwishlist_url;
+            } else {
+                // If the image is the "Remove from wishlist" image, change to "Add to wishlist" image
+                wishlistImage.src = addToWishlistImage;
+                wishlistImage.alt = 'Add to wishlist';
+                wishlistButton.title = '{{ button_wishlist }}';
+                wishlistButton.formAction = wishlistButton.dataset.remove_url;
+            }
+        });
+    });
+</script>

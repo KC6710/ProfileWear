@@ -1,0 +1,68 @@
+<div class="col-12 product-details-main">
+  <div class="product-tabs">
+    <ul class="nav-tabs">
+      <li class="nav-item active">My Favourites</li>
+    </ul>
+  </div>
+</div>
+{% if products %}
+  {% for product in products %}
+  <div class="col-12 col-md-6 col-lg-12 col-xl-6">
+    <div class="product-list-item">
+      <div class="visual">
+        <div class="card-length">
+          <div class="tags">
+            <div class="tag1">
+              <div class="tag2">
+                <p>BEST SELLER</p>
+              </div>
+              <div class="tag2">
+                <p>CHEAP T-SHIRT</p>
+              </div>
+            </div>
+
+            <div class="favourite">
+            <form method="post" data-oc-toggle="ajax" data-oc-load="{{ wishlist }}" data-oc-target="#wishlist">
+              <input type="hidden" name="product_id" value="{{ product.product_id }}"/> <input type="hidden" name="quantity" value="{{ product.minimum }}"/>
+              <button type="submit" formaction="{{ remove }}" data-bs-toggle="tooltip" title="{{ button_remove }}" class="btn"><img src="image/wishlist1.svg" alt="wishlist" /></button>
+            </div>
+            </form>
+          </div>
+          <a href="product-details.html" style="color :black;text-decoration:none">
+            <div class="pic">
+              {% if product.thumb %}
+              <a href="{{ product.href }}">
+                <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}">
+              </a>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+        <a href="{{ product.href }}" style="color :black;text-decoration:none">
+          <div class="detail">
+            <h6>Cheap T-Shirt</h6>
+            <p>
+              {{ product.description }}
+            </p>
+            {% if not special %}
+              <p class="from-amount">From <b>{{ product.price }}</b></p>
+            {% else %}
+            <p class="from-amount">From <b>{{ product.special }}</b></p>
+            {% endif %}
+            <div> 
+              <img src="image/wheel 1.png" alt="">
+              <b>02</b>
+              <span style="margin-left:5px;">
+              color variants
+              </span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+{% else %}
+  <p>{{ text_no_favorite_results }}</p>
+{% endif %}

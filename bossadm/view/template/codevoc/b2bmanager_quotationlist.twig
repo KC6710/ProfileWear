@@ -1,0 +1,621 @@
+{{ header }}
+{% if order_detected=='true' %}
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TVS9G9R');</script>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TVS9G9R"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<script>
+dataLayer.push({ ecommerce: null });
+dataLayer.push({
+  event: "purchase",
+  ecommerce: {
+      transaction_id: "{{ order_data_order_id }}",
+      value: {{ order_data_total }},
+      tax: {{ order_data_tax }},
+      shipping: {{ order_data_shipping }},
+      items: [
+        {% for product in the_products %}
+       {
+        item_id: "{{ product.model }}",
+        item_name: "{{ product.name }}",
+        price: {{ product.price }},
+        quantity: {{ product.quantity }}
+      }{% if loop.last %} {% else %}, {% endif %}
+      {% endfor %}
+      ]
+  }
+});
+</script>
+{% endif %}
+{{ column_left }}
+<div id="content">
+<!-- B2Bmanager Module-->
+<style>#container{background:#fff;}</style>
+<link href="view/stylesheet/pw4_bootstrap_3.css" rel="stylesheet" type="text/css"/>
+<link href="view/stylesheet/codevoc_b2b_manager.css" rel="stylesheet" type="text/css"/>
+<div class="page-header">
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-2">
+            <h1>
+               <font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Offert</font></font>
+            </h1>
+         </div>
+         <div class="col-6">
+            <form class="float-left">
+               <div class="input-group">
+                  <div class="input-group-text">Sök</div>
+                  <input type="text" class="form-control"   name="filter_search" value="{{ filter_search }}" id="input-search">
+                  <button type="button" id="button-filter" class="btn btn-primary"><i class="fa fa-search"></i></button>
+               </div>
+            </form>
+         </div>
+         <div class="col-4">
+            <div class="float-end">
+               <a href="{{ add }}" class="btn btn-primary" aria-label="Add New" data-bs-original-title="Add New"><i class="fa-solid fa-plus"></i> Skapa</a>
+            </div>
+         </div>
+      </div>
+
+      {% if order_detected=='true' %}
+         <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> Order skapades #{{ order_data_order_id }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+         </div>   
+      {% endif %}
+      {% if error_warning %}
+         <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+         </div>
+         {% endif %}
+         {% if success %}
+         <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+         </div>
+      {% endif %}
+   </div>
+</div>
+
+<!-- Cancel modal -->
+<div id="modalCancelReason" class="modal fade"  tabindex="-1">
+   <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+         <form>
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">&times;</button>
+               <h4 class="modal-title">Avbryt offert</h4>
+            </div>
+            <div class="modal-body">
+               <select name="cancelReason" id="cancelReason" class="form-control" required>
+                  <option value="">Anledning</option>
+                  {% for status in cancelled_statuses  %}
+                  <option value="{{ status.key }}">{{ status.value }}</option>
+                  {% endfor %}
+               </select>
+               <br>
+               <textarea name="comment" class="form-control" placeholder="Notering" rows="5"></textarea>
+               <input type="hidden" name="quotationId" value="">
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-primary" id="cancelReasonSubmit">Avbryt & spara</button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div><!-- Cancel modal -->
+
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="btn-group float-right btn-group-justified mb-3 b2b-action-btn" role="group" aria-label="Basic example">
+            <a {% if filter_quotation_status_id =='all' %} class="btn btn-primary active" {% else %} class="btn btn-light" {% endif %} onclick="searchResults('all');"> {{text_all}}</a>
+            <a {% if filter_quotation_status_id =='1' %} class="btn btn-primary active" {% else %} class="btn btn-light" {% endif %} onclick="searchResults('1');"> {{text_drafts}}</a>
+            <a {% if filter_quotation_status_id =='2' %} class="btn btn-primary active" {% else %} class="btn btn-light" {% endif %} onclick="searchResults('2');"> {{text_send}}</a>
+            <a {% if filter_quotation_status_id =='3' %} class="btn btn-primary active" {% else %} class="btn btn-light" {% endif %} onclick="searchResults('3');"> {{text_history}}</a>
+            <a {% if filter_quotation_status_id =='4' %} class="btn btn-primary active" {% else %} class="btn btn-light" {% endif %} onclick="searchResults('4');"> Avbruten</a>
+         </div>
+         <input type="hidden" id="filter_quotation_status_id" name="filter_quotation_status_id" value="{{filter_quotation_status_id}}" />
+         <div class="dropdown pull-right mx-2">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+               Tilldelad <i class="fa fa-angle-down"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+
+               {% if assigneeFilter == '' %}
+                  <li><a class="dropdown-item bg-primary text-light" onclick="viewAssignee(0);">All</a></li>
+               {% else %}
+                  <li><a class="dropdown-item" onclick="viewAssignee(0);">Alla</a></li>
+               {% endif %}
+
+               {% for system_user in system_users %}
+                  {% if system_user.user_id == assigneeFilter %}
+                     <li><a class="dropdown-item bg-primary text-light" onclick="viewAssignee('{{system_user.user_id}}');">{{system_user.username}}</a></li>
+                  {% else %}
+                     <li><a class="dropdown-item" onclick="viewAssignee('{{system_user.user_id}}');">{{system_user.username}}</a></li>
+                  {% endif %}
+               {% endfor %}
+            </ul>
+         </div>
+         <div class="dropdown pull-right mx-2">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+               Visa {{ limit }} <i class="fa fa-angle-down"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+               <li><a {% if limit =='10' %} class="dropdown-item bg-primary text-light" {% else %} class="dropdown-item" {% endif %} onclick="viewResults('10');">10</a></li>
+               <li><a {% if limit =='20' %} class="dropdown-item bg-primary text-light" {% else %} class="dropdown-item" {% endif %} onclick="viewResults('20');">20</a></li>
+               <li><a {% if limit =='50' %} class="dropdown-item bg-primary text-light" {% else %} class="dropdown-item" {% endif %} onclick="viewResults('50');">50</a></li>
+               <li><a {% if limit =='100' %} class="dropdown-item bg-primary text-light" {% else %} class="dropdown-item" {% endif %} onclick="viewResults('100');">100</a></li>
+            </ul>
+         </div>
+      </div>
+   </div>
+
+   <div class="row mb-3 b2b-table-list">
+      <div class="col col-md-12">
+         <div class="card">
+            <div class="card-header">
+               <i class="fa-solid fa-list"></i> Offert lista
+            </div>
+            <div class="card-body">
+               <form method="post" action="{{delete}}" enctype="multipart/form-data" id="form-quotation">
+                  <div class="b2b-table">
+                     <table class="">
+                        <thead>
+                           <tr>
+                              <th scope="col" class="text-start">{{column_select}}</th>
+                              <th scope="col" class="text-start">{{column_customer}}</th>
+                              <th scope="col"class="text-start">Skapad</th>
+                              <th scope="col" class="text-start">{{ column_total }}</th>
+                              <th scope="col" class="text-start">{{column_assignee}}</th>
+                              <th scope="col" class="text-start">{{column_status}}</th>
+                              <th scope="col" class="text-start">{{column_action}}</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           {% if quotations %}
+                           {% for quotation in quotations %}
+                           <tr>
+                              <th class="align-middle" scope="row" valign="middle">{% if quotation.quotation_id in selected %}
+                                 <input type="checkbox" name="selected[]" value="{{ quotation.quotation_id }}" checked="checked" />
+                                 {% else %}
+                                 <input type="checkbox" name="selected[]" value="{{ quotation.quotation_id }}" />
+                                 {% endif %}
+                                 #{{ quotation.quotation_id }}
+                                 <i class="btn btn-sm fa fa-copy mx-2 copy-button" data-bs-toggle="tooltip" data-bs-title="Copy to clipboard" style="color:grey" data-copyname="{{quotation.quotation_id}}"></i>
+                              </th>
+
+                              <td class="align-middle">
+                                    {% if quotation.companyname %}
+                                    <a href="{{ quotation.edit }}" class="txt-company">
+                                       <span id="company-name-{{ quotation.quotation_id }}">
+                                          {{quotation.companyname}}
+                                       </span>
+                                    </a> 
+                                    {#
+                                    <i class="btn btn-sm fa fa-copy mx-2 copy-button" data-bs-toggle="tooltip" data-bs-title="Copy to clipboard" style="color:grey" data-copyname="{{quotation.companyname}}"></i>
+                                     #}
+                                    {% endif %} 
+                                 <a href="{{ quotation.edit }}" class="txt-customer">
+                                    <span class="highlight">
+                                       {{ quotation.customer }}
+                                    </span>
+                                 </a> 
+                                 {#
+                                 <i class="btn btn-sm fa fa-copy mx-2 copy-button" data-bs-toggle="tooltip" data-bs-title="Copy to clipboard" style="color:grey" data-copyname="{{quotation.customer}}"></i>
+                                 #}
+                                 {% if quotation.attachments > 0 %} &ensp;
+                                    <span class="label-attachments">
+                                       <i class="fa fa-paperclip"></i>
+                                    </span> 
+                                 {% endif %}
+                                 
+                              </td>
+
+                              <td class="align-middle">
+                                 <i class="fa fa-clock"></i>
+                                 {{ quotation.create_date }}
+                              </td>
+
+                              <td class="align-middle"><b>{{ quotation.total }}</b></td>
+
+                              <td class="align-middle">
+                                 <div class="form-group">
+                                    <div class="input-group">
+                                       <select  class="form-select-sm" id="assignee_status_id" name="assignee" style="max-width:80px">
+                                          <option value="" selected="selected" disabled>{{ text_select }}</i></option>
+                                          {% for system_user in system_users %}
+                                             {% if system_user.user_id == quotation.assignee %}
+                                                <option value="{{system_user.user_id}}" selected="selected">{{system_user.username}}</option>
+                                             {% else %}
+                                                <option value="{{system_user.user_id}}">{{system_user.username}}</option>
+                                             {% endif %}
+                                          {% endfor %}
+                                       </select>
+                                       <div class="btn btn-outline-secondary btn-sm border border-dark btn-save-assignee-status" data-quotation-id="{{ quotation.quotation_id }}"><i class="fa fa-check"></i></div>
+                                    </div>
+                                 </div>
+                              </td>
+
+                              <td class="align-middle">
+                                 <div class="form-group">
+                                    <div class="input-group">
+                                       <select  class="form-select-sm" id="quotation_status_id">
+                                          <option value="" selected="selected" disabled>{{ text_select }}</option>
+                                          {% for quotation_status in quotation_statuses %}
+                                             {% if quotation_status.quotation_status_id == quotation.quotation_status_id %}
+                                                <option value="{{ quotation_status.quotation_status_id }}" selected="selected">{{ quotation_status.name }}</option>
+                                             {% else %}
+                                                <option value="{{ quotation_status.quotation_status_id }}">{{ quotation_status.name }}</option>
+                                             {% endif %}
+                                          {% endfor %}
+                                       </select>
+                                       <div class="btn btn-outline-secondary btn-sm border border-dark btn-save-quotaion-status" data-quotation-id="{{ quotation.quotation_id }}"><i class="fa fa-check"></i></div>
+                                    </div>
+                                 </div>
+                              </td>
+
+                              <td class="align-middle">
+
+         
+
+                                 <div class="btn-group btn-group" role="group" aria-label="actions">
+                                    <a class="btn btn-primary btn-sm" href="{{ quotation.edit }}"><i class="fa fa-edit"></i> Edit</a>
+
+                                    <div class="btn-group dropdown"  role="group">
+                                       <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                          <i class="fa-solid fa-ellipsis-vertical"></i>
+                                       </button>
+                                       <ul class="dropdown-menu dropdown-menu-end">
+                                          <li>
+                                             {% if quotation.orderid!='' %}
+                                                <a class="dropdown-item" href="{{quotation.order}}" ><i class="fa fa-cart-shopping"></i> Order #{{quotation.orderid}}</a>
+                                             {% else %}
+                                                <a class="dropdown-item" href="javascript:void(0);" id="btn_order{{ quotation.quotation_id }}" onClick="createOrder('{{ quotation.quotation_id }}');"><i class="fa fa-plus"></i> Create Order</a>
+                                             {% endif %}
+                                          </li>
+                                          <li><a class="dropdown-item" href="{{ quotation.copy }}" onclick="return confirm('Vill du kopiera offert #{{ quotation.quotation_id }} ')"><i class="fa fa-copy"></i> Copy Quotation</a></li>
+                                          <li><a class="dropdown-item" href="{{ quotation.pdf }}" target="_blank"><i class="fa fa-file-pdf"></i> Create PDF</a></li>
+                                       </ul>
+                                    </div>
+                                 </div>
+                              </td>
+                           </tr>
+                           {% endfor %}
+                           {% else %}
+                           <tr>
+                              <td class="text-center" colspan="8">{{ text_no_results }}</td>
+                           </tr>
+                           {% endif %}
+                        </tbody>
+                     </table>
+                  </div>
+               </form>
+               
+               <div class="row">
+                  <div class="col-sm-6 text-left">{{ pagination }}</div>
+                  <div class="col-sm-6 text-right">{{ results }}</div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   
+</div>
+<!-- B2Bmanager Module-->
+<script type="text/javascript"><!--
+   $('input[name^=\'selected\']').on('change', function() {
+		$('#button-delete').prop('disabled', true);
+		var selected = $('input[name^=\'selected\']:checked');
+		if (selected.length) {
+			$('#button-delete').prop('disabled', false);
+		}
+   });
+
+   $('#button-delete').prop('disabled', true);
+
+   $('input[name^=\'selected\']:first').trigger('change');
+
+   $('#button-delete').on('click', function(e) {
+
+				if (confirm('{{ text_confirm }}'))
+				{
+					$('#form-quotation').submit();
+				}
+   });
+function searchResults(status)
+{
+
+	$('[name=\'filter_quotation_status_id\']').val(status);
+	url = '';
+	url = 'index.php?route=codevoc/b2bmanager_quotation&user_token={{user_token}}';
+
+	var filter_quotation_status_id = $('[name=\'filter_quotation_status_id\']').val();
+	if (filter_quotation_status_id != '')
+	{
+		url += '&filter_quotation_status_id=' + encodeURIComponent(filter_quotation_status_id);
+	}
+	//v7
+	var filter_search = $('input[name=\'filter_search\']').val();
+
+	if (filter_search) {
+		url += '&filter_search=' + encodeURIComponent(filter_search);
+	}
+
+   url += '&limit={{limit}}'
+	//v7
+	location = url;
+}
+
+function viewResults(limit)
+{
+   const currentUrl = window.location.href;
+
+    // Check if the "limit" parameter already exists in the current URL
+    if (currentUrl.includes('limit=')) {
+      // If it exists, update its value with the newLimit
+      const updatedUrl = currentUrl.replace(/limit=\d+/, `limit=${limit}`);
+      window.location.href = updatedUrl;
+    } else {
+      // If it doesn't exist, add the "limit" parameter to the current URL
+      const delimiter = currentUrl.includes('?') ? '&' : '?';
+      const updatedUrl = `${currentUrl}${delimiter}limit=${limit}`;
+      window.location.href = updatedUrl;
+    }
+}
+
+function viewAssignee(assignee)
+{
+   const currentUrl = window.location.href;
+
+   if(assignee == 0) {
+      const updatedUrl = currentUrl.replace(/&assignee_filter=\d+/, "");
+      window.location.href = updatedUrl;
+   }
+
+    // Check if the "limit" parameter already exists in the current URL
+    if (currentUrl.includes('assignee_filter=')) {
+      // If it exists, update its value with the newLimit
+      const updatedUrl = currentUrl.replace(/assignee_filter=\d+/, `assignee_filter=${assignee}`);
+      window.location.href = updatedUrl;
+    } else {
+      // If it doesn't exist, add the "limit" parameter to the current URL
+      const delimiter = currentUrl.includes('?') ? '&' : '?';
+      const updatedUrl = `${currentUrl}${delimiter}assignee_filter=${assignee}`;
+      window.location.href = updatedUrl;
+    }
+}
+
+function createOrder(quotation_id)
+{
+
+	 $.ajax({
+     url: 'index.php?route=codevoc/b2bmanager_quotation.createOrder&user_token={{user_token}}&quotation_id=' + quotation_id,
+     type: 'post',
+     dataType: 'html',
+	 beforeSend: function() {
+			$('#btn_order'+quotation_id).button('loading');
+	},
+		complete: function() {
+			 $('#btn_order'+quotation_id).button('reset');
+	},
+     success: function (data)
+	 {
+	 		if (data.error)
+			{
+            	alert(data.error);
+            }
+			else
+			{
+            $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Order created successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+				var url = '';
+				url = 'index.php?route=codevoc/b2bmanager_quotation&user_token={{user_token}}';
+				location = url;
+			}
+     }
+     	});
+
+}
+   //-->
+</script>
+ <!-- v7-->
+  <script type="text/javascript"><!--
+$('#button-filter').on('click', function() {
+	url = '';
+
+
+	var filter_search = $('input[name=\'filter_search\']').val();
+
+	if (filter_search) {
+		url += '&filter_search=' + encodeURIComponent(filter_search);
+	}
+
+	var filter_quotation_status_id = $('[name=\'filter_quotation_status_id\']').val();
+	if (filter_quotation_status_id != '')
+	{
+		url += '&filter_quotation_status_id=' + encodeURIComponent(filter_quotation_status_id);
+	}
+
+	location = 'index.php?route=codevoc/b2bmanager_quotation&user_token={{ user_token }}' + url;
+});
+$(".btn-send-reminder").on("click", function() {
+   if(confirm("Vill du registrera påminnelse?")) {
+      var quotation_id = $(this).data('quotation-id')
+      var btn = $(this)
+      $.ajax({
+         url: 'index.php?route=codevoc/b2bmanager_quotation/sendQuotationReminder&user_token={{user_token}}&quotation_id=' + quotation_id,
+         type: 'post',
+         dataType: 'html',
+	      beforeSend: function() {
+			   $(btn).button('loading');
+	      },
+		   complete: function() {
+            $(btn).button('reset');
+	      },
+         success: function (data) {
+	 		   if (data.error){
+            	alert(data.error);
+            } else {
+               window.location.reload()
+            }
+         }
+     	});
+   }
+})
+
+$(".btn-save-quotaion-status").on("click", function() {
+
+ if(confirm("Vill du ändra status på offerten?")) {
+
+    var quotation_id = $(this).data('quotation-id')
+    var btn = $(this)
+    var status = $(this).closest('td').find('select').val()
+
+    if(status && status == 4) {
+       $("#modalCancelReason form select").val("")
+       $("#modalCancelReason form textarea").val("")
+       $("#modalCancelReason form input[type=hidden]").val(quotation_id)
+       $("#modalCancelReason").modal('show')
+       return;
+    }
+
+    if(status) {
+       $.ajax({
+         url: 'index.php?route=codevoc/b2bmanager_quotation.updateQuotationStatus&user_token={{user_token}}&quotation_id=' + quotation_id,
+         type: 'post',
+         dataType: 'html',
+         data: {
+            status: status,
+         },
+	      beforeSend: function() {
+			   $(btn).button('loading');
+	      },
+		   complete: function() {
+            $(btn).button('reset');
+	      },
+         success: function (data) {
+	 		   if (data.error){
+            	alert(data.error);
+               return;
+            }
+            $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Status updated successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+         },
+         error: function(data){
+            alert("Unable to update status")
+            console.log(data)
+         }
+     	});
+    }
+ }
+})
+
+$(".btn-save-assignee-status").on("click", function() {
+
+ if(confirm("Vill du ändra mottagaren av offerten?")) {
+
+    var quotation_id = $(this).data('quotation-id')
+    var btn = $(this)
+    var status = $(this).closest('td').find('select').val();
+
+    if(status) {
+       $.ajax({
+         url: 'index.php?route=codevoc/b2bmanager_quotation.updateAssigneeStatus&user_token={{user_token}}&quotation_id=' + quotation_id,
+         type: 'post',
+         dataType: 'html',
+         data: {
+            status: status,
+         },
+	      beforeSend: function() {
+			   $(btn).button('loading');
+	      },
+		   complete: function() {
+            $(btn).button('reset');
+	      },
+         success: function (data) {
+	 		   if (data.error){
+            	alert(data.error);
+               return;
+            }
+            $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Assignee updated successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+         },
+         error: function(data){
+            alert("Unable to update status")
+            console.log(data)
+         }
+     	});
+    }
+ }
+})
+
+// Handle submit request cancel readon
+$(document).on('click','#cancelReasonSubmit',function(e){
+   e.preventDefault()
+   var form = $('#cancelReasonSubmit').closest('form')
+   var id = $(form).find('input[type=hidden]').val()
+   var reason = $(form).find('select').val()
+   var comment = $(form).find('textarea').val()
+   var button = $(form).find('button')
+
+   if(!$(form)[0].checkValidity()) {
+      $(form)[0].reportValidity();
+      return false;
+   }
+
+   $(button).attr('disabled', true)
+   $.ajax({
+      type: 'POST',
+      url: 'index.php?route=codevoc/b2bmanager_quotation.saveCancelReason&user_token={{ user_token }}&id='+ id,
+      data: {
+         reason: reason,
+         comment: comment
+      },
+      dataType: "json",
+      success: function(response) {
+         console.log(response)
+         $(button).attr('disabled', false)
+         window.location = 'index.php?route=codevoc/b2bmanager_quotation&user_token={{user_token}}&filter_quotation_status_id={{filter_quotation_status_id}}'
+      },
+      error: function(error){
+         console.log(error)
+         alert("Unable to change status")
+         $(button).attr('disabled', false)
+      }
+   })
+
+   return false;
+});
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const copyButtons = document.querySelectorAll('.copy-button');
+
+    copyButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        const copyName = button.dataset.copyname;
+
+        // Create a temporary textarea element
+        const textarea = document.createElement('textarea');
+        textarea.value = copyName; // Set the value to the customer name
+
+        // Append the textarea to the document
+        document.body.appendChild(textarea);
+
+        // Copy the content to the clipboard
+        textarea.select();
+        document.execCommand('copy');
+
+        // Remove the temporary textarea
+        document.body.removeChild(textarea);
+      });
+    });
+  });
+
+//--></script>
+  <!-- v7-->
+  
+{{ footer }}

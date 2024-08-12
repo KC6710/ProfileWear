@@ -1,0 +1,46 @@
+{{ header }}
+{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="float-end pull-right">
+				{% if action %}
+					{% if ocme.oc().isV4() %}
+						<button type="submit" form="form-attribute" data-bs-toggle="tooltip" title="{{ ocme.trans('module::global.text_save') }}" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+					{% else %}
+						<button type="submit" form="form-attribute" data-toggle="tooltip" title="{{ ocme.trans('module::global.text_save') }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+					{% endif %}
+				{% endif %}
+				{% if back %}
+					{% if ocme.oc().isV4() %}
+						<a href="{{ back }}" data-bs-toggle="tooltip" title="{{ ocme.trans('module::global.text_back') }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+					{% else %}
+						<a href="{{ back }}" data-toggle="tooltip" title="{{ ocme.trans('module::global.text_back') }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+					{% endif %}
+				{% endif %}
+				{% if add %}
+					{% if ocme.oc().isV4() %}
+						<a href="{{ add }}" data-bs-toggle="tooltip" title="{{ ocme.trans('module::global.text_add') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i></a>
+					{% else %}
+						<a href="{{ add }}" data-toggle="tooltip" title="{{ ocme.trans('module::global.text_add') }}" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+					{% endif %}
+				{% endif %}
+				{% if delete %}
+					{% if ocme.oc().isV4() %}
+						<button type="button" data-bs-toggle="tooltip" title="{{ ocme.trans('module::global.text_delete') }}" onclick="return confirm('{{ ocme.trans('module::global.text_confirm') }}') ? $('#form-attribute-value').submit() : false;" class="btn btn-danger"><i class="fa-regular fa-trash-can"></i></button>
+					{% else %}
+						<button type="button" data-toggle="tooltip" title="{{ ocme.trans('module::global.text_delete') }}" class="btn btn-danger" onclick="confirm('{{ ocme.trans('module::global.text_confirm') }}') ? $('#form-attribute-value').submit() : false;"><i class="fa fa-trash"></i></button>
+					{% endif %}
+				{% endif %}
+			</div>
+			<h1>{{ ocme_heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+					<li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		
+		{{ ocme.msg().render() }}

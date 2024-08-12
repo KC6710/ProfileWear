@@ -1,0 +1,118 @@
+{{ header }}
+
+<main class="main-body profile-container">
+  <div class="profile-breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+      
+      {% if loop.last %}
+      <span class="item">{{ breadcrumb.text }}</span>
+      {% else %}
+      <a href="{{ breadcrumb.href }}"><span class="item active">{{ breadcrumb.text }}</span></a>
+      <span class="round"></span>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+  <div class="center-container">
+    {{ column_left }}
+    <div class="right">
+      {% if success %}
+        <div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-check"></i> {{ success }}</div>
+      {% endif %}
+      <h6>{{ heading_title }}</h6>
+      <div class="profile-header">
+        <div id="avatar">{{ firstname|first|upper }}{{ lastname|first|upper }}</div>
+        <div class="content">
+          <h6>{{ firstname }} {{ lastname }}</h6>
+          <p>Customer No. {{ customer_id }}</p>
+          <div class="button-group">
+            <p>
+              <a data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightPassword" aria-controls="offcanvasRightPassword" style="width:48%;">
+                Change Password &nbsp;&nbsp;
+              <img src="image/arrow_right.svg">
+              </a>
+              
+            </p>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <p>Profile</p>
+      <form id="form-customer" action="{{ save }}" method="post" data-oc-toggle="ajax">
+      <div class="row">
+        <div class="col-12 col-sm-6 mb-2">
+          <label for="input-firstname" class="form-label input-label">{{ entry_firstname }} <span class="input-required">*</span></label>
+          <input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname" class="form-control input-default">
+          <div id="error-firstname" class="invalid-feedback"></div> 
+        </div>
+        <div class="col-12 col-sm-6 mb-2">
+          <label for="input-lastname" class="form-label input-label">{{ entry_lastname }} <span class="input-required">*</span></label>
+          <input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname" class="form-control input-default">
+          <div id="error-lastname" class="invalid-feedback"></div> 
+        </div>
+        <div class="col-12 col-sm-6 mb-2">
+          <label for="input-email" class="form-label input-label">{{ entry_email }} <span class="input-required">*</span></label>
+          <input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control input-default">
+          <div id="error-email" class="invalid-feedback"></div> 
+        </div>
+        <div class="col-12 col-sm-6 mb-3">
+          <label for="input-telephone" class="form-label input-label">{{ entry_telephone }} <span class="input-required">*</span></label>
+          <input type="tel" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-telephone" class="input-default" pattern="^\d{8,14}$" oninvalid="this.setCustomValidity('Telephone must be between 8 and 14 digits number.');" oninput="this.setCustomValidity('')" required />
+          <div id="error-telephone" class="invalid-feedback"></div>
+        </div>
+        {% for custom_field in custom_fields %}
+
+            {% if custom_field.type == 'text' %}
+              <div class="col-12 col-sm-6 mb-3 custom-field custom-field-{{ custom_field.custom_field_id }}">
+                <label for="input-custom-field-{{ custom_field.custom_field_id }}" class="form-label input-label">{{ custom_field.name }}</label>
+                <input type="text" name="custom_field[{{ custom_field.custom_field_id }}]" value="{{ account_custom_field[custom_field.custom_field_id] }}" placeholder="{{ custom_field.name }}" id="input-custom-field-{{ custom_field.custom_field_id }}" class="input-default" />
+                <div id="error-custom-field-{{ custom_field.custom_field_id }}" class="invalid-feedback"></div>
+              </div>
+            {% endif %}
+
+          {% endfor %}
+      </div>
+      <div class="action-button">
+        <button class="primaryButton" type="submit">{{ button_continue }} <img src="image/arrow-right.png" alt="Arrow"></button>
+      </div>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="search-drawer">
+    <div class="offcanvas offcanvas-end main-drawer" style="width: 30%" tabindex="-1" id="offcanvasRightPassword" aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header drawer_header_box">
+        <h2>{{ change_password_title }}</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+
+      <div class="offcanvas-body px-3 px-xl-5">
+        <form id="form-password" action="{{ password_save }}" method="post" data-oc-toggle="ajax">
+          <fieldset>
+            <div class="row mb-3 required">
+              <label for="input-password" class="col-md-3 col-form-label">{{ entry_password }}</label>
+              <div class="col-md-9">
+                <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="form-control" autocomplete="new-password"/>
+                <div id="error-password" class="invalid-feedback"></div>
+              </div>
+            </div>
+            <div class="row mb-3 required">
+              <label for="input-confirm" class="col-md-3 col-form-label">{{ entry_confirm }}</label>
+              <div class="col-md-9">
+                <input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_confirm }}" id="input-confirm" class="form-control"/>
+                <div id="error-confirm" class="invalid-feedback"></div>
+              </div>
+            </div>
+          </fieldset>
+          <div class="row">
+            <div class="col text-end">
+              <button type="submit" class="btn btn-primary">{{ button_save_password }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+{{ footer }}

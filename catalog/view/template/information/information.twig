@@ -1,0 +1,22 @@
+{{ header }}
+<main class="main-body information-page">
+  <div class="header">
+    {% for breadcrumb in breadcrumbs %}
+      
+      {% if loop.last %}
+      <span class="item">{{ breadcrumb.text }}</span>
+      {% else %}
+      <a href="{{ breadcrumb.href }}"><span class="item active">{{ breadcrumb.text }}</span></a>
+      <span class="round"></span>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+  <div class="banner" style="display: block;">
+    <h2>{{ heading_title }}</h2>
+  </div>
+  <div class="information-main">
+  {{ description }}
+  </div>
+
+{{ footer }}

@@ -1,0 +1,620 @@
+{{ header }}
+<main class="main-body shopping-cart-details-container make-a-quotation-container">  
+  <div class="cart_breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+          
+      {% if loop.last %}
+        <span class="item">{{ breadcrumb.text }}</span>
+      {% else %}
+        <a href="{{ breadcrumb.href }}" class="item active">{{ breadcrumb.text }}</a>
+        <span class="round"></span>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+
+  {% if attention %}
+    <div class="alert alert-info"><i class="fa-solid fa-circle-info"></i> {{ attention }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+  {% endif %}
+  {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-check"></i> {{ success }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+  {% endif %}
+  {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> {{ error_warning }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+  {% endif %}
+
+  <div class="header">
+    <div class="left">
+      <h6>{{ heading_title }}</h6>
+    </div>
+    <div class="right">
+      <span><a href="{{ continue }}">{{ button_shopping }}</a></span>
+      <img src="image/arrow_right.svg">
+    </div>
+  </div>
+  <div class="center-container" id="quotation_add">
+    <div class="left">
+      <div class="row">
+
+        <div class="box-green-global">
+        <h3 style="isplay: flex;align-items: center;">Vad roligt att du ska profilera! <img src="image/empji-party.png" style="width:25px; margin-left:5px;"></h3>
+        <p>Börja med ange e-postadress, därefter fyller du i dina kontaktuppgifter när du är klar kan du klicka på skicka!</p>
+        </div>        
+        <div class="m-gap-20"></div>
+
+        <form method="post" data-oc-target="#quotation_add" >
+        <div class="row">
+          <div class="col-12 mb-3" style="position: relative">
+            <label for="inputEmail" class="form-label input-label">Ange e-postadress <span class="input-required">*</span></label>
+            <input type="email" name="email" class="form-control input-default" id="inputEmail" style="padding-right: 140px" placeholder="E-postadress" value="{{ email }}">
+            <div class="error-message" id="emailError" style="color: red;"></div>
+              <div class="d-flex align-items-center justify-content-start gap-2 my-2 information-email">
+                <img src="image/info.svg">
+                <p style="margin: 0">
+                 Om du har ett konto registrerad med e-postadressen hämtas dina kontaktuppgifter i nästa steg.
+                </p>
+              </div>
+             
+
+          </div>
+          <div class="col-12 mb-3">
+            {# <button type="button" id="checkemail" style="margin-top: 22px" class="primaryButton">Gå vidare</button> #}
+            <a href="javascript:void(0);" onClick="checkCustomerInfo();" class="primaryButton btn-next btn-next-step mt-3 mb-5">Gå vidare <i class="fa fa-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="customer_details" style="display:none;">
+        	<div class="col-sm-12">
+						<label class="" for="inputEmail"><span class="step"> Fyll kontaktuppgifter</span></label>
+						<span class="autofil-contact-details-info"><small><i class="fa fa-info-circle"></i> Stämmer inte dina kontaktuppgifter? Meddela oss i din förfrågan under "instruktioner" så uppdaterar vi dessa.</small><br><br></span>
+					</div>
+          <div class="col-12 mb-3">
+            <label for="inputFirstName" class="form-label input-label">Förnamn <span class="input-required">*</span></label>
+            <input type="text" name="first_name" class="form-control input-default" id="inputFirstName" placeholder="Ange förnamn." value="{{ first_name }}">
+            <div class="error-message" id="firstNameError" style="color: red;"></div>
+          </div>
+          <div class="col-12 mb-3">
+            <label for="inputLastName" class="form-label input-label">Efternamn <span class="input-required">*</span></label>
+            <input type="text" name="last_name" class="form-control input-default" id="inputLastName" placeholder="Ange efternamn."  value="{{ last_name }}">
+            <div class="error-message" id="lastNameError" style="color: red;"></div>
+          </div>
+          <div class="col-12 mb-3">
+            <label for="inputCompany" class="form-label input-label">Företag  (om privatperson lämna tomt)</label>
+            <input type="text" class="form-control input-default" name="vatnr" id="inputCompany" placeholder="Ange eventuell företagsnamn."  value="{{ company }}">
+          </div>
+          <div class="col-12 mb-3">
+            <label for="inputTelephone" class="form-label input-label">Telefon <span class="input-required">*</span></label>
+            <input type="number" name="telephone" class="form-control input-default" id="inputTelephone" placeholder="Ange telefonnummer." value="{{ telephone }}">
+            <div class="error-message" id="telephoneError" style="color: red;"></div>
+          </div>
+          <div class="col-12 mb-3">
+            <label for="inputMessage" class="form-label input-label">Instruktioner <span class="input-required">*</span></label>            
+            <textarea class="form-control input-textarea" name="message" id="message" aria-label="With textarea" placeholder="Ange information om din förfrågan."></textarea>
+              <div class="d-flex align-items-center justify-content-start gap-2 my-2">
+                <img src="image/info.svg">
+                <p style="margin: 0">
+                 Ange önskad placering av din profilering samt överig beskrivning av din förfrågan.
+                </p>
+              </div>  
+                <hr>
+    <p class="cutomize-details-heading">Profilering för dina artiklar</p>
+    <div class="print-file-box">
+      <div class="radio-button-box">
+        <div class="d-flex flex-row" style="width: 130px">
+          <p class="print-file-text" style="margin-bottom: 0rem">
+            Tryckfil
+          </p>
+          <!--
+          <img src="image/info.svg" alt="Info" style="width: 18px; height: 18px; margin-top: 3px">
+          -->
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="upload_files" id="flexRadioDefault1" checked>
+          <label class="form-check-label" for="flexRadioDefault1">
+            Jag vill skicka tryckfil senare
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="upload_files" id="flexRadioDefault2">
+          <label class="form-check-label" for="flexRadioDefault2">
+            Jag vill ladda upp tryckfilen nu
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="input-group" id="fileUploadDiv" style="display:none;">
+      <div class="file-input-wrapper">
+        <input type="file" name="files[]" id="file-input" accept=".jpg, .jpeg, .png" multiple>
+        <input type="hidden" id="file-name">
+        <label for="file-input" class="file-input-label">
+          <span><img src="image/upload.svg" alt="Upload" style="margin-bottom: 2px; margin-right: 5px"></span>
+          <span class="file-size-limit">Välj fil för profilering</span>
+        </label>
+      </div>
+      <div id="selected-file" class="selected-file mt-2">
+      </div>
+    </div>
+
+
+    {% if screen_color %}
+      <hr class="horizontal-line">
+
+      <div class="radio-button-box">
+        <div class="d-flex flex-row" style="width: 130px">
+          <p class="print-file-text" style="margin-bottom: 0rem">
+            Tryckfärg
+          </p>
+          <img src="image/info.svg" alt="Info" style="width: 18px; height: 18px; margin-top: 3px">
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="select_colors" id="flexRadioDefault3" checked>
+          <label class="form-check-label" for="flexRadioDefault3">
+            I want suggestion for printing color
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="select_colors" id="flexRadioDefault4" >
+          <label class="form-check-label" for="flexRadioDefault4">
+            I want to specify print color
+          </label>
+        </div>
+      </div>
+
+      <div class="select-box-container" id="ColorsDiv">
+      {% for i in 1..(screen_color) %}
+        <div class="select-box">
+          <p class="select-box-label">
+            Color 0{{ i }} <span>*</span>
+            <span><img src="image/wheel-1.svg" alt="Wheel"></span>
+          </p>
+          <select class="form-select form-select-lg" aria-label=".form-select-lg example">
+            <option selected="">Select</option>
+            <option value="1">Red</option>
+            <option value="2">Green</option>
+            <option value="3">Blue</option>
+          </select>
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+    <hr class="horizontal-line">          
+            <div class="error-message" id="messageError" style="color: red;"></div>
+          </div>
+          <input type="hidden" name="select_colors" id="hidden_select_colors">
+          <input type="hidden" name="color_selects" id="hidden_color_selects">
+          <div class="mb-5" style="margin-top: 40px">
+            <button class="primaryButton" formaction="{{ quotation_confirm }}" type="submit">
+              Skicka din förfrågan
+              <img src="image/arrow_right.svg" alt="">
+            </button>
+          </div>
+        </div>
+        </form>
+        <div class="gap-div"></div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="order-summary">
+        <h3>Summering</h3>
+        
+          {% for total in totals %}
+          
+            {% if total.title == 'Total' %}
+              <div class="grand-total">
+                <p>{{ total.title }}</p>
+                  <p>{{ total.text }}</p>
+              </div>
+            {% else %}
+              <div class="border-bottom mb-3 mt-4">
+                <div>
+                  <p>{{ total.title }}</p>
+                  <p>{{ total.text }}</p>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+<script>
+  document.querySelector('#file-input').addEventListener('change', function() {
+  var files = this.files;
+
+  var imagesJSON = localStorage.getItem('images');
+  var images = imagesJSON ? JSON.parse(imagesJSON) : [];
+
+  var filesProcessed = 0;
+  var totalSize = 0;
+
+  // Calculate the existing total size from local storage
+  if (images.length > 0) {
+    images.forEach(function(image) {
+      totalSize += parseFloat(image.fileSize);
+    });
+  }
+
+  if (files && files.length > 0) {
+    Array.from(files).forEach(function(file) {
+      // Calculate the file size in MB
+      var fileSizeInMB = (file.size / 1024 / 1024).toFixed(2);
+
+      // Calculate new total size if this file is added
+      var newTotalSize = totalSize + parseFloat(fileSizeInMB);
+
+      // Validate file size
+      if (fileSizeInMB > 5 || newTotalSize > 5) {
+        alert('Either individual file or total files size exceeds the 5 MB limit.');
+        return;
+      }
+
+      // Update the total size
+      totalSize = newTotalSize;
+
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        var dataURL = e.target.result;
+        var fileData = {
+          dataURL: dataURL,
+          fileName: file.name,
+          fileSize: fileSizeInMB,
+        };
+
+        images.push(fileData);
+
+        var fileDiv = document.createElement('div');
+        fileDiv.className = 'selected-file-name';
+        fileDiv.style.position = 'relative';
+
+        var fileNameSpan = document.createElement('span');
+        fileNameSpan.textContent = file.name + ' (' + fileSizeInMB + ' MB)';
+
+        var closeSpan = document.createElement('span');
+        closeSpan.textContent = 'x';
+        closeSpan.style.position = 'absolute';
+        closeSpan.style.top = '5px';
+        closeSpan.style.right = '5px';
+        closeSpan.style.cursor = 'pointer';
+
+        closeSpan.onclick = function() {
+          var index = images.indexOf(fileData);
+          if (index > -1) {
+            images.splice(index, 1);
+            localStorage.setItem('images', JSON.stringify(images));
+            fileDiv.remove();
+          }
+        };
+
+        var img = document.createElement('img');
+        img.src = dataURL;
+        img.style.height = '60px';
+
+        fileDiv.appendChild(img);
+        fileDiv.appendChild(fileNameSpan);
+        fileDiv.appendChild(closeSpan);
+
+        document.querySelector('#selected-file').appendChild(fileDiv);
+
+        filesProcessed++;
+
+        if (filesProcessed === files.length) {
+          localStorage.setItem('images', JSON.stringify(images));
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+});
+
+    // Retrieve the images on page load (e.g., on the checkout page)
+window.onload = function() {
+  var previewContainer = document.getElementById('selected-file');
+  var imagesJSON = localStorage.getItem('images');
+  var images = imagesJSON ? JSON.parse(imagesJSON) : [];
+
+  images.forEach(function(imageData, index) {
+    var dataURL = imageData.dataURL;
+    var fileName = imageData.fileName;
+    var fileSize = imageData.fileSize;
+
+    // Create a div and img element for each stored file
+    var div = document.createElement('div');
+    div.className = 'selected-file-name';
+    div.style.position = 'relative';
+    var fileNameSpan = document.createElement('span');
+    fileNameSpan.textContent = fileName + '(' + fileSize + ' mb)';
+
+    var span = document.createElement('span');
+    span.innerHTML = ' x';
+    span.dataset.index = index;
+    span.style.position = 'absolute';
+    span.style.top = '5px';
+    span.style.right = '5px';
+    span.style.cursor = 'pointer';
+    
+    span.onclick = function(e) {
+      var idx = e.target.dataset.index;
+      images.splice(idx, 1);
+      localStorage.setItem('images', JSON.stringify(images));
+      e.target.parentElement.remove(); // Remove the div containing the image
+    };
+    
+    var img = document.createElement('img');
+    img.alt = 'Preview';
+    img.src = dataURL;
+    img.style.height = '60px';
+
+    div.appendChild(img);
+    div.appendChild(fileNameSpan);
+    div.appendChild(document.createTextNode(' \u00A0 ')); // Non-breaking space
+    div.appendChild(span);
+
+    
+    previewContainer.appendChild(div);
+  });
+};
+
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  // Initialize existing code
+  var radios = document.getElementsByName('upload_files');
+  var imagesdiv = document.getElementById('fileUploadDiv');
+  var colorradios = document.getElementsByName('select_colors');
+  var colorsdiv = document.getElementById('ColorsDiv');
+  var textarea = document.querySelector('.custom_message');
+  var colorSelects = document.querySelectorAll('.form-select');
+
+  // Load state from localStorage
+  loadState();
+
+  function loadState() {
+    // Load radios
+    ['upload_files', 'select_colors'].forEach((key) => {
+      var radioButtons = document.getElementsByName(key);
+      if(radioButtons.length > 0) {
+        var savedValue = localStorage.getItem(key);
+        if (savedValue !== null) {
+          radioButtons[savedValue].checked = true;
+        }
+      }
+    });
+
+    // Load message
+    if (localStorage.getItem("message") !== null) {
+      textarea.value = localStorage.getItem("message");
+    }
+
+    // Load color selects
+if (localStorage.getItem("colorSelects") !== null) {
+  const savedSelectTexts = JSON.parse(localStorage.getItem("colorSelects"));
+  colorSelects.forEach((select, index) => {
+    if (savedSelectTexts[index] !== undefined) {
+      const matchingOption = Array.from(select.options).find(option => option.text === savedSelectTexts[index]);
+      if (matchingOption) {
+        select.value = matchingOption.value;
+      }
+    }
+  });
+}
+  }
+
+  function toggleUploadImages() {
+    setDisplay(imagesdiv, radios[1].checked);
+    localStorage.setItem("upload_files", radios[1].checked ? 1 : 0);
+  }
+
+  function toggleColorRadio() {
+    setDisplay(colorsdiv, colorradios[1].checked);
+    localStorage.setItem("select_colors", colorradios[1].checked ? 1 : 0);
+  }
+
+  function setDisplay(element, condition) {
+    element.style.display = condition ? 'flex' : 'none';
+  }
+
+  function saveMessage() {
+    localStorage.setItem("message", textarea.value);
+  }
+
+  function saveColorSelects() {
+  // Assumes colorSelects is a collection of all your select elements
+  const colorNames = Array.from(colorSelects).map(select => {
+    const option = select.options[select.selectedIndex];
+    return option ? option.text : "";  // use option.text to get the actual color name
+  });
+
+  localStorage.setItem("colorSelects", JSON.stringify(colorNames));
+}
+
+  // Event listeners
+  radios.forEach(radio => radio.addEventListener('change', toggleUploadImages));
+  colorradios.forEach(radio => radio.addEventListener('change', toggleColorRadio));
+  textarea.addEventListener('input', saveMessage);
+  colorSelects.forEach(select => select.addEventListener('change', saveColorSelects));
+
+  // Initial state
+  toggleUploadImages();
+  var radioButtons = document.getElementsByName('select_colors');
+      if(radioButtons.length > 0) {
+        toggleColorRadio();
+      }
+});
+</script>
+<script type="text/javascript">
+function checkCustomerInfo()
+{
+
+  var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+  var email = $("#inputEmail").val();
+
+  		if(!filter.test(email)){
+		 		 alert("Ange e-postadress för gå vidare.")
+         		 return;
+		 }
+		 else
+		 {
+		 		 $.ajax({
+					url: 'index.php?route=checkout/quotation.getCustomerByEmail',
+					type: 'post',
+					dataType: 'json',
+					data: {
+						'email': $('#inputEmail').val()
+					},
+					beforeSend: function () {
+					$('#inputFirstName').val('');
+					$('#inputLastName').val('');
+					$('#inputCompany').val('');
+					$('#inputTelephone').val('');
+					$('#message').val('');
+				  	$('#customer_id').val('');
+				  },
+				  success: function (customer)
+				  {
+				  	 if(customer)
+					 {
+								$('#inputFirstName').attr('readonly', true);
+								$('#inputLastName').attr('readonly', true);
+								$('#inputCompany').attr('readonly', true);
+								$('#inputTelephone').attr('readonly', true);
+
+						$('#inputFirstName').val(customer.firstname);
+						$('#inputLastName').val(customer.lastname);
+						$('#inputCompany').val(customer.company);
+						$('#inputTelephone').val(customer.telephone);
+						$('#customer_id').val(customer.customer_id);
+            $('.step').hide();
+						$('.autofil-contact-details-info').show();
+					}
+					else
+				 	{
+				  	$('#inputFirstName').attr('readonly', false);
+						$('#inputLastName').attr('readonly', false);
+						$('#inputCompany').attr('readonly', false);
+						$('#inputTelephone').attr('readonly', false);
+				   	$('#customer_id').val('');
+            $('.autofil-contact-details-info').hide();
+				   }
+					$('.customer_details').show();
+				  }
+
+				     });
+         $(".information-email").removeClass('d-flex');
+		 		 $(".btn-next-step, .information-email").hide();
+		 }
+
+}
+function validateForm() {
+  let isValid = true;
+
+  $(".error-message").text("");  // Clear all error messages
+
+  const email = $("#inputEmail").val();
+  if (!email || !email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+    $("#emailError").text("Vänligen ange en giltig e-mail adress");
+    isValid = false;
+  }
+
+  const firstName = $("#inputFirstName").val();
+  if (!firstName || firstName.trim() === '') {
+    $("#firstNameError").text("Vänliga ange ditt första namn");
+    isValid = false;
+  }
+
+  const lastName = $("#inputLastName").val();
+  if (!lastName || lastName.trim() === '') {
+    $("#lastNameError").text("Vänligen ange ditt efternamn");
+    isValid = false;
+  }
+
+  const telephone = $("#inputTelephone").val();
+  if (!telephone || !telephone.match(/^[0-9]+$/)) {
+    $("#telephoneError").text("Vänligen ange ett giltigt telefonnummer");
+    isValid = false;
+  }
+
+  const message = $("#message").val();
+  if (!message || message.trim() === '') {
+    $("#messageError").text("Vänligen ange text för instruktioner");
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+$('#message').val(localStorage.getItem('message') || '');
+$('#quotation_add').on('submit', 'form', function(e) {
+    e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+    var element = this;
+
+    // Populate hidden fields from LocalStorage
+    $('#hidden_select_colors').val(localStorage.getItem('select_colors') || '');
+    $('#message').val(localStorage.getItem('message') || '');
+    $('#hidden_color_selects').val(localStorage.getItem('colorSelects') || '');
+
+    var imagesJSON = localStorage.getItem('images');
+    var images = imagesJSON ? JSON.parse(imagesJSON) : [];
+
+    // Remove existing hidden inputs to avoid duplication
+    $('input[name="files_data[]"]').remove();
+    $('input[name="hidden_images_name[]"]').remove();
+
+    // Append images data to the form as hidden inputs
+    images.forEach(function(imageData) {
+        if (imageData.dataURL && imageData.fileName) {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'files_data[]',
+                value: imageData.dataURL
+            }).appendTo(element);
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'hidden_images_name[]',
+                value: imageData.fileName
+            }).appendTo(element);
+        }
+    });
+
+    var button = e.originalEvent ? e.originalEvent.submitter : '';
+
+    $.ajax({
+        url: $(button).attr('formaction'),
+        type: 'post',
+        data: $(element).serialize(),
+        dataType: 'json',
+        beforeSend: function() {
+            $(button).button('loading');
+        },
+        complete: function() {
+            $(button).button('reset');
+        },
+        success: function(json) {
+            console.log(json);
+            if (json['redirect']) {
+                location = json['redirect'];
+            }
+            $.ajax({
+              url : 'index.php?route=checkout/quotation.sendQuotationMail&quotation_id='+json['quotation_id'],
+              type : 'get'
+            })
+
+            if (json['error']) {
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+            }
+
+            $('#shopping-cart').load('index.php?route=checkout/cart.list&language={{ language }}', {}, function () {
+                $('#header-cart').load('index.php?route=common/cart.info&language={{ language }}');
+            });
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
+//--></script>
+{{ footer }}

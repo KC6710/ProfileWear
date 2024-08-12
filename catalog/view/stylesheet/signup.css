@@ -1,0 +1,123 @@
+.nav-tabs {
+  display: flex;
+  list-style-type: none;
+  border: none;
+  /* gap: 20px; */
+  padding-left: 0;
+  margin-top: 20px;
+}
+.nav-tabs > * + * {
+  margin-left: 20px;
+}
+.nav-tabs .nav-item {
+  color: #cdcdcd;
+  font-size: 2rem;
+  font-weight: 500;
+}
+.nav-tabs .active {
+  border-bottom: 3px solid #f6bacb;
+  color: #2a2a2a;
+  padding-bottom: 20px;
+}
+.signup-main h4 {
+  font-weight: 700;
+  line-height: 42px;
+  text-transform: capitalize;
+}
+.signup-main {
+  padding-block: 80px !important;
+  padding-inline: 30px !important;
+}
+
+.signup-main p {
+  font-size: 16px;
+}
+
+.signup-main a {
+  color: var(--dark-green);
+}
+
+.signup-main .extra {
+  color: var(--body-text-color);
+  font-size: 13px;
+  margin-top: 50px;
+}
+.signup-main .form-label {
+  color: var(--body-text-color);
+  font-weight: 600;
+  font-size: 13px;
+  font-family: Barlow;
+  line-height: 14px; /* 107.692% */
+}
+
+.signup-main .permissions label {
+  color: var(--body-text-color, #444);
+  font-family: Barlow;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 200% */
+}
+
+/* ---------login style ---------------- */
+.signup-main .forgot-pass {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  /* flex-wrap: wrap; */
+  gap: 10px;
+}
+.signup-main .forgot-pass button {
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  color: var(--body-text-grey, #393939);
+  font-family: Barlow;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  padding-inline: 10px;
+}
+
+@media (max-width: 900px) {
+  .nav-tabs .nav-item {
+    font-size: 1.5rem;
+  }
+}
+@media (max-width: 770px) {
+  .signup-main .forgot-pass {
+    flex-wrap: wrap;
+  }
+  .signup-main .forgot-pass button {
+    width: 100%;
+  }
+}
+@media (max-width: 550px) {
+  .signup-main h4 {
+    font-size: 28px;
+  }
+  .nav-tabs .nav-item {
+    font-size: 1.75rem;
+  }
+  .signup-main {
+    padding: 30px !important;
+  }
+}
+
+@media (max-width: 450px) {
+  .signup-main .primaryButton {
+    gap: 8px !important;
+    font-size: 12px !important;
+  }
+  .signup-main .secondaryButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 350px) {
+  .nav-tabs .nav-item {
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,44 @@
+/**
+ * Mega Filter Pack
+ * 
+ * @license Commercial
+ * @author info@ocdemo.eu
+ * 
+ * All code within this file is copyright OC Mega Extensions.
+ * You may not copy or reuse code within this file without written permission. 
+ */
+
+.ocme-product-attribute-values {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ocme-product-attribute-values-item {
+	float: left;
+	color: #fff;
+	background: #6f7b8a;
+	padding: 3px 5px 4px 10px;
+	margin: 2px;
+	cursor: move;
+}
+
+.ocme-product-attribute-values-ghost {
+	opacity: 0.5;
+}
+
+.ocme-product-attribute-values li .btn,
+.ocme-product-attribute-values li .btn.active,
+.ocme-product-attribute-values li .btn:active,
+.ocme-product-attribute-values li .btn.hover,
+.ocme-product-attribute-values li .btn:hover,
+.ocme-product-attribute-values li .btn.active.hover,
+.ocme-product-attribute-values li .btn:active:hover,
+.ocme-product-attribute-values li .btn.focus,
+.ocme-product-attribute-values li .btn:focus {
+	border: none;
+	background: none;
+	color: #fff;
+	margin-left: 7px;
+	outline: none;
+}

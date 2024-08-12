@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Path Manager</id>
+  <name>>Path Manager</name>
+  <code>path_manager</code>
+	<version>2.4.2</version>
+	<vqmver>2.5.1</vqmver>
+	<author><![CDATA[<b style="color:#83a411">Geeko<b style="color:#5f5f5f">Dev</b></b>]]></author>
+  <link>https://geekodev.com</link>
+  
+	<file path="catalog/controller/startup/seo_url.php" error="skip" v="4">
+    <operation>
+			<search position="before"><![CDATA[parse_str($url_info['query'], $query);]]></search>
+			<add position="before"><![CDATA[
+    $this->load->model('extension/full_product_path/tool/path_manager');
+    $url_info['query'] = $this->model_extension_full_product_path_tool_path_manager->oc4QqueryHook($url_info['query']);
+      ]]></add>
+    </operation>
+  
+     <operation error="skip">
+      <search position="before"><![CDATA[return $url;]]></search>
+      <add position="before"><![CDATA[
+        $url = rtrim($url, '/');
+        
+        if (($this->config->get('full_product_path_slash') == '1' && !empty($gkd_is_category)) || $this->config->get('full_product_path_slash') == '2') {
+          if (!(substr($url, -4) == '.xml') && !strpos($url, '?')) {
+            $url .= '/';
+          }
+        }
+      ]]></add>
+    </operation>
+    
+    <operation>
+      <search position="after" index="1"><![CDATA[$this->load->model('design/seo_url');]]></search>
+      <add position="after" index="1"><![CDATA[
+      $this->event->register('model/setting/startup/getStartups/after', new \Opencart\System\Engine\Action('extension/full_product_path/geekodev/startup.seoProcessEnd'));
+      ]]></add>
+    </operation>
+    
+    <operation error="skip" v="4">
+      <search position="after"><![CDATA[[$key, $value] = explode('=', $part);]]></search>
+      <add position="after"><![CDATA[
+    if ($this->config->get('full_product_path_homelink') && $value == 'common/home') {
+      unset($query[ $key ]);
+      continue;
+    }
+      ]]></add>
+    </operation>
+    
+  </file>
+  
+	<!--file path="catalog/controller/*/seo_url.php" error="skip">
+	
+    <operation>
+			<search position="after"><![CDATA[$categories = explode('_', $value);]]></search>
+			<add position="after"><![CDATA[
+        if ($this->config->get('full_product_path_directcat')) {
+          $categories = array(array_pop($categories));
+				} else if (count($categories) < 2) {
+           $this->load->model('extension/full_product_path/tool/path_manager');
+          $categories = $this->model_extension_full_product_path_tool_path_manager->getFullCategoryPath(array_pop($categories));
+          $categories = explode('_', $categories);
+        }
+      ]]></add>
+    </operation>
+    
+    <operation>
+			<search position="replace" regex="true"><![CDATA[~parse_str\(\$(url_data|url_info)\['query'\], \$data\);~]]></search>
+			<add position="replace"><![CDATA[
+        $0
+      
+				if (isset($data['route']) && $data['route'] == 'product/product') {
+          if ($this->config->get('full_product_path_bypasscat') && isset($data['path'])) {
+            unset($data['path']);
+          }
+          
+          if (isset($data['manufacturer_id']) && $this->config->get('full_product_path_mode') != '3') {
+            unset($data['manufacturer_id']);
+          }
+          
+          if (!isset($data['path']) && !isset($data['manufacturer_id']) && isset($data['product_id'])) {
+             $this->load->model('extension/full_product_path/tool/path_manager');
+            $data = (array) $this->model_extension_full_product_path_tool_path_manager->getFullProductPath($data['product_id']) + $data;
+          }
+				}
+        
+        $gkd_is_category = (isset($data['route']) && $data['route'] == 'product/category') ? true : false;
+			]]></add>
+		</operation>
+    
+    <operation>
+			<search position="before"><![CDATA[} elseif ($key == 'path') {]]></search>
+			<add position="before"><![CDATA[
+					} elseif ($this->config->get('full_product_path_homelink') && $key == 'route' && $value == 'common/home') {
+						$url .= '/';
+			]]></add>
+		</operation>
+
+		<operation>
+			<search position="after"><![CDATA[$categories = explode('_', $value);]]></search>
+			<add position="after"><![CDATA[
+        if ($this->config->get('full_product_path_directcat')) {
+          $categories = array(array_pop($categories));
+        }
+			]]></add>
+		</operation>
+
+    <operation error="skip" v="1.5.5 - 2.x">
+      <search position="before"><![CDATA[return $url_info['scheme']]]></search>
+      <add position="before"><![CDATA[
+        $url = rtrim($url, '/');
+        
+        if (($this->config->get('full_product_path_slash') == '1' && !empty($gkd_is_category)) || $this->config->get('full_product_path_slash') == '2') {
+          if (!(substr($url, -4) == '.xml')) {
+            $url .= '/';
+          }
+        }
+      ]]></add>
+    </operation>
+	</file>
+	
+  <file path="catalog/controller/product/category.php">
+  
+		<operation>
+			<search position="after"><![CDATA[public function index() {]]></search>
+			<add position="after"><![CDATA[
+				// path manager - preserve bc
+				if (isset($this->request->get['path']) && $this->config->get('full_product_path_directcat')) {
+					$cat_id = strrchr('_'.$this->request->get['path'], '_');
+					$cat_id = str_replace('_', '', $cat_id);
+           $this->load->model('extension/full_product_path/tool/path_manager');
+          $this->request->get['path'] = $this->model_extension_full_product_path_tool_path_manager->getFullCategoryPath($cat_id);
+				}
+			]]></add>
+		</operation>
+  </file><file path="catalog/controller/product/category.php" v="3">
+    
+    <operation error="skip" v="3" i="canonical">
+      <search position="replace"><![CDATA[$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id']), 'canonical');]]></search>
+      <add position="replace"><![CDATA[ $this->load->model('extension/full_product_path/tool/path_manager'); $this->document->addLink($this->url->link('product/category', 'path=' . ($this->config->get('full_product_path_cat_canonical') ? $this->model_extension_full_product_path_tool_path_manager->getFullCategoryPath($category_info['category_id']) : $category_info['category_id'])), 'canonical');]]></add>
+    </operation>
+    
+    <operation error="skip" v="3" i="canonical">
+      <search position="replace"><![CDATA[$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page='. $page), 'canonical');]]></search>
+      <add position="replace"><![CDATA[ $this->load->model('extension/full_product_path/tool/path_manager'); $this->document->addLink($this->url->link('product/category', 'path=' . ($this->config->get('full_product_path_cat_canonical') ? $this->model_extension_full_product_path_tool_path_manager->getFullCategoryPath($category_info['category_id']) : $category_info['category_id']) . '&page='. $page), 'canonical');]]></add>
+    </operation>
+    
+    <operation error="skip" v="3" i="prev">
+      <search position="replace"><![CDATA[$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . (($page - 2) ? '&page='. ($page - 1) : '')), 'prev');]]></search>
+      <add position="replace"><![CDATA[ $this->load->model('extension/full_product_path/tool/path_manager'); $this->document->addLink($this->url->link('product/category', 'path=' . ($this->config->get('full_product_path_cat_canonical') ? $this->model_extension_full_product_path_tool_path_manager->getFullCategoryPath($category_info['category_id']) : $category_info['category_id']) . (($page - 2) ? '&page='. ($page - 1) : '')), 'prev');]]></add>
+    </operation>
+    
+    <operation error="skip" v="3" i="next">
+      <search position="replace"><![CDATA[$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page='. ($page + 1)), 'next');]]></search>
+      <add position="replace"><![CDATA[ $this->load->model('extension/full_product_path/tool/path_manager'); $this->document->addLink($this->url->link('product/category', 'path=' . ($this->config->get('full_product_path_cat_canonical') ? $this->model_extension_full_product_path_tool_path_manager->getFullCategoryPath($category_info['category_id']) : $category_info['category_id']) . '&page='. ($page + 1)), 'next');]]></add>
+    </operation>
+    
+	</file><file path="catalog/controller/product/category.php">
+  
+    <operation error="skip" v="2.2" i="canonical">
+      <search position="replace"><![CDATA[$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'], true), 'canonical');]]></search>
+      <add position="replace"><![CDATA[ $this->load->model('extension/full_product_path/tool/path_manager'); $this->document->addLink($this->url->link('product/category', 'path=' . ($this->config->get('full_product_path_cat_canonical') ? $this->model_extension_full_product_path_tool_path_manager->getFullCategoryPath($category_info['category_id']) : $category_info['category_id']), true), 'canonical');]]></add>
+    </operation>
+    
+	</file><file path="catalog/controller/product/category.php">
+  
+    <operation error="skip" v="2.1" i="canonical">
+      <search position="replace"><![CDATA[$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'], 'SSL'), 'canonical');]]></search>
+      <add position="replace"><![CDATA[ $this->load->model('extension/full_product_path/tool/path_manager'); $this->document->addLink($this->url->link('product/category', 'path=' . ($this->config->get('full_product_path_cat_canonical') ? $this->model_extension_full_product_path_tool_path_manager->getFullCategoryPath($category_info['category_id']) : $category_info['category_id']), 'SSL'), 'canonical');]]></add>
+    </operation>
+    
+	</file><file path="catalog/controller/product/category.php">
+  
+    <operation error="skip" v="2.0" i="canonical">
+      <search position="replace"><![CDATA[$this->document->addLink($this->url->link('product/category', 'path=' . $this->request->get['path']), 'canonical');]]></search>
+      <add position="replace"><![CDATA[ $this->load->model('extension/full_product_path/tool/path_manager'); $this->document->addLink($this->url->link('product/category', 'path=' . ($this->config->get('full_product_path_cat_canonical') ? $this->model_extension_full_product_path_tool_path_manager->getFullCategoryPath($category_info['category_id']) : $category_info['category_id']), true), 'canonical');]]></add>
+    </operation>
+    
+	</file-->
+  
+  <file path="catalog/controller/product/product.php">
+  
+		<operation>
+			<search position="before" index="1"><![CDATA[if (isset($this->request->get['path'])) {]]></search>
+			<add position="before" index="1"><![CDATA[
+      // path manager
+      if (isset($this->request->get['product_id']) && ((!isset($this->request->get['path']) && $this->config->get('full_product_path_breadcrumbs') == '1') || ($this->config->get('full_product_path_breadcrumbs') == '2')) && is_array($this->request->get)) {
+        unset($this->request->get['path']);
+         $this->load->model('extension/full_product_path/tool/path_manager');
+        $this->request->get = $this->model_extension_full_product_path_tool_path_manager->getFullProductPath($this->request->get['product_id'], true) + $this->request->get;
+      }
+			]]></add>
+		</operation>
+    
+	</file>
+  
+	<file path="catalog/controller/product/product.php">
+  
+		<operation>
+			<search position="before" index="1"><![CDATA[if (isset($this->request->get['path'])) {]]></search>
+			<add position="before" index="1"><![CDATA[
+				// path manager
+				if (isset($this->request->get['product_id']) && ((!isset($this->request->get['path']) && $this->config->get('full_product_path_breadcrumbs') == '1') || ($this->config->get('full_product_path_breadcrumbs') == '2')) && is_array($this->request->get)) {
+					unset($this->request->get['path']);
+           $this->load->model('extension/full_product_path/tool/path_manager');
+					$this->request->get = $this->model_extension_full_product_path_tool_path_manager->getFullProductPath($this->request->get['product_id'], true) + $this->request->get;
+				}
+			]]></add>
+		</operation>
+    
+	</file>
+  
+  <file path="catalog/controller/product/product.php">
+  
+		<operation>
+			<search position="after" offset="1"><![CDATA[data['heading_title'] = $product_info['name'];]]></search>
+      <add position="after" offset="1"><![CDATA[
+				// path manager
+        if ($this->config->get('full_product_path_noprodbreadcrumb')) {
+          if (version_compare(VERSION, '2', '>=')) {
+            array_pop($data['breadcrumbs']);
+          } else {
+            array_pop($this->data['breadcrumbs']);
+          }
+        }
+			]]></add>
+		</operation>
+    
+	</file>
+  
+  <file path="catalog/controller/product/search.php">
+	
+		<operation error="skip">
+			<search position="replace"><![CDATA[$this->url->link('product/product', 'product_id=' . $result['product_id'] . $url)]]></search>
+			<add position="replace"><![CDATA[$this->config->get('full_product_path_remove_search') ? $this->url->link('product/product', 'product_id=' . $result['product_id']) : $this->url->link('product/product', 'product_id=' . $result['product_id'] . $url)]]></add>
+		</operation>
+
+	</file><file path="catalog/controller/product/search.php" v="4">
+	
+		<operation error="skip">
+			<search position="replace"><![CDATA[$this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['product_id'] . $url)]]></search>
+			<add position="replace"><![CDATA[$this->config->get('full_product_path_remove_search') ? $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['product_id']) : $this->url->link('product/product', 'language=' . $this->config->get('config_language') . '&product_id=' . $result['product_id'] . $url)]]></add>
+		</operation>
+
+	</file>
+
+
+</modification>

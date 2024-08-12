@@ -1,0 +1,34 @@
+{% if coupon == true %}
+    <!-- Coupon successful - start -->
+    <div class="input-group">
+        <span class="sco-input-label">{{ item_coupon }}</span>
+        <div id="sco-coupon-input" class="form-control sco-input" style="line-height: 35px;">
+            {{ coupon.code }}
+        </div>
+        <span class="input-group-btn">
+                <button class="btn btn-danger sco-btn-danger btnSco" id="sco-coupon-remove">
+                    <i id="sco-coupon-button-icon" class="fa fa-times-circle"></i>
+                </button>
+            </span>
+    </div>
+    <script>
+        $('#coupon-toggle-btn').addClass('used');
+        $('#sco-coupon-input').addClass('sco-input-applied');
+    </script>
+    <!-- Coupon successful - end -->
+{% else %}
+<!-- Coupon unsuccessfully - start -->
+<div class="input-group">
+    <input type="text" class="form-control sco-input" name="coupon" placeholder="{{ item_coupon }}"/>
+    <span class="input-group-btn">
+                    <button class="btn sco-primary-btn btnSco" id="sco-coupon-add" type="button">
+                        <i id="sco-coupon-button-icon" class="fa fa-check"></i>
+                    </button>
+                </span>
+</div>
+<script>
+    $('#coupon-toggle-btn').removeClass('used');
+    $('#sco-coupon-input').removeClass('sco-input-applied');
+</script>
+{% endif %}
+<!-- Coupon unsuccessfully - end -->

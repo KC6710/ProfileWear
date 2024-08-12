@@ -1,0 +1,23 @@
+{% if sections|length %}
+{% for section in sections %}
+{% if section.title %}
+<h3>{{ section.title }}</h3>
+{% endif %}
+<div class="accordion mb-4" id="-{{ module }}-section{{ section.index }}">
+  {% for key, group in section.groups %}
+  <div class="accordion-item">
+      <h2 class="accordion-header" id="header-{{ module }}-{{ section.index }}-{{ group.id }}">
+		<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ module }}-{{ section.index }}-{{ group.id }}" aria-expanded="false" aria-controls="collapseThree">
+        {{ group.title }}
+      </button>
+      </h2>
+    <div id="collapse-{{ module }}-{{ section.index }}-{{ group.id }}" class="accordion-collapse collapse" aria-labelledby="header-{{ module }}-{{ section.index }}-{{ group.id }}" data-bs-parent="#section{{ section.index }}">
+      <div class="accordion-body">
+        {{ group.description }}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+ </div>
+{% endfor %}
+{% endif %}

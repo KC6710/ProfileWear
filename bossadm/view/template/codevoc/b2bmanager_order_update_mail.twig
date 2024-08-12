@@ -1,0 +1,139 @@
+<style>
+body {font-family: 'Trebuchet MS', sans-serif; font-size:12px;font-weight:normal;}
+.container{max-width: 700px; margin:0 auto;}
+.logotype{background:#000;color:#fff;width:75px;height:75px;  line-height: 75px; text-align: center; font-size:11px;}
+.column-title{background:#eee;text-transform:uppercase;padding:15px 5px 15px 15px;font-size:11px}
+.column-detail{border-top:1px solid #eee;border-bottom:1px solid #eee;}
+.column-header{background:#d1eaf0;text-transform:uppercase;padding:15px;font-size:11px;border-right:1px solid #eee;}
+.row{padding:7px 14px;border-bottom:1px solid #eee;}
+.alert{background: #ffd9e8;padding:20px;margin:20px 0;line-height:22px;color:#333}
+.socialmedia{background:#eee;padding:20px; display:inline-block}
+</style>
+<div class="container" style="max-width: 700px; margin:0 auto;width:700px;">
+    <table width="700" style="background:#000;max-width: 700px; margin:0 auto;">
+    <tr>
+      <td width="100%">
+<img src="https://profilewear.se/image/catalog/shop_information/e-mails/pw-logo-white-txt.png" style="height:30px;margin:10px 10px 7px 10px;">
+        <a href="https://profilewear.se" style="float: right; color: #fff; text-decoration: none; margin-top: 15px; margin-right: 15px;">Besök Profilewear.se</a>
+      </td>
+      <td></td>
+    </tr>
+  </table> 
+  <table width="100%" style="text-align:center;background:#d1eaf0;line-height: 20px;">
+    <tr>
+      <td>
+        <br><br>
+        <span style="font-size:22px;">Orderuppdatering #{{order_id}}
+        </span>
+        <br><br>
+      </td>
+    </tr>
+  </table>
+  <table style="background:#f0f7f9;width:100%;">
+    <tr>
+      <td style="padding:20px;" width="50%">
+        <table style=" background:#fbddeb;padding:20px;" width="100%"><tr><td>
+          <img src="https://profilewear.se/image/catalog/shop_information/e-mails/truck.png" width="40"><br>
+          <span style="font-size:16px;">Frakt</span><br><br>
+          <table style="width:100%">
+            <tr>
+              <td style="line-height:20px;">
+                <strong>Fraktmetod:</strong> {{shipping_method}}
+                <br><br>
+                {{shipping_firstname}} {{shipping_lastname}}<br>{{shipping_address_1}} {{shipping_address_2}}<br>{{shipping_city}} {{shipping_postcode}}
+                <br><br>
+                {{email}}<br>
+                {{telephone}}                
+              </td>
+            </tr>
+            </table>
+          </td></tr>
+        </table>
+      </td>
+
+      <td style="padding:20px;" width="50%">
+        <table style="padding:10px;" width="100%"><tr><td>
+          <img src="https://profilewear.se/image/catalog/shop_information/e-mails/card.png" width="40"><br>
+          <span style="font-size:16px;">Betalning</span><br><br>
+          <table style="width:100%">
+            <tr>
+              <td style="line-height:20px;">
+                <strong>Betalmethod:</strong> {{payment_method}}
+                <br><br>
+                Datum: {{date_added}}<br><br>
+                {{payment_firstname}} {{payment_lastname}}<br>{{payment_address_1}} {{payment_address_2}}<br>{{payment_city}} {{payment_postcode}}<br>{{payment_country}}
+              </td>
+            </tr>
+            </table>          
+          </td></tr>
+        </table>
+      </td>      
+    </tr>
+  </table>
+   <table width="100%" style="border-collapse: collapse;border:1px solid #f5f5f3;">
+     <tr>
+       <td width="40%" style="background:#f5f5f3;text-transform:uppercase;padding:15px;font-size:11px;">Artikel</td>
+       <td width="20%" style="background:#f5f5f3;text-transform:uppercase;padding:15px;font-size:11px;"></td>
+       <td width="20%" style="background:#f5f5f3;text-transform:uppercase;padding:15px;font-size:11px;">Pris</td>
+       <td width="20%" style="background:#f5f5f3;text-transform:uppercase;padding:15px;font-size:11px;">Totalt</td>
+     </tr>
+    {% if order_products %}
+	{% for order_product in order_products %}
+     <tr>
+       <td style="padding:7px 14px;border-bottom:1px solid #eee;"><span style="color:#777;font-size:11px;">#{{ order_product.model }}</span><br>{{ order_product.name }}</td>
+       <td style="padding:7px 14px;border-bottom:1px solid #eee;">    
+       {% for options in order_product.option %}
+       {% for product_option_value in options.product_option_value %}
+	   {% if product_option_value.selected =='selected' %}
+            {{product_option_value.name}}              
+            {% if not loop.last %}
+                             |
+              {% endif %}
+       {% endif %}
+	   {% endfor %}
+    {% endfor %}</td>
+       <td style="padding:7px 14px;border-bottom:1px solid #eee;">{{ order_product.quantity }} <span style="color:#777">X</span> {{ order_product.price }} kr</td>
+       <td style="padding:7px 14px;border-bottom:1px solid #eee;">{{ order_product.total }} KR</td>
+     </tr>
+    {% endfor %}
+    {% endif %}
+  </table>
+  <div style="background:#f5f5f3;text-transform:uppercase;padding:15px;text-align:right;font-size:11px;">
+    Sub-total: {{subtotal}} KR / Fraktkostnad: {{shipping}} KR / MOMS 25%: {{tax}} KR<br><br><span style="font-size:14px;">TOTALT: {{total}} KR</span></div>
+  
+  <br>
+
+  <div style="background:#fbddeb;padding:20px;">
+    <span style="font-size:18px">Att tänka på!</span><br><br>
+    <strong>Leveranstid</strong><br>
+Kläder utan profilering/tryck: 5-8 arbetsdagar.<br>
+Vid köp av profilkläder: 10-15 arbetsdagar (brodyr + 5 arbetsdagar).<br><br>
+
+    <strong>Annullera order</strong><br>
+Order kan annulleras inom 12 timmar från lagd order. Detta beror detta på att din order redan har börjat plockas. I dessa fall behöver du först ta emot ordern och därefter returnera den om du har ångrat dig.<br><br>
+    
+    <strong>Avgift för ej uthämtade paket</strong><br>
+För paket som inte hämtas ut från ombud debiterar vi en avgift på 199 kr. Avgiften motsvarar våra faktiska kostnader för returfrakt och hantering. Om du har ångrat dig när paketet har skickats från oss måste du först hämta ut paketet från ditt ombud och sedan skicka tillbaka det till oss.<br><br>
+
+    <strong>Retur/Reklamation</strong><br>
+Alla returer måste anmälas på följande länk <a href="https://profilewear.se/retur-reklamation/" style="color:#000">profilewear.se/retur-reklamation/</a><br> Observera att konsumenten bekostar returfrakten på egen hand vid nyttjande av ångerrätten. Ångerrätten inte inkluderar produkter som fått en personlig prägel, tex i form av profilering (tryck, brodyr etc) enligt kap:2, 11§ i distans- och hemförsäljningslagen.<br><br>
+<strong>Restnotering/Om något är slut<strong><br>
+Vi kontaktar er vid eventuell restnotering och får vi inte återkoppling inom 2 arbetsdagar annulleras er order.      
+    
+  </div>  
+  
+  <br>
+  <div style="background:#feb09c;text-align:center;padding:2px;">
+    <a href="https://www.minapaket.se/"><img src="https://profilewear.se/image/catalog/shop_information/e-mails/minapaket.png"></a>
+  </div>
+  <br>
+  <div style="background:#FDF2C3;padding:30px;font-size:11px;">
+  <img src="https://profilewear.se/image/catalog/shop_information/e-mails/instagram.png" width="40"><br><br>
+    <span style="font-size:18px">Tips & erbjudanden</span><br><br>
+    <a style="color:#000;" href="https://linktr.ee/Profilewear.se">@profilewear.se</a>
+  </div>
+  <br>
+  <div style="background:#fbddeb;text-align:center;">
+      <br><br><small>Swedish Profile Wear AB / Telefon 010-551 88 60 / E-post <a href="mailto:hej@profilewear.se" style="color:#000;">hej@profilewear.se</a><br><span style="color:#000"><?php echo date('Y-m-d h:i A') ?></span></small> <br><br>
+  </div>
+</div>

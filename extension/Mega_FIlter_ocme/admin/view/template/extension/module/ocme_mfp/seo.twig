@@ -1,0 +1,29 @@
+{{ header }}
+
+<div class="ocme-config">
+	<div class="row">
+		<div class="col-xs-2">
+			<div class="nav-tabs-wrapper">
+				<ul class="nav nav-tabs tabs-left">
+					<li class="active">
+						<a href="#tab-attributes" data-toggle="tab">{{ ocme.trans('module::global.text_filter') }}</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-xs-10">
+			<div class="tab-content">
+				<div id="tab-other" class="tab-pane active">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">{{ ocme.trans('module::global.text_url_parameter_name') }}</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="variables[filter_seo_config][url_parameter_name]" value="{{ ocme.variable().store(ocme.request().query('store_id')).get('filter_seo_config.url_parameter_name') }}" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+							
+{{ footer }}

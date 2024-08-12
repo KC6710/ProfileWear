@@ -1,0 +1,247 @@
+{{ header }}{{ column_left }}
+<div id="content">
+ <div class="page-header">
+  <div class="container-fluid">
+  <div class="float-end">
+  <button type="submit" form="form-faq" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-save"></i></button>
+  <a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a></div>
+      	<h1>{{ heading_title }}</h1>
+      	<ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+       </ol>
+      </div>
+     </div>
+    <div class="container-fluid">
+     <div class="card">
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+      <div class="card-body">
+        <form id="form-faq" action="{{ save }}" method="post" data-oc-toggle="ajax">
+		  <div class="row mb-3">
+            <label for="input-name" class="col-sm-2 col-form-label">{{ entry_name }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+              <div id="error-name" class="invalid-feedback"></div>
+            </div>
+          </div>
+		  <div class="row mb-3">
+            <label for="input-status" class="col-sm-2 col-form-label">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <div class="form-check form-switch form-switch-lg">
+                <input type="hidden" name="status" value="0"/>
+                <input type="checkbox" name="status" value="1" id="input-status" class="form-check-input"{% if status %} checked{% endif %}/>
+              </div>
+            </div>
+          </div>
+        <div class="row">
+         <div class="col-sm-2">
+      		<ul class="nav flex-column nav-pills" id="section" role="tablist" aria-orientation="vertical">
+                {% set section_row = 1 %}
+                {% if sections|length %}
+                {% for section in sections %}
+        		<li class="nav-item">
+				<a class="nav-link {% if loop.first %}active{% endif %}" href="#tab-section-{{ section_row }}" data-toggle="pill" data-bs-toggle="tab"><i class="fa fa-minus-circle" onclick="$('a[href=\'#tab-section-{{ section_row }}\']').parent().remove(); $('#tab-section-{{ section_row }}').remove(); $('#section li:first-child a').tab('show');"></i> {{ tab_section }} {{ section_row }}</a>
+				</li>
+                {% set section_row = section_row + 1 %}
+        		{% endfor %}
+                {% endif %}
+        		<li id="section-add"><a class="nav-link" style="cursor:pointer" onclick="addSection();"><i class="fa fa-plus-circle"></i> {{ text_add_section }}</a></li> 
+        	</ul>
+        </div>
+      	<div class="col-sm-10">
+        <div class="tab-content sections-holder">
+        {% set section_row = 1 %}
+      	{% if sections|length %}
+		{# function sortsections($a, $b) {return strcmp($a['sort'], $b['sort']);} usort($sections, 'sortsections'); #}
+        {% for section in sections %}
+		<div class="tab-pane {% if loop.first %}active show{% endif %}" id="tab-section-{{ section_row }}" role="tabpanel">
+		<div class="tab-content">
+          <div class="row mb-3">
+          <label for="input-name" class="col-sm-2 col-form-label">{{ text_section_title }}</label>
+          <div class="col-sm-10">
+		  {% for language in languages %}
+			  <div class="input-group">
+			  <div class="input-group-prepend">
+			  <span class="input-group-text" id="sections[{{ section_row }}][title][{{ language.language_id }}]"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />&nbsp;</span>
+			  </div>
+			  <input type="text" aria-describedby="sections[{{ section_row }}][title][{{ language.language_id }}]" class="form-control" name="sections[{{ section_row }}][title][{{ language.language_id }}]" 
+			  value="{{ section.title[language.language_id] ? section.title[language.language_id] }}" />
+			  </div>
+		  {% endfor %}
+          </div>
+          </div> <!-- row mb-3 -->
+		  <div class="row mb-3">
+            <label for="input-sort" class="col-sm-2 col-form-label">{{ text_sort_order }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="sections[{{ section_row }}][sort]" value="{{ section.sort ? section.sort }}" class="form-control"/>
+            </div>
+          </div>
+          <div id="groups-{{ section_row }}">
+          <div class="card mb-3">
+            <div class="card-header"><span class="card-title">{{ text_groups_heading }}</span></div>
+            <div class="card-body">
+            {% set group_row = 0 %}
+      		{% if section.groups|length %}
+           {# usort($section['groups'], function ($a, $b) { return strcmp($a['sort'], $b['sort']); }); #}
+                {% for group in section.groups %}
+                <div id="group-row-{{ section_row }}-{{ group_row }}" class="group">
+                <div id="language-{{ section_row }}-{{ group_row }}" class="tab-pane">
+                  <ul class="nav nav-tabs" id="language{{ section_row }}">
+                    {% for language in languages %}
+                    <li class="nav-item"><a class="nav-link{% if loop.first %} active{% endif %}" href="#tab-section-{{ section_row }}-{{ group_row }}-{{ language.language_id }}" data-bs-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+                    {% endfor %}
+                  </ul>
+               <div class="tab-content">
+				{% for language in languages %}
+                <div class="tab-pane {% if loop.first %} active{% endif %}" id="tab-section-{{ section_row }}-{{ group_row }}-{{ language.language_id }}">
+                  <div class="row mb-3">
+                  <label class="col-sm-2 col-form-label" for="sections[{{ section_row }}][groups][{{ group_row }}][title][{{ language.language_id }}]">{{ text_input_question }}</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" name="sections[{{ section_row }}][groups][{{ group_row }}][title][{{ language.language_id }}]" id="title-{{ section_row }}-{{ group_row }}-{{ language.language_id }}" value="{{ section.groups[group_row].title[language.language_id] ? section.groups[group_row].title[language.language_id] }}" />	
+                    </div>
+                   </div>
+				  <div class="row mb-3">
+                  <label class="col-sm-2 col-form-label" for="sections[{{ section_row }}][groups][{{ group_row }}][description][{{ language.language_id }}]">{{ text_input_answer }}</label>
+                  <div class="col-sm-10">
+                  <textarea class="form-control custom-control answer" onfocus="enable_editor(this);" name="sections[{{ section_row }}][groups][{{ group_row }}][description][{{ language.language_id }}]" id="description-{{ section_row }}-{{ group_row }}-{{ language.language_id }}">{{ section.groups[group_row].description[language.language_id] ? section.groups[group_row].description[language.language_id] }}</textarea>
+                  </div>
+                 </div>
+                </div>
+                {% endfor %}
+                </div>
+                <div class="row mb-3">
+                <label for="input-sort" class="col-sm-2 col-form-label">{{ text_sort_order }}</label>
+                <div class="col-sm-10">
+                <input class="form-control" name="sections[{{ section_row }}][groups][{{ group_row }}][sort]" value="{{ section.groups[group_row].sort ? section.groups[group_row].sort }}" />
+                </div>
+              </div>
+			  </div>
+                <button type="button" class="btn btn-danger float-end" onclick="removeGroup({{ section_row }}, {{ group_row }});"><span class="fa fa-trash"></span> {{ button_remove }}</button>
+                <div class="clearfix"></div>
+                <hr />
+          		</div> <!-- class group ends -->
+                {% set group_row = group_row + 1 %}
+                {% endfor %} <!-- foreach groups ends -->
+                {% endif %}
+                <div id="group-holder-{{ section_row }}"></div>
+               </div>
+              </div>
+          	</div> <!-- id groups- ends -->
+            <button type="button" class="btn btn-success float-end" onclick="addGroup({{ section_row }});"><span class="fa fa-plus"></span> {{ button_add_group }}</button>
+         </div> <!-- tab-content ends -->
+      	{% set section_row = section_row + 1 %}
+      	</div>
+      	{% endfor %} <!-- foreach sections ends -->
+        {% endif %} <!-- if !empty sections ends -->
+       </div>
+      </div> <!-- col-sm-10 ends -->
+     </form>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+<script type="text/javascript"><!--
+var section_row = {{ section_row }};
+function addSection() {	
+	group_row = 0;
+   	html  = '<div class="tab-pane active" id="tab-section-' + section_row + '" role="tabpanel">';
+	html += '<div class="tab-content">';
+	html += '<div class="row mb-3">';
+	html += '<label for="input-name" class="col-sm-2 col-form-label">{{ text_section_title }}</label>';
+	html += '<div class="col-sm-10">';
+	{% for language in languages %}
+	html += '<div class="input-group">';
+	html += '<div class="input-group-prepend">';
+    html += '<span class="input-group-text"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />&nbsp;</span>';
+	html += '</div>';
+    html += '<input type="text" class="form-control" name="sections[' + section_row + '][title][{{ language.language_id }}]" />';
+	html += '</div>';
+	{% endfor %}
+	html += '</div>';
+	html += '</div>';
+	html += '<div class="row mb-3">';
+	html += '<label for="input-sort" class="col-sm-2 col-form-label">{{ text_sort_order }}</label>';
+	html += '<div class="col-sm-10">';
+	html += '<input type="text" class="form-control" name="sections[' + section_row + '][sort]" value="' + section_row + '" />';
+	html += '</div>';
+	html += '</div>';
+    html += '<div id="groups-' + section_row + '">';
+	html += '<div class="card mb-3">';
+  	html += '<div class="card-header"><span class="card-title">{{ text_groups_heading }}</span></div>';
+    html += '<div class="card-body">';
+	//groups as group
+	html += '<div id="group-holder-' + section_row + '"></div>';
+	html += '</div>';
+	html += '</div>';
+	html += '</div>';
+    html += '<button type="button" class="btn btn-success float-end" onclick="addGroup(' + section_row + ');"><span class="fa fa-plus"></span> {{ button_add_group }}</button>';
+	html += '</div>';
+	html += '</div>';
+	$('.tab-content.sections-holder').append(html);
+	$('#section-add').before('<li><a class="nav-link" data-bs-toggle="tab" href="#tab-section-' + section_row + '" data-bs-toggle="tab"><i class="fa fa-minus-circle" onclick="$(\'a[href=\\\'#tab-section-' + section_row + '\\\']\').parent().remove(); $(\'#tab-section-' + section_row + '\').remove(); $(\'#section li:first-child a\').tab(\'show\');"></i> {{ tab_section }} ' + section_row + '</a></li>');
+	$('#section a[href=\'#tab-section-' + section_row + '\']').tab('show');
+	section_row++;
+}
+//--></script>
+
+<script type="text/javascript"><!--
+function addGroup( section_row) {
+	group_row = $('#tab-section-' + section_row + ' .group').length;
+	html  = '<div id="group-row-' + section_row + '-' + group_row + '" class="group">';
+	html += '<div id="language-' + section_row + '-' + group_row + '" class="tab-pane">';
+	html += '<ul class="nav nav-tabs" id="language-' + section_row + '">';
+	{% for language in languages %}
+    html += '  <li class="nav-item"><a class="nav-link" href="#tab-section-' + section_row + '-' + group_row + '-{{ language.language_id }}" data-bs-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>';
+	{% endfor %}
+	html += '</ul>';
+	html += '<div class="tab-content">';
+	{% for language in languages %}
+	html += '<div class="tab-pane" id="tab-section-' + section_row + '-' + group_row + '-{{ language.language_id }}">';
+	html += '<div class="row mb-3">';
+	html += '<label class="col-sm-2 col-form-label">{{ text_input_question }}</label>';
+	html += '<div class="col-sm-10">';
+	html += '<input type="text" name="sections[' + section_row + '][groups][' + group_row + '][title][{{ language.language_id }}]" class="form-control"/>';
+	html += '</div>';
+	html += '</div>';
+	html += '<div class="row mb-3">';
+	html += '<label class="col-sm-2 col-form-label">{{ text_input_answer }}</label>';
+	html += '<div class="col-sm-10">';
+	html += '<textarea onfocus="enable_editor(this);" name="sections[' + section_row + '][groups][' + group_row + '][description][{{ language.language_id }}]" id="description-' + section_row + '-' + group_row + '-{{ language.language_id }}" class="answer custom-control form-control"></textarea>';
+	html += '</div>';
+	html += '</div>';
+	html += '</div>';
+	{% endfor %}
+	html += '</div>';
+	html += '<div class="row mb-3">';
+	html += '<label class="col-sm-2 col-form-label">{{ text_sort_order }}</label>';
+	html += '<div class="col-sm-10">';
+	html += '<input type="text" class="form-control" name="sections[' + section_row + '][groups][' + group_row + '][sort]" value="' + (group_row + 1) + '" />';
+	html += '</div>';
+	html += '</div>';
+	html += '</div>';
+	html += '<button type="button" class="btn btn-danger float-end" onclick="removeGroup('+ section_row +',' + group_row +');"><span class="fa fa-trash"></span> {{ button_remove }}</button>';
+	html += '<div class="clearfix"></div>';
+	html += '<hr />';
+	html += '</div>';
+	$('#group-holder-' + section_row ).before(html);
+	$('.tab-pane li:first-child a').tab('show');
+	group_row++;
+}
+	
+function removeGroup(section_row, group_row){
+	$('#group-row-' + section_row + '-' + group_row).remove();
+}
+//--></script>
+
+<script type="text/javascript"><!--
+function enable_editor(textarea) {
+$(textarea).ckeditor({
+language:'{{ ckeditor }}'
+});
+}
+</script>
+<script type="text/javascript" src="view/javascript/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="view/javascript/ckeditor/adapters/jquery.js"></script>
+{{ footer }}

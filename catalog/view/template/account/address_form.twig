@@ -1,0 +1,80 @@
+
+<div class="offcanvas offcanvas-end main-drawer new_address_drawer" tabindex="-1" id="offcanvasRightaddNewAddress" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header drawer-header">
+    <h2>{{ text_address_add }}</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body pt-0 p-5">
+    <div class="form-container">
+      <form id="form-address" action="{{ save }}" method="post" data-oc-toggle="ajax">
+      <div class="row">
+        <div class="col-12 mb-3">
+          <label for="input-firstname" class="form-label input-label">{{ entry_firstname }}
+            <span class="input-required">*</span></label>
+          <input class="form-control input-default" type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname">
+        </div>
+        <div class="col-12 mb-3">
+          <label for="input-lastname" class="form-label input-label">{{ entry_lastname }} <span class="input-required">*</span></label>
+          <input  type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname" class="form-control input-default">
+        </div>
+        <div class="col-12 mb-3">
+          <label for="input-company" class="form-label input-label">{{ entry_company }}</label>
+          <input type="text" name="company" value="{{ company }}" placeholder="{{ entry_company }}" id="input-company" class="form-control input-default">
+        </div>
+        <div class="col-12 mb-3">
+          <label for="input-address-1" class="form-label input-label">{{ entry_address_1 }} <span class="input-required">*</span></label>
+          <input type="text" name="address_1" value="{{ address_1 }}" placeholder="{{ entry_address_1 }}" id="input-address-1"  class="form-control input-default">
+        </div>
+        <div class="col-12 mb-3">
+          <label for="input-address-2" class="form-label input-label">{{ entry_address_2 }}</label>
+          <input type="text" name="address_2" value="{{ address_2 }}" placeholder="{{ entry_address_2 }}" id="input-address-2"  class="form-control input-default">
+        </div>
+        <div class="col-12 mb-3">
+          <label for="input-city" class="form-label input-label">{{ entry_city }} <span class="input-required">*</span></label>
+          <input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city }}" id="input-city"  class="form-control input-default">
+        </div>
+        <div class="col-12 mb-3">
+          <label for="input-postcode" class="form-label input-label">{{ entry_postcode }} <span class="input-required">*</span></label>
+          <input type="text" name="postcode" value="{{ city }}" placeholder="{{ entry_postcode }}" id="input-postcode"  class="form-control input-default">
+        </div>
+        <div class="col-12 mb-3">
+          <label for="input-country" class="form-label input-label">{{ entry_country }} <span class="input-required">*</span></label>
+          <select name="country_id" id="input-country" class="form-select">
+            <option value="">{{ text_select }}</option>
+            {% for country in countries %}
+              <option value="{{ country.country_id }}"{% if country.country_id == country_id %} selected{% endif %}>{{ country.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12 mb-3">
+          <label for="input-zone" class="form-label input-label">{{ entry_zone }} <span class="input-required">*</span></label>
+          <select name="zone_id" id="input-zone" class="form-select">
+            <option value="">{{ text_select }}</option>
+            {% for country in countries %}
+              <option value="{{ country.country_id }}"{% if country.country_id == country_id %} selected{% endif %}>{{ country.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12 mb-3">
+          <label class="form-label input-label">{{ entry_default }}</label>
+          <div class="col-sm-10">
+            <div class="form-check-inline">
+              <input type="radio" name="default" value="1" id="input-default-yes" class="form-check-input"{% if default %} checked{% endif %}/> <label for="input-default-yes" class="form-check-label">{{ text_yes }}</label>
+            </div>
+            <div class="form-check-inline">
+              <input type="radio" name="default" value="0" id="input-default-no" class="form-check-input"{% if not default %} checked{% endif %}/> <label for="input-default-no" class="form-check-label">{{ text_no }}</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 mt-4">
+          <button type="submit" class="primaryButton">
+            Save address
+            <img src="image/arrow_right_white.svg" alt="Arrow">
+          </button>
+        </div>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+

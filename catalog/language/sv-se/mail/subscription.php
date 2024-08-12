@@ -1,0 +1,34 @@
+<?php
+// Text
+$_['text_subject'] = '%s - Prenumeration %s';
+$_['text_greeting'] = 'Tack för ditt intresse för %s produkt. Din prenumerationsförfrågan har mottagits och kommer att behandlas när betalningen har bekräftats.';
+$_['text_link'] = 'För att se din prenumeration, klicka på länken nedan:';
+$_['text_promotion'] = 'Framgång: En reklamfunktion har lagts till med denna prenumeration!';
+$_['text_subscription_trial'] = '%s var %d %s(s) för %d betalning(ar) sedan ';
+$_['text_subscription_duration'] = '%s varje %d %s(s) för %d betalning(s)';
+$_['text_subscription_cancel'] = '%s var %d %s(s) tills den avbryts';
+$_['text_subscription_detail'] = 'Prenumerationsinformation';
+$_['text_instruction'] = 'Instruktioner';
+$_['text_orders_id'] = 'Beställnings-ID:';
+$_['text_date_added'] = 'Datum tillagt:';
+$_['text_order_status'] = 'Beställningsstatus:';
+$_['text_payment_method'] = 'Betalningsmetod:';
+$_['text_payment_address'] = 'Betalningsadress';
+$_['text_email'] = 'E-post:';
+$_['text_telephone'] = 'Telefon:';
+$_['text_ip'] = 'IP-adress:';
+$_['text_products'] = 'Produkter';
+$_['text_product'] = 'Produkt';
+$_['text_model'] = 'Modell';
+$_['text_quantity'] = 'Mängd';
+$_['text_price'] = 'Pris';
+$_['text_order_total'] = 'Beställningssumma';
+$_['text_total'] = 'Totalt';
+$_['text_comment'] = 'Kommentarerna för din prenumeration är:';
+$_['text_description'] = 'Beskrivning';
+$_['text_day'] = 'dag';
+$_['text_week'] = 'vecka';
+$_['text_semi_month'] = 'halvmånad';
+$_['text_month'] = 'månad';
+$_['text_year'] = 'år';
+$_['text_footer'] = 'Svara på detta e-postmeddelande om du har några frågor.';

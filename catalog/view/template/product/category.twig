@@ -1,0 +1,269 @@
+{{ header }}
+<main id="product-category" class="main-body searchresults-main">
+  <div class="product-header">
+    {% for breadcrumb in breadcrumbs %}
+      
+      {% if loop.last %}
+        <p class="item">{{ breadcrumb.text }}</p>
+      {% else %}
+        <a href="{{ breadcrumb.href }}"><h6 class="item active">{{ breadcrumb.text }}</h6></a>
+        <span class="bg-pink"></span>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+
+  <div class="main-banner mb-2 row" style="background: {% if category_color %}{{category_color}}!important;{% else %}#EEE!important;{% endif %}">
+    {% if thumb %}
+        <div class="col-4  d-none d-lg-block cat-main-img">
+          <img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}"/>
+        </div>
+        <div class="inner-desc col-8" style="color:{{category_text_color}}">
+          <h1>{{ heading_title }}</h1>
+          <div class="cat-desc-holder">
+          {% if description %}
+          {% set trimmedDescription = description | slice(0, 300) ~ (description|length > 300 ? '...' : '') %}
+          <p class="mb-4">
+              {{ trimmedDescription }}
+          </p>
+          {% endif %}
+          <button
+            class="primaryButtonWhite d-none d-lg-flex {% if category_text_color == '#000' %} cat-dark-btn{% endif %}"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
+          >
+            Läs mer
+          </button>
+          <button
+            class="primaryButton d-block d-lg-none"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
+          >
+            Läs mer
+          </button>
+          </div><!--<div class="cat-desc-holder">-->
+        </div>
+    {% else %}
+          {% if description %}
+              <div class="inner-desc col-12 cat-no-img" style="color:{% if category_color %}{{category_text_color}}!important;{% else %}#000!important;{% endif %}">
+              <h1>{{ heading_title }}</h1>
+              <div class="cat-desc-holder">
+              {% if description %}
+                {% set trimmedDescription = description | slice(0, 300) ~ (description|length > 300 ? '...' : '') %}
+                <p class="mb-4">
+                    {{ trimmedDescription }}
+                </p>
+              {% endif %}
+              <button
+                class="primaryButtonWhite d-none d-lg-flex {% if category_text_color == '#000' %} cat-dark-btn{% endif %}"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+              >
+                Läs mer
+              </button>
+              <button
+                class="primaryButton d-block d-lg-none"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+              >
+                Läs mer
+              </button>
+              </div><!--<div class="cat-desc-holder">-->
+              </div>
+        {% else %}
+            <div class="col-12" style="color:{% if category_color %}{{category_text_color}}!important;{% else %}#000!important;{% endif %}">
+            <h1 style="text-align:center">{{ heading_title }}</h1>
+            </div>
+        {% endif %}
+        </div>
+    {% endif %}
+  </div>
+  
+{% if categories %}
+      <div class="row gy-2 web">
+      {% for category in categories %}
+        <div class="col-12 col-md-6 col-lg-3 p-2 featured-category-img" style="background-image: url({{category.image}}); height:300px;">
+          <div class="profile-cards" onclick="window.location.href='{{category.href}}'"style="padding-top:200px;">
+            <div class="banner-btns">
+              <p>{{category.name}}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}  
+      </div>
+{% endif %}
+  <div class="bar d-none d-lg-flex mb-4">
+    <div class="d-flex align-items-center">
+      
+      <h5>{{ heading_title }}</h5>
+      <p>{{ product_total }} produkter</p>
+    </div>
+    <div class="sort-div">
+      <p>Sortera:</p>
+      <select class="form-select" id="input-sort" style="border: none" aria-label="Default select example" onchange="location = this.value;">
+        {% for sorts in sorts %}
+          <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="bar-mobile d-lg-none mb-4">
+    <div class="d-flex align-items-center w-30" style="border-right: 1px solid #cdcdcd">
+      <p class="justify-content-center">250 products</p>
+    </div>
+    <div class="sort-div w-30" style="border-left: 1px solid #cdcdcd">
+      <select class="form-select" id="input-sort" style="border: none" aria-label="Default select example" onchange="location = this.value;">
+        {% for sorts in sorts %}
+          <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="row">{{ column_left }}
+    <div id="content" class="col-12 col-lg-9">{{content_top}}
+      {% if products %}
+        <div id="product-list" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4">
+          {% for product in products %}
+            <div class="col-6 col-md-4 col-lg-4 col-xl-3 px-2">{{ product }}</div>
+          {% endfor %}
+        </div>
+        <div class="row">
+          <div class="col-sm-6 text-start">{{ pagination }}</div>
+          <div class="col-sm-6 text-end">{{ results }}</div>
+        </div>
+      {% endif %}
+      {% if not categories and not products %}
+        <p>{{ text_no_results }}</p>
+        <div class="text-end"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+      {% endif %}
+      
+    </div>
+    {{ column_right }}
+  </div>
+  </div>
+
+  <div class="modal more-info-modal" id="staticBackdrop" data-bs-keyboard="true" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-modal="true" role="dialog" style="display: none;">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <button style="font-size: 10px; display: flex; margin-left: auto" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-wrapper">
+              <img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="categ-img"/>
+              <div class="content">
+                <h5>{{ heading_title }}</h5>
+                {{ description }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</main>
+
+<div class="gap-div"></div>
+ {{ content_bottom }}
+<div class="gap-div"></div>
+{{ footer }}
+<style>
+.category-bottom-desc.short-content {
+    overflow: hidden;
+    max-height: 250px; /* Adjust the height as per your needs */
+    transition: max-height 1s ease-out; /* Optional: Add a smooth transition effect */
+}
+
+.category-bottom-desc {
+    max-height: none;
+    overflow: visible;
+}
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0), rgb(255 255 255));
+    z-index: 1000;
+}
+.category-bottom-desc {
+    position: relative; /* Ensure relative positioning for absolute overlay to work */
+}
+.category-bottom-desc-btn{
+  display: block;
+    margin: 0 auto;
+    position: relative;
+    top: -24px;
+    z-index: 9999;
+}
+</style>
+
+<script>
+    const wishlistForms = document.querySelectorAll('.wishlist-form');
+
+    wishlistForms.forEach((wishlistForm) => {
+        wishlistForm.addEventListener('submit', function (event) {
+            {# event.preventDefault(); // Prevent the form submission #}
+            
+            // Perform your AJAX request or form submission logic here
+
+            const wishlistButton = wishlistForm.querySelector('.wishlist-button');
+            const wishlistImage = wishlistButton.querySelector('img');
+
+            const addToWishlistImage = 'image/wishlist.svg';
+            const removeFromWishlistImage = 'image/wishlist1.svg';
+
+            if (wishlistButton.contains(wishlistImage) && wishlistImage.src.includes(addToWishlistImage)) {
+                // If the image is the "Add to wishlist" image, change to "Remove from wishlist" image
+                wishlistImage.src = removeFromWishlistImage;
+                wishlistImage.alt = 'Remove from wishlist';
+                wishlistButton.title = '{{ button_remove }}';
+                wishlistButton.formAction = wishlistButton.dataset.addwishlist_url;
+            } else {
+                // If the image is the "Remove from wishlist" image, change to "Add to wishlist" image
+                wishlistImage.src = addToWishlistImage;
+                wishlistImage.alt = 'Add to wishlist';
+                wishlistButton.title = '{{ button_wishlist }}';
+                wishlistButton.formAction = wishlistButton.dataset.remove_url;
+            }
+        });
+    });
+
+     /*Category hide content initial*/    
+    function showOverlayOnElement() {
+        var overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        var targetElement = document.querySelector('.category-bottom-desc');
+        targetElement.appendChild(overlay);
+    }
+
+    function hideOverlay() {
+    var overlay = document.querySelector('.overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var contentContainer = document.querySelector('.category-bottom-desc');
+        var readMoreButton = document.createElement('button');
+        readMoreButton.classList = 'primaryButton category-bottom-desc-btn';
+        readMoreButton.textContent = 'Läs mer';
+        readMoreButton.style.marginTop = '5px'; // Optional: Add some space between the button and the content
+
+        contentContainer.classList.add('short-content');
+        contentContainer.parentNode.appendChild(readMoreButton);
+        readMoreButton.addEventListener('click', function() {
+            if (contentContainer.classList.contains('short-content')) {
+                // Show full content
+                contentContainer.classList.remove('short-content');
+                readMoreButton.style.display = 'none'; // Hide the button after revealing full content
+            }
+            hideOverlay();
+        });
+    showOverlayOnElement();    
+    });
+
+
+</script>

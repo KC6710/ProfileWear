@@ -1,0 +1,28 @@
+{{ header }}
+
+<div class="ocme-about">
+	<table class="table">
+		<thead>
+			<tr>
+				<td class="text-center">
+					<div class="ocme-logo" style="margin-top: 0">
+						MEGA FILTER <span>PACK</span>
+					</div>
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td class="text-center"><br />{{ ocme.trans('module::global.text_update_is_in_progress') }}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+			
+<script type="text/javascript">
+	jQuery.post(ocme_fix_url('{{ update_action }}'), {}, function( response ){
+		document.location = ocme_fix_url( response.redirect );
+	});
+</script>
+
+{{ footer }}

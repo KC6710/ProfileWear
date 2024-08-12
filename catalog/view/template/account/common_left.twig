@@ -1,0 +1,36 @@
+<div class="left">
+	<div class="tabs-container">
+		<a href="{{ edit }}" class="tab-item">
+			<h4>My Profile</h4>
+			<p>Manage your personal Information</p>
+		</a>
+		<a href="{{ order }}" class="tab-item">
+			<h4>Order History</h4>
+			<p>View and manage your past orders</p>
+		</a>
+		<a href="{{ address }}" class="tab-item">
+			<h4>Address Book</h4>
+			<p>View and manage your past orders</p>
+		</a>
+        {% if logged %}
+            <a href="{{ logout }}" class="tab-item">
+                <h4>Log Out</h4>
+                <p>Log out of your account</p>
+            </a>
+        {% endif %}
+	</div>
+</div>
+<script>
+
+window.onload = function() {
+	const tabs = document.querySelectorAll('.tab-item');
+	const currentUrl = window.location.href;
+
+	tabs.forEach((tab) => {
+		if (tab.href === currentUrl) {
+			tab.classList.add('activeTab');
+		}
+	});
+}
+
+</script>

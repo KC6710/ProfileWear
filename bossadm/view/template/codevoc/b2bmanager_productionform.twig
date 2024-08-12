@@ -1,0 +1,500 @@
+{{ header }}
+<link href="view/stylesheet/pw4_bootstrap_3.css" rel="stylesheet" type="text/css"/>
+<link href="view/stylesheet/pw4_style.css" rel="stylesheet" type="text/css"/>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-category" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid d-flex">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="col-sm-8 px-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_form }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-category" class="form-horizontal">
+          <!-- addon point 5-->
+			<input type="hidden" name="type" value="{{ type }}" />
+			<!-- addon point 5-->
+		  	<div class="row form-group required">
+            <div class="col-sm-2">
+              <label class="control-label" for="input-name">{{ entry_name }}</label>
+           </div> 
+              <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+				 {% if error_name %}
+                  <div class="text-danger">{{ error_name }}</div>
+                  {% endif %}
+			   </div>
+            </div>
+        	<div class="row form-group required">
+              <label class="col-sm-2 control-label" for="input-order-date">{{ entry_order_date }}</label>
+              <div class="col-sm-10">
+               		 <div class="input-group order_date">
+                      <input type="text" name="order_date" value="{{ order_date }}" placeholder="{{ entry_order_date }}" data-date-format="YYYY-MM-DD" id="input-order-date" class="form-control date"/> 
+                      <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span></div>
+				 {% if error_order_date %}
+                  <div class="text-danger">{{ error_order_date }}</div>
+                  {% endif %}
+			   </div>
+            </div>
+			<div class="row form-group">
+              <label class="col-sm-2 control-label" for="input-order-id">{{ entry_order_id }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="order_id" value="{{ order_id }}" placeholder="{{ entry_order_id }}" id="input-order-id" class="form-control" />
+				 {% if error_order_id %}
+                  <div class="text-danger">{{ error_order_id }}</div>
+                  {% endif %}
+			   </div>
+            </div>
+			<div class="row form-group required">
+              <label class="col-sm-2 control-label" for="input-delivery-date">{{ entry_delivery_date }}</label>
+              <div class="col-sm-10">
+                 <div class="input-group delivery_date">
+                                <input type="text" name="delivery_date" value="{{ delivery_date }}" placeholder="{{ entry_delivery_date }}" data-date-format="YYYY-MM-DD" id="input-delivery-date" class="form-control date"/> <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                            </span></div>
+
+				 {% if error_delivery_date %}
+                  <div class="text-danger">{{ error_delivery_date }}</div>
+                  {% endif %}
+			   </div>
+            </div>
+
+      <div class="row form-group required">
+          <label class="col-sm-2 control-label" for="input-production-date">{{ entry_production_date }}</label>
+          <div class="col-sm-10">
+              <div class="input-group production_date">
+                  <input type="text" name="production_date" value="{{ production_date }}" placeholder="{{ entry_production_date }}" data-date-format="YYYY-MM-DD" id="input-production-date" class="form-control date"/> <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                    </span>
+              </div>
+				      {% if error_production_date %}
+                <div class="text-danger">{{ error_production_date }}</div>
+              {% endif %}
+			   </div>
+      </div>
+      <div class="row form-group required">
+          <label class="col-sm-2 control-label" for="input-duration">{{ entry_duration }}</label>
+          <div class="col-sm-10">
+              <input type="text" name="duration" value="{{ duration }}" id="input-duration" class="form-control" />
+              {% if error_duration %}
+              <div class="text-danger">{{ error_duration }}</div>
+              {% endif %}
+          </div>
+      </div>
+			<div class="row form-group required">
+              <label class="col-sm-2 control-label" for="input-supplier">{{ entry_supplier }}</label>
+              <div class="col-sm-10">
+         		 <select name="suppliers[]" id="input-supplier_id" class="form-control" multiple>
+			    {# <option value="" selected="selected">{{ text_select }}</option> #}
+				 {% for supplier in suppliers %}
+                      {% if supplier.supplier_id in production_suppliers %}
+                        <option value="{{ supplier.supplier_id }}" selected="selected">{{ supplier.name }}</option>
+                      {% else %}
+						<option value="{{ supplier.supplier_id }}">{{ supplier.name }}</option>
+						{% endif %}
+                    {% endfor %}
+				</select>
+					 {% if error_suppliers %}
+                  <div class="text-danger">{{ error_suppliers }}</div>
+                  {% endif %}
+			   </div>
+            </div>
+			<div class="row form-group required">
+              <label class="col-sm-2 control-label" for="input-method">{{ entry_method }}</label>
+              <div class="col-sm-10">
+               <select name="methods[]" id="input-method_id" class="form-control" multiple>
+			    {# <option value="" selected="selected">{{ text_select }}</option> #}
+				 {% for method in methods %}
+                      {% if method.method_id in production_methods %}
+                        <option value="{{ method.method_id }}" selected="selected">{{ method.name }}</option>
+                      {% else %}
+						<option value="{{ method.method_id }}">{{ method.name }}</option>
+						{% endif %}
+                    {% endfor %}
+				</select>
+				 {% if error_methods %}
+                  <div class="text-danger">{{ error_methods }}</div>
+                  {% endif %}
+			   </div>
+            </div>
+			<div class="row form-group">
+              <label class="col-sm-2 control-label" for="input-item-arrive">{{ entry_item_arrive }}</label>
+              <div class="col-sm-10">
+                 <select name="item_arrival" id="input-item-arrival" class="form-control">
+				 	 <option value="" selected="selected">{{ text_select }}</option>
+                     {% if item_arrival=='Yes' %}
+					  <option value="Yes" selected="selected">{{ text_yes }}</option>
+                      <option value="No">{{ text_no }}</option>
+					  {% elseif item_arrival=='No' %}
+					  <option value="Yes">{{ text_yes }}</option>
+                      <option value="No" selected="selected">{{ text_no }}</option>
+					  {% else  %}
+					  <option value="Yes">{{ text_yes }}</option>
+                      <option value="No">{{ text_no }}</option>
+					 {% endif %}
+				  </select>
+
+			   </div>
+            </div>
+			<div class="row form-group">
+              <label class="col-sm-2 control-label" for="input-print-arrive">{{ entry_print_arrive }}</label>
+              <div class="col-sm-10">
+                 <select name="print_arrival" id="input-print_arrival" class="form-control">
+				 	 <option value="">{{ text_select }}</option>
+                     {% if print_arrival=='Yes' %}
+					  <option value="Yes" selected="selected">{{ text_yes }}</option>
+                      <option value="No">{{ text_no }}</option>
+					  {% elseif print_arrival=='No' %}
+					  <option value="Yes">{{ text_yes }}</option>
+                      <option value="No" selected="selected">{{ text_no }}</option>
+					  {% else  %}
+					  <option value="Yes">{{ text_yes }}</option>
+                      <option value="No">{{ text_no }}</option>
+					 {% endif %}
+				  </select>
+			   </div>
+            </div>
+			<div class="row form-group required">
+              <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+              <div class="col-sm-10">
+				 <select name="status" id="input-status" class="form-control">
+                   {% for statusname in allstatus %}
+                      {% if statusname == status %}
+						  <option value="{{ statusname }}" selected="selected">{{ statusname }}</option>
+						 {% else %}
+							<option value="{{ statusname }}">{{ statusname }}</option>
+						 {% endif %}
+                    {% endfor %}
+			    </select>
+				 {% if error_status %}
+                  <div class="text-danger">{{ error_status }}</div>
+                  {% endif %}
+			   </div>
+            </div>
+			<div class="row form-group">
+              <label class="col-sm-2 control-label" for="input-description">{{ entry_description }}</label>
+              <div class="col-sm-10">
+                <textarea style="height:200px" name="description" placeholder="{{ entry_description }}" id="input-description"  class="form-control">{{ description }}</textarea>
+
+			   </div>
+            </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-file">Korrektur</label>
+            <div class="col-sm-10">
+                <input type="text" name="file" value="{{ file }}" placeholder="Ange Google drive länk till korrektur" id="input-file" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-attention">{{ entry_attention }}</label>
+            <div class="col-sm-10">
+                <input type="text" name="attention" value="{{ attention }}" placeholder="{{ entry_attention }}" id="input-attention" class="form-control" />
+            </div>
+        </div>
+		</form>
+      </div>
+    </div>    
+    </div>
+<div id="vue-app" class="col-sm-4">
+<div >
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-calculator"></i> Produktionstid</h3>
+    </div>
+    <div class="panel-body dark-section">
+
+      <div class="calc-column">
+        <label>Antal</label>
+        <input type="number" name="" value="" placeholder="" id="" class="form-control" v-model.number="form.amount" />
+      </div><!-- calc-column -->
+
+      <div class="calc-column">
+        <label>Svårighetsgrad</label>
+        <select class="form-control" v-model.number="form.difficulty">
+          <option value="0.07">Enkel (alla plagg)</option>
+          <option value="0.13">Mellan (pikéer, skjortor)</option>
+          <option value="0.17">Svåt (ärm, luva, fickor)</option>
+        </select>
+      </div><!-- calc-column -->
+
+      <div class="calc-column">
+        <div class="form-group pt-0">
+          <label>Värmningstid</label>
+          <div class="input-group">
+            <input type="number" class="form-control" v-model.number="form.print_delay" id="" value="0.23">
+            <div class="input-group-addon">min</div>
+          </div>
+        </div>
+      </div><!-- calc-column -->
+      <div class="clear-div"></div>
+      <div class="calc-column">
+        <div class="form-group pt-0">
+          <label>Placering</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="" v-model.number="form.print_adjustments" value="0.10">
+            <div class="input-group-addon">min</div>
+          </div>
+        </div>
+      </div><!-- calc-column -->
+
+      <div class="calc-column">
+        <div class="form-group pt-0">
+          <label>Förberedning</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="" v-model.number="form.preparation" value="0.10">
+            <div class="input-group-addon">min</div>
+          </div>
+        </div>
+      </div><!-- calc-column -->
+
+      <div class="calc-column">
+        <button class="form-control btn-add-to-count" @click="addToCount()"><i class="fa fa-check"></i> Lägg till</button>
+      </div><!-- calc-column -->
+
+      <div class="clear-div"></div>
+
+      <div class="hours"><span class="total-hours">${time_for_production}</span><span>Timmar</span></div>
+
+
+  </div>
+</div>
+</div>
+
+<div class="col-sm-12" v-if="counts.length > 0">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-calculator"></i> Kalkylerad tid</h3>
+    </div>
+    <div class="panel-body dark-section">
+    <div class="col-sm-6">
+      <ul class="calculated-totals">
+        <li v-for="(item, index) in counts">Beräkning ${index +1} <span>${item}/t.</span><button type="button" class="btn btn-link" @click="removeCount(index)"><i class="fa fa-trash"></i></button></li>
+      </ul>
+    </div>
+    <div class="col-sm-6">
+      <label>Total tid</label><br>
+      <div class="total-count-hours"><span class="total-count-summary">${total_count}</span><span>Timmar</span></div>
+      <br>
+      <button class="form-control" type="button" @click="addToDuration">Lägg in i produktion</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-sm-12">
+  <div class="panel panel-default dark-section">
+    <div class="panel-heading dark-section">
+      <h3 class="panel-title"><i class="fa fa-shopping-cart"></i> Order artiklar</h3>
+    </div>
+    <div class="panel-body dark-section">
+
+<table class="table table-bordered">
+<tr>
+  <td width="10%"><input class="form-check-input" type="checkbox" v-model="select_all"></td>
+  <td>Artikel</td>
+  <td width="10%">Antal</td>
+</tr>
+
+<tr v-for="article in articles">
+  <td><input class="form-check-input" type="checkbox" v-model="checkedArticles" :value="article"></td>
+  <td>
+    ${article.name}
+    ( <span v-for="option in article.option">${ option.value }&nbsp;</span>)
+  </td>
+  <td>${ article.quantity }</td>
+</tr>
+<tr v-if="checkedArticles.length > 0">
+<td colspan="3">
+  <span>Total antal artiklar: <b> ${checked_articles_quantity} </b></span>
+  <button type="button" class="form-control" @click="addToAmount">Lägg till i kalkylatorn</button>
+</td>
+</tr>
+</table>
+
+  </div>
+</div>
+</div>
+</div>
+
+
+
+
+<style>
+
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    background: #2f343e;
+    border: 1px solid #616974;
+}
+hr{border-color:#454c56}
+.btn-add-to-count{margin-top:22px;}
+.pt-0{padding-top:0}
+.clear-div{border-bottom:1px solid #454c56; margin:0 0px 12px 0px;clear:both;}
+.calc-column{width:30%; float:left;margin-right:5px;}
+.dark-section{background:#1c2125}
+ul.calculated-totals {margin:0;padding:0;list-style:none;}
+ul.calculated-totals li {line-height:35px;}
+ul.calculated-totals li span{margin:0 10px;color: #adbac6;
+    background-color: #373e47;
+    border: 1px solid #454c56;padding:4px;border-radius:2px;}
+.hours{width:132px;margin: 10px 0 0 0;}
+.total-hours{background:green;padding:10px; text-align:center;font-size:22px;width:80px;display: inline-block;}
+.hours span:nth-child(2) {float:right;padding: 17px 0 0 0;}
+.total-count-hours{width:132px;margin: 10px 0 0 0;}
+.total-count-summary{background:green;padding:5px; text-align:center;font-size:18px;width:80px;display: inline-block;}
+.total-count-hours span:nth-child(2) {float:right;padding: 5px 0 0 0;}
+#container{background:#22272e;color:#adbac7}
+.page-header h1{color:#adbac7;text-shadow:none}
+.panel-default .panel-heading{color:#4c4d5a;border-color:#444c56;background:transparent!important;text-shadow:none}
+.panel{background-color:transparent;border:1px solid transparent;-webkit-box-shadow:none;box-shadow:none}
+.panel-default{border:1px solid #444c56;border-top:1px solid #444c56}
+.table-bordered{border:1px solid #444c56}
+.table-bordered > thead > tr > th,.table-bordered > tbody > tr > th,.table-bordered > tfoot > tr > th,.table-bordered > thead > tr > td,.table-bordered > tbody > tr > td,.table-bordered > tfoot > tr > td{border:1px solid #444c56}
+.table-hover > tbody > tr:hover{background-color:#2c333b}
+.panel-heading h3{color:#adbac7}
+.btn-primary{color:#adbac7;background-color:#373e47;border-color:#444c56}
+.btn-primary:hover{color:#adbac7;background-color:#373e47;border-color:#4c4d5a}
+.form-group + .form-group{border-top:1px solid #444c56}
+.form-control{color:#adbac7;background-color:transparent;border:1px solid #444c56}
+label{font-weight:lighter}
+.breadcrumb > li{display:inline-block;text-shadow:none}
+.breadcrumb li a{color:#adbac7}
+.page-header{border-bottom:1px solid #444c56}
+.input-group-addon {
+    color: #adbac6;
+    background-color: #373e47;
+    border: 1px solid #454c56;
+}
+
+</style>
+
+  </div>
+</div>
+ <script type="text/javascript"><!--
+  $('.order_date').datetimepicker({
+			  language: '{{ datepicker }}',
+			  pickTime: false
+		  });
+
+      $('.production_date').datetimepicker({
+			  language: '{{ datepicker }}',
+			  pickTime: false
+		  });
+
+		    $('.delivery_date').datetimepicker({
+          {% if name|length %}
+            defaultDate: moment().add(14, 'days'),
+            minDate: moment().add(14, 'days'),
+          {% endif %}
+			  language: '{{ datepicker }}',
+			  pickTime: false
+		  });
+		    //--></script>
+<script>
+var app = new Vue({
+  el: '#vue-app',
+  delimiters: ['${', '}'],
+  data: {
+    form: {
+      amount: 0,
+      difficulty: 0.07,
+      print_delay: 0.23,
+      print_adjustments: 0.1,
+      preparation: 10,
+    },
+    counts: [],
+    articles: JSON.parse(`{{ products |json_encode|e('js') }}`),
+    checkedArticles: [],
+  },
+  computed: {
+    time_for_production: function() {
+      return ((this.form.preparation + (this.form.amount * this.form.difficulty) + (this.form.amount * (this.form.print_delay + this.form.print_adjustments))) / 60 ).toFixed(2)
+    },
+    total_count: function() {
+      let total = this.counts.reduce(function(a, cv){
+        return parseFloat(a) + parseFloat(cv)
+      }, 0)
+      return parseFloat(total).toFixed(2)
+    },
+    select_all: {
+      get: function () {
+          return this.articles ? this.checkedArticles.length == this.articles.length : false;
+      },
+      set: function (value) {
+        var selected = [];
+
+        if (value) {
+            this.articles.forEach(function (article) {
+                selected.push(article);
+            });
+        }
+
+        this.checkedArticles = selected;
+      }
+    },
+    checked_articles_quantity: function(){
+      return this.checkedArticles.reduce(function(a, cv) {
+        return a + parseInt(cv.quantity)
+      }, 0)
+    },
+  },
+  methods: {
+    resetForm: function() {
+      this.form.amount = 0
+      this.form.difficulty = 0.07
+      this.form.print_delay = 0.23
+      this.form.print_adjustments = 0.1
+      this.form.preparation = 10
+    },
+    addToCount: function() {
+      this.counts.push(this.time_for_production)
+      this.resetForm()
+    },
+    removeCount: function(index) {
+      this.counts.splice(index, 1)
+    },
+    addToDuration: function() {
+      document.getElementById("input-duration").value = this.total_count
+    },
+    addToAmount: function() {
+      this.form.amount = this.checked_articles_quantity
+      this.checkedArticles = []
+    }
+  },
+})
+</script>
+{% if production_id is null %}
+<script>
+// script to set production date to currentday + 7 day
+var date = new Date();
+date.setDate(date.getDate() + 7); //number  of days to add, e.x. 7 days
+var dateFormated = date.toISOString().substr(0,10);
+document.getElementById("input-production-date").value = dateFormated
+</script>
+{% endif %}
+{{ footer }}

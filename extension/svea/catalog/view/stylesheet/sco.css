@@ -1,0 +1,91 @@
+body :focus,body :active{outline:none!important}
+input.form-control,select.form-control,textarea.form-control{font-weight:600;box-shadow:none;-webkit-transition:padding .1s ease-out;transition:padding .1s ease-out;background-color:#fff;border:1px solid #cbcbcb;border-radius:5px;color:#3d3d3d;position:relative}
+.checkout-page-container h1,.checkout-page-container h2,.checkout-page-container h3,.checkout-page-container h4,.checkout-page-container h5,.checkout-page-container h6{color:#000}
+.checkout-page-container h3{font-size:23px}
+.form-group{margin-bottom:0}
+.sco-form,.sco-form input,.sco-form a,.sco-form span,.sco-form p{color:#3d3d3d}
+.sco-form i{color:#6bcf97}
+.sco-form.inactive,.sco-form.inactive input,.sco-form.inactive a,.sco-form.inactive span,.sco-form.inactive p{color:#DADADA}
+.sco-form .cover-layer{display:none}
+.sco-form.passed .cover-layer{display:block;position:absolute;width:100%;height:100%;background:rgba(255,255,255,0.5);z-index:999}
+.sco-form.inactive i{color:#DADADA}
+.shipping-methods{margin-top:15px;position:relative}
+.shipping-methods:after{content:"▼";position:absolute;top:0;right:0;height:100%;font-size:14px;padding:11px 15px;color:#6bcf97;pointer-events:none}
+#sco-shipping{-webkit-appearance:none;-moz-appearance:none;text-indent:1px}
+#sco-shipping::-ms-expand{display:none}
+.sco-form input{outline:.5px}
+.sco-main-content a{color:#6bcf97}
+textarea.form-control{height:85px;resize:none}
+#sco-comment-add{height:85px}
+#sco-form{margin-top:20px}
+#sco-cart h3{margin-bottom:0}
+.table{margin-bottom:0}
+.table-products{border-bottom:1px solid #ddd;margin-bottom:10px}
+.table-products > tbody > tr > td{padding:15px 0;font-size:16px;font-weight:400;border-top:0;border-bottom:1px solid #ddd}
+.table-totals{margin-bottom:15px}
+.table-totals > tbody > tr > td{padding:2px 0;font-size:16px;font-weight:400;border:0}
+.table-totals .td-title{font-weight:400}
+.table-totals .td-value,.table-products .td-total{text-transform:uppercase}
+.table-totals tr:last-child td{font-size:16px;font-weight:700}
+.table-products > tbody > tr > td.td-name{width:auto}
+.table-products > tbody > tr > td.td-quantity{width:30%}
+.table-products > tbody > tr > td.td-total{width:30%}
+.table-totals > tbody > tr > td.td-title{width:auto}
+.table-totals > tbody > tr > td.td-value{width:30%; text-align: right;}
+.margin-bottom{margin-bottom:15px}
+.addon{position:relative}
+.addon i{position:absolute;left:0;padding:15px;pointer-events:none;z-index:10}
+.addon input{padding-left:35px}
+.list-group li > a i{padding-right:3px;vertical-align:text-top}
+.sco-main-content{padding:0;overflow:hidden}
+.sco-left-column{background-color:#fafafa;padding:15px 15px 15px 35px}
+.allow-classic-checkout{text-align:center;font-size:16px}
+#sco-email{border-radius:5px 5px 0 0;border-bottom:1px solid transparent;z-index:1}
+#sco-postcode{border-radius:5px}
+.sco-input,#sco-shipping,#sco-email,#sco-postcode{height:43px;line-height:22px;font-size:16px!important;font-weight:400!important}
+#sco-comment{line-height:28px;font-size:16px!important;font-weight:400!important}
+.sco-input-applied{background-color:#e9ecef;border-radius:5px!important}
+#sco-comment textarea.form-control{font-size:16px!important;font-weight:400!important}
+.sco-change-postcode{left:auto!important;right:0!important}
+.sco-input.form-control{z-index:0}
+#sco-details{display:none}
+#sco-coupon,#sco-voucher{margin-bottom:25px}
+#sco-coupon input.form-control:focus,#sco-voucher input.form-control:focus,#sco-comment textarea.form-control:focus{border:1px solid #6bcf97;box-shadow:none}
+.sco-change-cart{color:#6bcf97;font-size:16px;display:block;text-align:right}
+#sco-snippet-section p{margin-bottom:30px}
+.sco-disclaimer{margin-top:10px;font-size:12px;font-weight:300}
+@media (min-width: 767px) {
+.checkout-page-container{width:760px;margin:0 auto;padding:30px 45px 90px;border:4px solid lightgray;border-radius:5px;overflow:visible!important;border-color:#eeefef}
+.action-icons{padding:0 20%;font-size:16px}
+}
+@media (max-width: 767px) {
+.checkout-page-container{padding:30px 15px 90px;border-radius:5px}
+}
+.action-icons{display:flex;justify-content:space-around;margin:45px 0 15px;font-size:16px}
+.sco-checkout-extra-options{text-align:center;flex:0 0 30%}
+.sco-checkout-extra-options a,.sco-checkout-extra-options a:hover,.sco-checkout-extra-options a:active{text-decoration:none}
+.sco-newsletter{font-size:16px}
+.sco-checkout-extra-options i{font-size:30px;opacity:1}
+.sco-checkout-extra-options a span{display:block;padding-top:7px}
+.addon .change-postcode{position:absolute;display:none;top:12px;right:15px;font-size:12px;color:#6bcf97;cursor:pointer}
+.sco-continue-btn,.sco-back-btn{margin-top:15px}
+.sco-primary-btn,.sco-primary-btn:hover,.sco-primary-btn:active,.sco-primary-btn:focus{height:42px;font-size:16px;background:#6bcf97;color:#000!important;border:none; width:100%;}
+.sco-primary-btn:active:focus,.sco-primary-btn.pushed{background:#00839b}
+.sco-btn-danger{height:42px;font-size:16px}
+.sco-primary-btn:disabled{background:#DADADA}
+.sco-checkout-extra-options i.check-icon{display:none;color:#92ab63;font-size:16px!important;opacity:1!important}
+.sco-checkout-extra-options.used i.check-icon{display:inline}
+.checkout-page-container .addon-content{margin-bottom:45px}
+.checkout-page-container .addon-content i{color:#FFF}
+.sco-danger{color:#DC901A;background:none;border:none}
+input.form-control.sco-input-alert{border:1px solid #DC901A}
+#sco-snippet-loader{color:#6bcf97;font-size:32px;display:inline-block;-webkit-animation:fa-spin 2s infinite linear;animation:fa-spin 2s infinite linear}
+.sco-input-label{position:absolute;top:0;left:13px;z-index:2;font-size:10px;color:#00839b!important}
+select{background:none !important;}
+.checkout-body h3 i {
+    background: #ffd9e8;
+    margin-right: 10px;
+    color: #000;
+    padding: 13px 16px;
+    font-size: 20px;
+}

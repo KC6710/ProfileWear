@@ -1,0 +1,70 @@
+{{ header }}{{ column_left }}
+
+<div id="content" class="ocme ocme-bootstrap ocme-{{ view }}">
+	<script type="text/javascript">
+		var OCME_AJAX_PARAMS = '{{ HTTP_URL ? '&option=com_mijoshop&format=raw' : '' }}';
+
+		function ocme_fix_url( url ) {
+			return url.replace(/&amp;/g,'&')+OCME_AJAX_PARAMS;
+		}
+	</script>
+	
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+				{% if action %}
+					<button type="submit" form="form-module" data-toggle="tooltip" title="{{ ocme.trans('button_save') }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+				{% endif %}
+				{% if action_cancel %}
+					<a href="{{ action_cancel }}" data-toggle="tooltip" title="{{ ocme.trans('button_cancel') }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+				{% endif %}
+			</div>
+			<h1>{{ ocme_heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+					<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if notification_new_version_is_available %}
+			<div class="alert alert-warning alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ notification_new_version_is_available }}
+				<button type="button" class="close" data-dismiss="alert" id="close-notification-new-version">&times;</button>
+			</div>
+		
+			<script>
+				$('#close-notification-new-version').click(function(){
+					$.get( ocme_fix_url( '{{ action_close_notification_new_version }}' ) );
+				});
+			</script>
+		{% endif %}
+		
+		{{ ocme.msg().render() }}
+				
+		<div class="panel panel-default" id="ocme-app">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ ocme.trans('module::global.text_edit') }}</h3>
+			</div>
+
+			<div class="panel-body">
+				{% if ocme_ak_reminder %}
+					<div class="alert alert-info text-center mb-30" role="alert">
+						{{ ocme_ak_reminder }}
+					</div>
+				{% endif %}
+
+				{% if not hide_tabs %}
+					<ul class="nav nav-tabs nav-tabs-main">
+						<li><a href="{{ action_home }}"><i class="fa fa-home"></i> {{ ocme.trans('module::global.text_home') }}</a></li>
+						<li{% if view in [ 'filter', 'filter_settings', 'filter_indexation' ] %} class="active"{% endif %}><a href="{{ action_filter }}"><i class="fa fa-filter"></i> {{ ocme.trans('module::global.text_filter') }}</a></li>
+						<!--<li{% if view == 'search' %} class="active"{% endif %}><a href="{{ action_search }}"><i class="fa fa-search"></i> {{ ocme.trans('module::global.text_search') }}</a></li>-->
+						<li{% if view == 'seo' %} class="active"{% endif %}><a href="{{ action_seo }}"><i class="fa fa-link"></i> {{ ocme.trans('module::global.text_seo') }}</a></li>
+						<li{% if view == 'config' %} class="active"{% endif %}><a href="{{ action_config }}"><i class="fa fa-cogs"></i> {{ ocme.trans('module::global.text_config') }}</a></li>
+						<li{% if view == 'about' %} class="active"{% endif %}><a href="{{ action_about }}"><i class="fa fa-info"></i> {{ ocme.trans('module::global.text_about') }}</a></li>
+					</ul>
+				{% endif %}
+
+				{% if action %}
+					<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+				{% endif %}

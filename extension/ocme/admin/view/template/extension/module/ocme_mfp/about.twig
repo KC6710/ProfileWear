@@ -1,0 +1,77 @@
+{{ header }}
+
+<div class="ocme-about">
+	<table class="table">
+		<thead>
+			<tr>
+				<td colspan="3" class="text-center">
+					<div class="ocme-logo" style="margin-top: 0">
+						MEGA FILTER <span>PACK</span>
+					</div>
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td width="200">{{ ocme.trans('module::global.text_license') }}:</td>
+				<td>
+					{% if action_disconnect %}
+						<span class="bg-{{ license_status == 'warning' ? 'info' : 'success' }} pt-3 pb-3 pr-10 pl-10">{{ ocme.trans('module::global.text_license_valid') }}</span>
+						{% if license_status == 'warning' %}
+							<i class="fa fa-warning"></i>
+						{% endif %}
+						<div class="pull-right">
+							{% if action_reconnect %}
+								<a href="{{ action_reconnect }}" class="btn btn-xs btn-primary"><i class="fa fa-plug"></i> {{ ocme.trans('module::global.text_reconnect') }}</a>
+							{% endif %}
+							
+							<a href="{{ action_disconnect }}" class="btn btn-xs btn-danger"><i class="fa fa-plug"></i> {{ ocme.trans('module::global.text_disconnect') }}</a>
+						</div>
+					{% else %}
+						<a href="{{ action_connect }}" class="btn btn-xs btn-primary"><i class="fa fa-plug"></i> {{ ocme.trans('module::global.text_connect') }}</a>
+					{% endif %}
+				</td>
+				<td rowspan="6" width="50%" style="border-left: 1px solid #dddddd;" class="text-center">
+					<h2 style="font-size: 16px; margin: 0; text-decoration: underline; padding: 10px 0;">{{ ocme.trans('module::global.text_if_something_doesnt_work') }}</h2>
+
+					<table style="width: 100%; margin-top: 15px;" class="text-left text-start">
+						<tr>
+							<td style="width: 50%; vertical-align: top;" class="text-center">
+								<center>{{ ocme.trans('module::global.text_vqmod') }}</center><br />
+
+								{{ ocme.trans('module::global.text_vqmod_guide') }}
+							</td>
+							<td style="border-left: 1px solid #dddddd; padding-left: 10px; vertical-align: top;" class="text-center">
+								<center><strong>{{ ocme.trans('module::global.text_ocmod') }}</strong></center><br />
+
+								{{ ocme.trans('module::global.text_ocmod_guide') }}
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td width="200">{{ ocme.trans('module::global.text_version') }}:</td>
+				<td>{{ extension_version }}</td>
+			</tr>
+			<tr>
+				<td>{{ ocme.trans('module::global.text_email') }}:</td>
+				<td><a href="mailto:support@ocdemo.eu">support@ocdemo.eu</a></td>
+			</tr>
+			<tr>
+				<td>{{ ocme.trans('module::global.text_forum') }}:</td>
+				<td><a href="https://forum.ocdemo.eu" target="_blank" class="btn btn-xs btn-default"><i class="fa fa-external-link"></i> {{ ocme.trans('module::global.text_open_forum') }}</a></td>
+			</tr>
+			<tr>
+				<td>{{ ocme.trans('module::global.text_support') }}:</td>
+				<td><a href="https://support.ocdemo.eu" target="_blank" class="btn btn-xs btn-default"><i class="fa fa-life-ring"></i> {{ ocme.trans('module::global.text_go_to_support') }}</a></td>
+			</tr>
+			<tr>
+				<td>{{ ocme.trans('module::global.text_documentation') }}:</td>
+				<td><a href="https://docs.ocdemo.eu/mega-filter-pack" target="_blank" class="btn btn-xs btn-default"><i class="fa fa-external-link"></i> {{ ocme.trans('module::global.text_open_documentation') }}</a></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+{{ footer }}

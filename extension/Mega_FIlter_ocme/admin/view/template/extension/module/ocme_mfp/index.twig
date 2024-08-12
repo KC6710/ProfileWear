@@ -1,0 +1,59 @@
+{{ header }}
+
+<div class="ocme-index-body text-center">
+	<div class="ocme-logo">
+		OC MEGA <span>EXTENSIONS</span>
+	</div>
+	<br /><br />
+	<font style="font-weight:300; font-size: 70px;">{{ ocme.trans('module::global.heading_name') }}</font>
+	<br /><br />
+	<ul class="center-block">
+		<li class="col-md-3">
+			<a href="{{ action_filter ? action_filter : '#' }}" {% if not action_filter %} disabled="disabled" style="opacity: 0.5" {% endif %}>
+				<i class="fa fa-filter"></i>
+				<span>{{ ocme.trans('module::global.text_filter') }}</span>
+			</a>
+		</li>
+		<!--<li class="col-md-3">
+			<a href="{{ action_search }}">
+				<i class="fa fa-search"></i>
+				<span>{{ ocme.trans('module::global.text_search') }}</span>
+			</a>
+		</li>-->
+		<li class="col-md-3">
+			<a href="{{ action_seo }}">
+				<i class="fa fa-link"></i>
+				<span>{{ ocme.trans('module::global.text_seo') }}</span>
+			</a>
+		</li>
+		<li class="col-md-3">
+			<a href="{{ action_config }}">
+				<i class="fa fa-cogs"></i>
+				<span>{{ ocme.trans('module::global.text_config') }}</span>
+			</a>
+		</li>
+		<li class="col-md-3">
+			<a href="{{ action_about }}">
+				<i class="fa fa-info"></i>
+				<span>{{ ocme.trans('module::global.text_about') }}</span>
+			</a>
+		</li>
+		<li class="clearfix"></li>
+	</ul>
+	<div class="ocme-text-description">{{ ocme.trans('module::global.text_description') }}</div>
+</div>
+
+<script type="text/javascript">
+	$().ready(function(){
+		$('.ocme-index-body a[href="#"]').click(function(){
+			Swal.fire({
+				icon: 'info',
+				title: '{{ ocme.trans("module::global.text_module_is_not_installed") }}'
+			});
+
+			return false;
+		});
+	});
+</script>
+
+{{ footer }}

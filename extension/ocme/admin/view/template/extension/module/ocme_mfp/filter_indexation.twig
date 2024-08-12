@@ -1,0 +1,71 @@
+{{ header }}
+
+<ul class="nav nav-tabs tabs-top">
+	<li><a href="{{ action_filter }}"><i class="fa fa-file"></i> {{ ocme.trans('module::global.text_modules') }}</a></li>
+	<li><a href="{{ action_filter_settings }}"><i class="fa fa-cog"></i> {{ ocme.trans('module::global.text_settings') }}</a></li>
+	<li class="active"><a href="{{ action_filter_indexation }}"><i class="fa fa-database"></i> {{ ocme.trans('module::global.text_indexation') }}</a></li>
+</ul>
+
+<div class="clearfix"></div>
+
+<ocme-filter-indexation inline-template
+	url="{{ action_indexation_action }}"
+	url_filter="{{ action_filter }}"
+	:autostart="{{ autostart }}"
+	:editable="{{ ocme_mfp_editable }}"
+>
+	<div class="ocme-indexation">
+		<div class="text-center" v-if="!initialized">
+			<i class="fa fa-circle-o-notch fa-spin fa-2x"></i><br /><br />
+			{{ ocme.trans('module::global.text_loading_please_wait') }}
+			<br /><br />
+		</div>
+		<div class="row" v-cloak v-if="initialized">
+			<div :class="'col-lg-' + ( 12 / panels.length )" v-for="panel in panels">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span v-html="panel.name"></span>
+						<i v-if="busy == panel.type || busy === true" class="fa fa-spin fa-spinner pull-right mt-3"></i>
+					</div>
+					<div class="panel-body text-center" style="min-height: 190px">
+						<div class="row height-50">
+							<div style="min-height: 40px;" :class="{ 'col-lg-6': panel.items.length > 1, 'text-center': true, 'col-lg-12': panel.items.length == 1 }" v-for="(item, key) in panel.items">
+								<span v-html="item.name + ( !item.params || ! item.params.links ? ':' : '' )"></span>
+								<span v-html="item.total"></span>
+								<span v-html="'-'+item.redundant" v-if="item.redundant" class="badge badge-danger v-super"></span>
+								<span v-html="'-'+item.damaged" v-if="item.damaged" class="badge badge-primary v-super"></span>
+								<span v-if="item.missing || ( prev && prev.item == item && waiting )" class="badge badge-info v-super">
+									<span v-if="item.missing" v-html="'+'+item.missing"></span>
+									<i v-if="busy == panel.type && ( ( curr.item == item && ! waiting ) || ( prev && prev.item == item && waiting ) )" class="fa fa-spin fa-spinner"></i>
+								</span>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+						<div class="progress mt-10">
+							<div class="progress-bar" :style="'width:' + percent(panel)"></div>
+						</div>
+						<button v-for="button in buttons(panel)" type="button" :class="'btn btn-sm ml-2 mr-2 btn-' + ( button.type || 'primary' )" v-on:click="clickButton(button)" :disabled="busy || ! canClickButton(button)">
+							<i v-if="!stopping && busy == panel.type && curr.button == button" class="fa fa-spin fa-spinner"></i>
+							<span v-html="button.name"></span>
+						</button>
+						<button type="button" class="btn btn-sm btn-danger" v-on:click="stop(panel)" v-if="busy==panel.type" :disabled="stopping">
+							<i v-if="stopping" class="fa fa-spin fa-spinner"></i>
+							{{ ocme.trans('module::global.text_stop') }}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr v-cloak v-if="initialized" />
+		<div v-cloak class="row" v-if="initialized">
+			<div class="col-lg-12 text-center">
+				<button type="button" class="btn btn-sm btn-primary" v-on:click="reindex()" :disabled="busy || ! canReindex()">
+					<i v-if="busy === true" class="fa fa-spin fa-spinner"></i>
+					{{ ocme.trans('module::global.text_reindex_new') }}
+				</button>
+			</div>
+		</div>
+	</div>
+</ocme-filter-indexation>
+							
+{{ footer }}

@@ -1,0 +1,41 @@
+{{ header }}
+
+<link href="extension/svea/catalog/view/stylesheet/sco.css" rel="stylesheet">
+<script src="extension/svea/catalog/view/javascript/sco.js"></script>
+<script>sessionStorage.setItem("lastStep", 0);</script>
+<main class="main-body product-details-main">
+<div class="container" id="container">
+    <div class="product-header">
+
+        {% for breadcrumb in breadcrumbs %}
+        
+        {% if loop.last %}
+            <p class="item">{{ breadcrumb.text }}</p>
+        {% else %}
+            <a href="{{ breadcrumb.href }}"><h6 class="item active">{{ breadcrumb.text }}</h6></a>
+            <span class="bg-pink"></span>
+        {% endif %}
+
+        {% endfor %}
+    </div>
+
+    <section style="width: 100%;" class="">
+
+        <div class="sco-main-content">
+            <div class="row">
+                <div class="col-sm-12" style="width: 100%;">
+                    <section class="sco-right-column">
+                        <div id="sco-snippet-section">
+                            {{ snippet }}
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+
+</div>
+
+{{ footer }}

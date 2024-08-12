@@ -1,0 +1,140 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="{{ ocme.oc().isV4() ? 'float-end' : 'pull-right' }}">
+          {% if ocme.oc().isV4() %}
+            <button type="submit" form="form-attribute" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i></button>
+            <a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+          {% else %}
+            <button type="submit" form="form-attribute" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary">
+              <i class="fa fa-save"></i>
+            </button>
+            <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+          {% endif %}
+        </div>
+        <h1>{{ heading_title }}</h1>
+        <ul class="breadcrumb">
+          {% for breadcrumb in breadcrumbs %}
+            <li class="{{ ocme.oc().isV4() ? 'breadcrumb-item' : '' }}"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      {% if ocme.oc.isV3() and error_warning %}
+        <div class="alert alert-danger alert-dismissible">
+          <i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+      {% endif %}
+      <div class="{{ ocme.oc().isV4() ? 'card' : 'panel panel-default' }}" id="ocme-app">
+        <div class="{{ ocme.oc().isV4() ? 'card-header' : 'panel-heading' }}">
+          {% if ocme.oc().isV3() %}
+            <h3 class="panel-title">
+          {% endif %}
+            <i class="fa fa-pencil"></i> {{ text_form }}
+          {% if ocme.oc().isV3() %}
+            </h3>
+          {% endif %}
+        </div>
+      <div class="{{ ocme.oc().isV4() ? 'card' : 'panel' }}-body">
+        <ocme-attribute-form 
+          inline-template 
+          form_action="{{ ocme_form_action }}" 
+          b64oc="{{ ocme_oc }}" 
+          b64attribute="{{ ocme_attribute }}" 
+          b64descriptions="{{ ocme_descriptions }}" 
+          attribute_group_id="{{ ocme_attribute_group_id }}" 
+          b64config="{{ ocme_config }}"
+        >
+          <form action="{{ ocme.oc().isV4() ? save : action }}" method="post" enctype="multipart/form-data" id="form-attribute" class="form-horizontal" data-oc-toggle="ajax">
+            <div class="{{ ocme.oc().isV4() ? 'row mb-3' : 'form-group' }} required">
+              <label class="col-sm-2 {{ ocme.oc().isV4() ? 'col-form' : 'control' }}-label">{{ ocme.trans('entry_name') }}</label>
+              <div class="col-sm-10">
+                {% for language in languages %}
+                  <div class="input-group">
+                    <span class="input-group-{{ ocme.oc().isV4() ? 'text' : 'addon' }}">
+                      <img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />
+                    </span>
+                    <input type="text" name="attribute_description[{{ language.language_id }}][name]" value="{{ attribute_description[language.language_id] ? attribute_description[language.language_id].name : '' }}" placeholder="{{ entry_name }}" class="form-control" />
+                  </div>
+                  {% if ocme.oc().isV4() %}
+                    <div id="error-name-{{ language.language_id }}" class="invalid-feedback"></div>
+                  {% else %}
+                    {% if error_name[language.language_id] %}
+                      <div class="text-danger">{{ error_name[language.language_id] }}</div>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+					  <div class="{{ ocme.oc().isV4() ? 'row mb-3' : 'form-group' }}">
+              <label class="col-sm-2 {{ ocme.oc().isV4() ? 'col-form' : 'control' }}-label" for="input-attribute-group">{{ entry_attribute_group }}</label>
+              <div class="col-sm-10">
+                <ocme-select v-model="attribute_group" @load="loadAttributeGroups" :close-on-select="true" placeholder-empty="---" placeholder-not-empty="---" option-key="attribute_group_id"></ocme-select>
+                <select v-model="attribute_group_id" name="attribute_group_id" id="input-attribute-group" class="form-control {{ ocme.oc().isV4() ? 'd-none' : 'hidden' }}">
+                  <option value="0"></option>
+                  {% for attribute_group in attribute_groups %}
+                    {% if attribute_group.attribute_group_id == attribute_group_id %}
+                      <option value="{{ attribute_group.attribute_group_id }}" selected="selected">{{ attribute_group.name }}</option>
+                    {% else %}
+                      <option value="{{ attribute_group.attribute_group_id }}">{{ attribute_group.name }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                {% if ocme.oc().isV4() %}
+                  <div id="error-attribute-group" class="invalid-feedback"></div>
+                {% else %}
+                  {% if error_attribute_group %}
+                    <div class="text-danger">{{ error_attribute_group }}</div>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+            <div class="{{ ocme.oc().isV4() ? 'row mb-3' : 'form-group' }}">
+              <label class="col-sm-2 {{ ocme.oc().isV4() ? 'col-form' : 'control' }}-label" for="input-sort-order">{{ entry_sort_order }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+              </div>
+            </div>
+            <div class="{{ ocme.oc().isV4() ? 'row mb-3' : 'form-group' }}">
+              <label for="input-with-image" class="col-sm-2 {{ ocme.oc().isV4() ? 'col-form' : 'control' }}-label">{{ ocme.trans('module::global.text_with_image') }}</label>
+              <div class="col-sm-10">
+                <label class="checkbox-inline"><input type="checkbox" name="with_image" value="1" v-model="v_with_image" /></label>
+              </div>
+            </div>
+            <div class="{{ ocme.oc().isV4() ? 'row mb-3' : 'form-group' }}">
+              <label for="input-with-color" class="col-sm-2 {{ ocme.oc().isV4() ? 'col-form' : 'control' }}-label">{{ ocme.trans('module::global.text_with_color') }}</label>
+              <div class="col-sm-10">
+                <label class="checkbox-inline"><input type="checkbox" name="with_color" value="1" v-model="v_with_color" /></label>
+              </div>
+            </div>
+            <div class="{{ ocme.oc().isV4() ? 'row mb-3' : 'form-group' }}">
+              <label for="input-with-color" class="col-sm-2 {{ ocme.oc().isV4() ? 'col-form' : 'control' }}-label">{{ ocme.trans('module::global.text_displayed_values_separator') }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="displayed_values_separator" :placeholder="config.displayed_values_separator" class="form-control" v-model="v_displayed_values_separator" />
+              </div>
+            </div>
+            <div class="{{ ocme.oc().isV4() ? 'row mb-3' : 'form-group' }}">
+              <label for="input-with-color" class="col-sm-2 {{ ocme.oc().isV4() ? 'col-form' : 'control' }}-label">{{ ocme.trans('module::global.text_values_type') }}</label>
+              <div class="col-sm-10">
+                <div class="radio">
+                  <label><input type="radio" name="values_type" value="string" v-model="v_values_type" /> {{ ocme.trans('module::global.text_values_type_string') }}</label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" name="values_type" value="integer" v-model="v_values_type" /> {{ ocme.trans('module::global.text_values_type_integer') }}</label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" name="values_type" value="float" v-model="v_values_type" /> {{ ocme.trans('module::global.text_values_type_float') }}</label>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name="attribute_id" :value="attribute.attribute_id" />
+          </form>
+        </ocme-attribute-form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

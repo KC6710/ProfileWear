@@ -1,0 +1,22 @@
+{{ header }}
+
+<div class="ocme-connect text-center">
+	<div class="ocme-logo">
+		OC MEGA <span>EXTENSIONS</span>
+	</div>
+	
+	<hr />
+	
+	<div class="guide">
+		{{ ocme.trans('module::global.text_disconnect_guide') }}
+	</div>
+	<br /><br />
+	<form method="post" action="{{ action }}">
+		<button class="btn btn-danger btn-lg" type="submit">
+			<i class="fa fa-plug"></i> {{ ocme.trans('module::global.text_disconnect') }}
+		</button>
+		<br /><br />
+	</form>
+</div>
+
+{{ footer }}

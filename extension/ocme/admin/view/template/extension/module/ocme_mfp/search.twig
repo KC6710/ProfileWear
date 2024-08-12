@@ -1,0 +1,48 @@
+{% include 'extension/module/ocme_mfp/_header.twig' %}
+
+<ul class="nav nav-tabs tabs-top">
+	<li class="active"><a href="{{ action_search }}"><i class="fa fa-file"></i> {{ text_modules }}</a></li>
+	<li><a href="{{ action_search_settings }}"><i class="fa fa-cog"></i> {{ text_settings }}</a></li>
+</ul>
+
+<div class="clearfix"></div>
+
+<ocme-search
+	inline-template
+	url="{{ action_search_config }}"
+	type="search"
+>
+	{% verbatim %}
+		<div class="row">
+			<div class="col-xs-2">
+				<ul class="nav nav-tabs tabs-left" id="nav-tabs">
+					<li :class="{active: module && module.module_id == m.module_id}" v-for="m in modules">
+						<a v-on:click.prevent="displayModule(m.module_id)" href="#">
+							<b class="pull-left"><span>{{ m.name }}</span></b>
+							
+							<div class="pull-right">
+								<div class="btn-group">
+									<button v-on:click.prevent.stop="duplicateModule(m.module_id)" type="button" class="btn btn-primary btn-xs" href="#" data-toggle="tooltip" :title="trans('text_duplicate')"><i class="fa fa-copy"></i></button>
+									<button v-on:click.prevent.stop="removeModule(m.module_id)" type="button" class="btn btn-danger btn-xs" href="#" data-toggle="tooltip" :title="trans('text_remove')"><i class="fa fa-remove"></i></button>
+								</div>
+							</div>
+							
+							<div class="clearfix"></div>
+						</a>
+					</li>
+					<li>
+						<div class="pull-right pt-10 pr-10">
+							<button class="btn btn-success btn-xs" v-on:click="addModule()"><i class="fa fa-plus-circle"></i> {{ trans('text_add_module') }}</button>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="col-xs-10">
+
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	{% endverbatim %}
+</ocme-search>
+
+{% include 'extension/module/ocme_mfp/_footer.twig' %}

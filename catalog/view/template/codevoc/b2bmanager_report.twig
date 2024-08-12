@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dashboard: Report</title>
+    <META NAME="ROBOTS" CONTENT="NOINDEX, FOLLOW">
+    <META NAME="ROBOTS" CONTENT="INDEX, NOFOLLOW">
+    <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.2/vue.js"></script>
+    <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+    <script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+
+    <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.5/plugin/weekOfYear.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="{{HTTPS_SERVER}}catalog/view/javascript/vue-chartjs.min.js"></script>
+
+    <style>
+    @import "https://fonts.googleapis.com/css2?family=Prompt:wght@100;300;600&display=swap";
+    body{background:#131217;color:#adbcdb;font-family:'Prompt',sans-serif}
+    .dashboardheader{border-bottom:1px solid #575f70;padding:10px;color:#575f70;margin-bottom:15px;display:flex;align-items: center;}
+    .dashboardheader .app-datepicker{margin-left: auto;}
+    .dashboardheader .app-datepicker .reportrange-text {font-size: 12px}
+    .dashboardheader .btn-tab {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .dashboardheader .btn-tab.active,.dashboardheader .btn-tab:hover  {
+      color: #FFF;
+    }
+    .tab-report {
+      display:flex;flex-wrap:wrap;text-align:center
+    }
+    .tab-report > div {
+      margin: 5px;
+    }
+    /* .d-flex{display:flex;flex-wrap:wrap;text-align:center}
+    .d-flex > div{margin:5px} */
+    .box{flex:0 0 calc(33.33% - 10px);background:#20242c;border-radius:10px;padding-bottom:15px}
+    .box:first-child{flex-basis:calc(50% - 10px)}
+    .box:nth-child(2){flex-basis:calc(50% - 10px)}
+    .box:nth-child(3){flex-basis:calc(50% - 10px)}
+    .box:nth-child(4){flex-basis:calc(50% - 10px)}
+    .box-sm:first-child{flex-basis:calc(16.66% - 10px)}
+    .box-sm:nth-child(2){flex-basis:calc(16.66% - 10px)}
+    .box-sm:nth-child(3){flex-basis:calc(16.66% - 10px)}
+    .box-sm:nth-child(4){flex-basis:calc(16.66% - 10px)}
+    .box-sm:nth-child(5){flex-basis:calc(16.66% - 10px)}
+    .box-sm:nth-child(6){flex-basis:calc(16.66% - 10px)}
+    .box .label{text-transform:uppercase;font-size:12px;border-bottom:1px solid #3c424d;padding:10px 0;font-weight:400}
+    .box .label span{margin-left:5px;border:1px solid #3a414f;font-size:10px;padding:0 5px;color:#999;letter-spacing:1px}
+    .box .digits{text-transform:uppercase;font-size:30px;font-weight:300;padding:10px 0 0}
+    .box .digits div{display:inline}
+    .box .digits span{margin-left:5px;font-weight:100}
+    .box .label-footer{text-transform:uppercase;background:#333;border:2px solid #adbcdb;color:#adbcdb;padding:3px 10px;border-radius:50px;font-size:11px;margin-right:3px;display:inline;margin-bottom:10px}
+    .box.a .digits{color:#edd750}
+    .box.a .label-footer{color:#ac9d43;border-color:#8d802e}
+    .box.a .label{color:#edd750;border-color:#edd750}
+    .box.a .label span{color:#edd750;border-color:#edd750}
+    .box.b .digits{color:#237ad8}
+    .box.b .label-footer{color:#4379b1;border-color:#20548a}
+    .box.b .label{color:#237ad8;border-color:#237ad8}
+    .box.b .label span{color:#237ad8;border-color:#237ad8}
+    .box.c .digits{color:#cc5028}
+    .box.c .label-footer{color:#a15337;border-color:#7d3c25}
+    .box.c .label{color:#cc5028;border-color:#cc5028}
+    .box.c .label span{color:#cc5028;border-color:#cc5028}
+    @media (max-width: 736px) {
+    .box{flex-basis:calc(50% - 10px)}
+    .box:first-child{flex-grow:1}
+    }
+    *{box-sizing:border-box}
+    .rangeselector{margin-top:-1px}
+    .rangeselector input{color:#adbac7;background-color:transparent;border:1px solid #444c56}
+    .rangeselector .input-group-prepend .input-group-text{background:#444c56;color:#adbac7;border:1px solid #444c56}
+    .action-buttons{margin-right:15px}
+    .action-buttons a{background:#7d3c25;border:2px solid #ec5d2f;color:#fff;padding:5px 10px;border-radius:50px;font-size:10px;margin-right:3px}
+    .action-buttons a:last-child{margin-right:0}
+    .action-buttons a.period{background:#392c4c;border-color:#6b4e95;color:#bba3de}
+    .action-buttons a.custom{background:#766c32;border-color:#edd750}
+    .action-buttons a:hover{background:#0000006b;border:2px solid #ffffff6b;text-decoration:none;transition:background-color .5s ease-out}
+    .calendars { flex-wrap: nowrap !important }
+
+    /* PW Report - Revenue Style */
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100;500&display=swap');
+
+    .table-dark {font-size: 12px;color:#eee}
+    .table td, .table th {padding: .25rem;vertical-align: top;border-top: 1px solid #666;border-right: 1px solid #666;padding-left: 7px;}
+    table tr:hover{background: #22262d !important;}
+    .fa.fa-times-circle{color:#9c2e2e; float:right; padding-right:8px;}
+    .fa.fa-check-circle{color:#197819; float:right; padding-right:8px;}
+    .col-sales{background: #114510;font-size: 12px;font-weight: bold;color: #c2c2c2;font-family: 'IBM Plex Mono', monospace;}
+    .col-costs{background: #412929;font-style: italic;font-size: 11px;font-weight: lighter;font-family: 'IBM Plex Mono', monospace;}
+    </style>
+
+    <!-- vue daterange picker -->
+    <script src="https://cdn.jsdelivr.net/npm/vue2-daterange-picker@0.6.5/dist/vue2-daterange-picker.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue2-daterange-picker@0.6.5/dist/vue2-daterange-picker.css">
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animated-number-vue@1.0.0/dist/AnimatedNumber.umd.min.js"></script>
+</head>
+<body>
+<div id="report-app">
+  <div class="container-fluid">
+    <div class="dashboardheader">
+      <span class="btn-tab" :class="{'active': activeTab == 'report'}" @click="activeTab = 'report'">REPORT</span>
+      <span class="btn-tab" :class="{'active': activeTab == 'revenue'}" @click="activeTab = 'revenue'">REVENUE</span>
+      <span class="btn-tab" :class="{'active': activeTab == 'quotation'}" @click="activeTab = 'quotation'">QUOTATION</span>
+      <span class="btn-tab" :class="{'active': activeTab == 'order'}" @click="activeTab = 'order'">ORDER</span>
+      <div class="app-datepicker">
+        <vue2-daterange-picker
+          v-model="dateRange"
+          opens="left"
+          :auto-apply="true"
+          @update="handleDateChanged"
+        ></vue2-daterange-picker>
+      </div>
+      </div><!-- dashboardheader -->
+    <div class="tab-report" v-show="activeTab == 'report'">
+      <div class="box a" v-if="saleOfYear">
+        <div class="label">Sale this year</div>
+        <div class="digits"><div class="count"><animated-number :value="saleOfYear.total" :format-value="formatToPrice" :duration="numberAnimationDuration" ></animated-number></div> <span>SEK</span></div>
+        <div class="label-footer">Average <b>${saleOfYear.avg}</b> SEK / <b>${saleOfYear.total_orders}</b> orders</div>
+      </div>
+      <div class="box a" v-if="saleCurrentPeriod">
+        <div class="label">Sale current period</div>
+        <div class="digits"><div class="count"><animated-number :value="saleCurrentPeriod.total" :format-value="formatToPrice" :duration="numberAnimationDuration"></animated-number></div><span>SEK</span></div>
+        <div class="label-footer">Average <b>${saleCurrentPeriod.avg}</b> SEK / <b>${saleCurrentPeriod.total_orders}</b> orders</div>
+      </div>
+      <div class="box b" v-if="salePrinted">
+        <div class="label">Sales<span>tag:Printed</span></div>
+        <div class="digits"><div class="count"><animated-number :value="salePrinted.total" :format-value="formatToPrice" :duration="numberAnimationDuration"></animated-number></div><span>SEK</span></div>
+        <div class="label-footer">Average <b>${salePrinted.avg}</b> SEK / <b>${salePrinted.total_orders}</b> orders</div>
+      </div>
+      <div class="box b" v-if="salePlain">
+        <div class="label">Sales<span>tag:Plain</span></div>
+        <div class="digits"><div class="count"><animated-number :value="salePlain.total" :format-value="formatToPrice" :duration="numberAnimationDuration"></animated-number></div><span>SEK</span></div>
+        <div class="label-footer">Average <b>${salePlain.avg}</b> SEK / <b>${salePlain.total_orders}</b> orders</div>
+      </div>
+      <hr>
+      <!--
+      <div class="box c" v-if="productions">
+        <div class="label">Production</div>
+        <div class="digits">
+          <div class="count">
+            ${ productions.total_productions }
+          </div>
+        </div>
+      </div>
+      <div class="box c" v-if="pwProductions">
+        <div class="label">Production<span>tag: PW</span></div>
+        <div class="digits">
+          <div class="count">
+            ${ pwProductions.total_productions }
+          </div>
+        </div>
+      </div>
+      <div class="box c" v-if="hotscreenProductions">
+        <div class="label">Production<span>tag: Hotscreen</span></div>
+        <div class="digits">
+          <div class="count">
+            ${ hotscreenProductions.total_productions }
+          </div>
+        </div>
+      </div>
+
+      <div class="box c" v-if="zamviProductions">
+        <div class="label">Production<span>tag: Zamvi</span></div>
+        <div class="digits">
+          <div class="count">
+            ${ zamviProductions.total_productions }
+          </div>
+        </div>
+      </div>
+      <div class="box c" v-if="otherProductions">
+        <div class="label">Production<span>tag: Other</span></div>
+        <div class="digits">
+          <div class="count">
+            ${ otherProductions.total_productions }
+          </div>
+        </div>
+      </div>
+      -->
+      <div class="box e">
+        <sale-by-year-chart v-if="saleByYear" :sale-by-year="saleByYear"></sale-by-year-chart>
+      </div>
+      <div class="box e">
+        <margin-by-year-chart v-if="marginByYear" :margin-by-year="marginByYear"></margin-by-year-chart>
+      </div>
+    </div>
+    <div class="tab-revenue" v-show="activeTab == 'revenue'">
+      <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th scope="col">Kund</th>
+            <th scope="col">Order nr.</th>
+            <th scope="col">Försäljning</th>
+            <th scope="col"><i class="fa fa-dollar-sign"></i></i> Kläder</th>
+            <th scope="col"><i class="fa fa-dollar-sign"></i> Tryck</th>
+            <th scope="col"><i class="fa fa-dollar-sign"></i> Övrigt</th>
+            <th scope="col"><i class="fa fa-dollar-sign"></i> Waste</th>
+            <th scope="col"><i class="fa fa-calendar-plus"></i> Skapad</th>
+            <th scope="col"><i class="fa fa-calendar-check"></i> Skickad</th>
+            <th scope="col">Vinst TG %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="revenueData.length <= 0">
+            <td colspan="10">No data found.</td>
+          </tr>
+          <tr v-if="revenueData.length > 0" v-for="revenue in revenueData">
+            <th scope="row">${revenue.client}</th>
+            <td>#${revenue.order_id}</td>
+            <td class="col-sales">${revenue.total} SEK</td>
+            <td class="col-costs"><span v-if="revenue.cost_garment">${revenue.cost_garment} SEK</span><span v-else>N/A</span></td>
+            <td class="col-costs"><span v-if="revenue.cost_print">${revenue.cost_print} SEK</span><span v-else>N/A</span></td>
+            <td class="col-costs"><span v-if="revenue.cost_other">${revenue.cost_other} SEK</span><span v-else>N/A</span></td>
+            <td class="col-costs"><span v-if="revenue.cost_waste">${revenue.cost_waste} SEK</span><span v-else>N/A</span></td>
+            <td>${revenue.date_added}</td>
+            <td>${revenue.date_send}</td>
+            <td>${revenue.profit}% <i class="fa fa-check-circle" v-if="revenue.cost_garment && revenue.cost_print"></i><i class="fa fa-times-circle" v-else></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-revenue" v-show="activeTab == 'quotation'">
+    <div class="tab-report">
+      <div class="box box-sm c">
+        <div class="label">Not set</div>
+        <div class="digits">
+          <div class="count">
+            ${quotationOverviewData.source_notset}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Direct</div>
+        <div class="digits">
+          <div class="count">
+            ${quotationOverviewData.source_direct}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Google - Organic</div>
+        <div class="digits">
+          <div class="count">
+            ${quotationOverviewData.source_google_organic}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Google CPC</div>
+        <div class="digits">
+          <div class="count">
+            ${quotationOverviewData.source_google_cpc}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Bing</div>
+        <div class="digits">
+          <div class="count">
+            ${quotationOverviewData.source_bing}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Blogg</div>
+        <div class="digits">
+          <div class="count">
+            ${quotationOverviewData.source_blogg}
+          </div>
+        </div>
+      </div>
+    </div>
+      <hr>
+      <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th scope="col">Client</th>
+            <th scope="col">Reference id</th>
+            <th scope="col">Total</th>
+            <th scope="col">UTM-Source</th>
+            <th scope="col">UTM-Medium</th>
+            <th scope="col">UTM-Campaign</th>
+            <th scope="col">UTM-Term</th>
+            <th scope="col">Date created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="quotationData.length <= 0">
+            <td colspan="10">No data found.</td>
+          </tr>
+          <tr v-if="quotationData.length > 0" v-for="item in quotationData">
+            <th scope="row">${item.name}</th>
+            <td>${ item.reference_id }</td>
+            <td class="col-sales">${ item.total } SEK</td>
+            <td>${ item.utm_source }</td>
+            <td>${ item.utm_medium }</td>
+            <td>${ item.utm_campaign }</td>
+            <td>${ item.utm_term }</td>
+            <td>${ item.created_at }</td>
+          </tr>
+        </tbody>
+      </table>
+    </div><!--tab-quotation-->
+    <div class="tab-revenue" v-show="activeTab == 'order'">
+    <div class="tab-report">
+      <div class="box box-sm c">
+        <div class="label">Not set</div>
+        <div class="digits">
+          <div class="count">
+            ${orderOverviewData.source_notset}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Direct</div>
+        <div class="digits">
+          <div class="count">
+            ${orderOverviewData.source_direct}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Google - Organic</div>
+        <div class="digits">
+          <div class="count">
+            ${orderOverviewData.source_google_organic}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Google CPC</div>
+        <div class="digits">
+          <div class="count">
+            ${orderOverviewData.source_google_cpc}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Bing</div>
+        <div class="digits">
+          <div class="count">
+            ${orderOverviewData.source_bing}
+          </div>
+        </div>
+      </div>
+      <div class="box box-sm c">
+        <div class="label">Blogg</div>
+        <div class="digits">
+          <div class="count">
+            ${orderOverviewData.source_blogg}
+          </div>
+        </div>
+      </div>
+    </div>
+      <hr>
+      <table class="table table-striped table-dark">
+        <thead>
+          <tr>
+            <th scope="col">Client</th>
+            <th scope="col">Reference id</th>
+            <th scope="col">Quotation ID</th>
+            <th scope="col">Total</th>
+            <th scope="col">UTM-Source</th>
+            <th scope="col">UTM-Medium</th>
+            <th scope="col">UTM-Campaign</th>
+            <th scope="col">UTM-Term</th>
+            <th scope="col">Date created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="orderData.length <= 0">
+            <td colspan="10">No data found.</td>
+          </tr>
+          <tr v-if="orderData.length > 0" v-for="item in orderData">
+            <th scope="row">${item.name}</th>
+            <td>${ item.reference_id }</td>
+            <td>${ item.order_quotation_id }</td>
+            <td class="col-sales">${ item.total } SEK</td>
+            <td>${ item.utm_source }</td>
+            <td>${ item.utm_medium }</td>
+            <td>${ item.utm_campaign }</td>
+            <td>${ item.utm_term }</td>
+            <td>${ item.created_at }</td>
+          </tr>
+        </tbody>
+      </table>
+    </div><!--tab-quotation-->
+  </div> <!--container-fluid-->
+</div>
+
+<script>
+  window.token = "{{ token }}"
+  Vue.component('vue2-daterange-picker', window['vue2-daterange-picker'].default);
+  Vue.component('animated-number', window['AnimatedNumber']);
+  Vue.component('sale-by-year-chart', {
+    extends: VueChartJs.Bar,
+    props: ['saleByYear'],
+    mounted () {
+      this.renderChart({
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+          {
+            label: 'Försäljning detta året',
+            backgroundColor: '#f87979',
+            data: [this.saleByYear.Jan, this.saleByYear.Feb, this.saleByYear.Mar, this.saleByYear.Apr, this.saleByYear.May, this.saleByYear.Jun, this.saleByYear.Jul, this.saleByYear.Aug, this.saleByYear.Sep, this.saleByYear.Oct, this.saleByYear.Nov, this.saleByYear.Dec]
+          }
+        ]
+      }, {responsive: true, maintainAspectRatio: false})
+    }
+  });
+  Vue.component('margin-by-year-chart', {
+    extends: VueChartJs.Bar,
+    props: ['marginByYear'],
+    mounted () {
+      this.renderChart({
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+          {
+            label: 'Vinst marginal detta året',
+            backgroundColor: '#f87979',
+            data: [this.marginByYear.Jan, this.marginByYear.Feb, this.marginByYear.Mar, this.marginByYear.Apr, this.marginByYear.May, this.marginByYear.Jun, this.marginByYear.Jul, this.marginByYear.Aug, this.marginByYear.Sep, this.marginByYear.Oct, this.marginByYear.Nov, this.marginByYear.Dec]
+          }
+        ]
+      }, {responsive: true, maintainAspectRatio: false})
+    }
+  });
+  var app = new Vue({
+    el: '#report-app',
+    delimiters: ['${', '}'],
+    data: {
+      processing: false,
+      error: null,
+      activeTab: 'report',
+      saleOfYear: null,
+      saleCurrentPeriod: null,
+      salePrinted: null,
+      salePlain: null,
+      productions: null,
+      pwProductions: null,
+      hotscreenProductions: null,
+      zamviProductions: null,
+      otherProductions: null,
+      saleByYear: null,
+      marginByYear: null,
+      numberAnimationDuration: 1000,
+      dateRange: {
+        startDate: new Date(),
+        endDate: new Date(),
+      },
+      revenueData: [],
+      quotationData: [],
+      quotationOverviewData: {
+        source_direct: 0,
+        source_notset: 0,
+        source_google_organic: 0,
+        source_google_cpc: 0,
+        source_blogg: 0,
+        source_bing: 0,
+      },
+      orderData: [],
+      orderOverviewData: {
+        source_direct: 0,
+        source_notset: 0,
+        source_google_organic: 0,
+        source_google_cpc: 0,
+        source_blogg: 0,
+        source_bing: 0,
+      },
+      currentYear: new Date().getFullYear(),
+    },
+    created: function() {
+      this.getData()
+      this.getRevenueData()
+      this.getQuotationData('quotation')
+      this.getQuotationData('order')
+    },
+    methods: {
+      formatToPrice(value) {
+        value = value.toFixed(2)
+        var parts = value.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        return parts.join(".");
+      },
+      getData: function() {
+        var self = this
+        $.ajax({
+          url: '{{ catalog }}index.php?route=codevoc/b2bmanager_report.getData&token='+ window.token,
+          dataType: 'json',
+          method: 'POST',
+          data: {
+            from_date: dayjs(this.dateRange.startDate).format('YYYY-MM-DD'),
+            to_date: dayjs(this.dateRange.endDate).format('YYYY-MM-DD'),
+            year: this.currentYear,
+          },
+          beforeSend: function() {
+            self.error = null
+            self.processing = true
+          },
+          complete: function() {
+            self.processing = false
+          },
+          success: function(json) {
+            if (json['error']) {
+              self.error = json['error']
+            }
+
+            if (json['success']) {
+              self.saleOfYear = json['sale_of_year']
+              self.saleCurrentPeriod = json['sale_current_period']
+              self.salePrinted = json['sale_printed']
+              self.salePlain = json['sale_plain']
+              self.productions = json['productions']
+              self.pwProductions = json['pw_productions']
+              self.hotscreenProductions = json['hotscreen_productions']
+              self.zamviProductions = json['zamvi_productions']
+              self.otherProductions = json['other_productions']
+              self.saleByYear = json['sale_by_year']
+              self.marginByYear = json['margin_by_year']
+            }
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          }
+        });
+      },
+      getRevenueData: function() {
+        var self = this
+        $.ajax({
+          url: '{{ catalog }}index.php?route=codevoc/b2bmanager_report.getRevenueData&token='+ window.token,
+          dataType: 'json',
+          method: 'POST',
+          data: {
+            from_date: dayjs(this.dateRange.startDate).format('YYYY-MM-DD'),
+            to_date: dayjs(this.dateRange.endDate).format('YYYY-MM-DD'),
+          },
+          beforeSend: function() {
+            self.error = null
+            self.processing = true
+          },
+          complete: function() {
+            self.processing = false
+          },
+          success: function(json) {
+            if (json['error']) {
+              self.error = json['error']
+            }
+
+            if (json['success']) {
+              self.revenueData = json['revenue_data']
+            }
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          }
+        });
+      },
+      getQuotationData: function(type) {
+        var self = this
+        $.ajax({
+          url: '{{ catalog }}index.php?route=codevoc/b2bmanager_report.getQuotationData&token='+ window.token,
+          dataType: 'json',
+          method: 'POST',
+          data: {
+            from_date: dayjs(this.dateRange.startDate).format('YYYY-MM-DD'),
+            to_date: dayjs(this.dateRange.endDate).format('YYYY-MM-DD'),
+            transaction_type: type,
+          },
+          beforeSend: function() {
+            self.error = null
+            self.processing = true
+          },
+          complete: function() {
+            self.processing = false
+          },
+          success: function(json) {
+            if (json['error']) {
+              self.error = json['error']
+            }
+
+            if (json['success']) {
+              if(type == 'quotation') {
+                self.quotationData = json['quotation_data']
+                self.quotationOverviewData = {
+                  source_direct: json['quotation_overview_data']['source_direct'],
+                  source_notset: json['quotation_overview_data']['source_notset'],
+                  source_google_organic: json['quotation_overview_data']['source_google_organic'],
+                  source_google_cpc: json['quotation_overview_data']['source_google_cpc'],
+                  source_blogg: json['quotation_overview_data']['source_blogg'],
+                  source_bing: json['quotation_overview_data']['source_bing'],
+                }
+                // self.quotationOverviewData = json['quotation_overview_data']
+              }
+              if(type == 'order') {
+                self.orderData = json['quotation_data']
+                self.orderOverviewData = {
+                  source_direct: json['quotation_overview_data']['source_direct'],
+                  source_notset: json['quotation_overview_data']['source_notset'],
+                  source_google_organic: json['quotation_overview_data']['source_google_organic'],
+                  source_google_cpc: json['quotation_overview_data']['source_google_cpc'],
+                  source_blogg: json['quotation_overview_data']['source_blogg'],
+                  source_bing: json['quotation_overview_data']['source_bing'],
+                }
+                // self.quotationOverviewData = json['quotation_overview_data']
+              }
+
+            }
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          }
+        });
+      },
+      handleDateChanged() {
+        this.getData()
+        this.getRevenueData()
+        this.getQuotationData('quotation')
+        this.getQuotationData('order')
+      }
+    },
+  })
+</script>
+</body>
+</html>

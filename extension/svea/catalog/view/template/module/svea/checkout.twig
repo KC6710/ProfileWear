@@ -1,0 +1,153 @@
+{{ header }}
+<link href="extension/svea/catalog/view/stylesheet/sco.css" rel="stylesheet" />
+<script>
+    var continueBtnText = "{{ button_continue }}";
+    var backBtnText = "{{ button_back }}";
+</script>
+<main class="main-body product-details-main">
+<div class="" id="container">
+    <section class="checkout-page-container checkout-body">
+    <div style="background:#ffd9e8;padding:15px; text-align:center;margin-bottom:10px;border-radius:5px;">
+    Handla säkert & tryggt med Svea Webpay.<br>
+        <img class="paymenticons" src="https://profilewear.se/catalog/view/theme/pwtmpl/image/paymenticons.svg" style="width:150px;margin-top:10px;">
+    </div>
+
+
+        <div class="sco-main-content">
+            {% if status_default_checkout %}
+                <section class="allow-classic-checkout">
+                    <div class="row">
+                        <div class="col-xs-12" style="width: 100%;">
+                            <p>{{ text_normal_checkout }}</p>
+                        </div>
+                    </div>
+                </section>
+            {% endif %}
+            <div class="row">
+                <div class="col-sm-12 sco-form step-1">
+                    {%  if status_test_mode == 1 %}
+                        <div class="alert alert-success text-center" role="alert">
+                            {{ text_test_mode }}
+                        </div>
+                    {% endif %}
+                    <div id="sco-cart"></div>
+                    <div class="action-icons">
+                        {% if status_coupon  and  module_sco_show_coupons  ==  '1' %}
+                            <div class="sco-checkout-extra-options" id="coupon-toggle-btn">
+                                <a data-bs-toggle="collapse" href="#sco-coupon" aria-expanded="false"aria-controls="sco-coupon">
+                                    <i class="fa fa-ticket"></i>
+                                    <span>
+                                    {{ coupon_icon_title }}
+                                        <i class="check-icon fa fa-check-circle"></i>
+                                </span>
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if status_voucher  and  module_sco_show_voucher  ==  '1' %}
+                            <div class="sco-checkout-extra-options" id="voucher-toggle-btn">
+                                <a data-bs-toggle="collapse" href="#sco-voucher" aria-expanded="false" aria-controls="sco-voucher">
+                                    <i class="fa fa-credit-card"></i>
+                                    <span>
+                                        {{ voucher_icon_title }}
+                                        <i class="check-icon fa fa-check-circle"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if module_sco_show_comment  ==  '1' %}
+                            <div class="sco-checkout-extra-options" id="comment-toggle-btn">
+                                <a data-bs-toggle="collapse" href="#sco-comment" aria-expanded="false" aria-controls="sco-comment">
+                                    <i class="fa fa-comment"></i>
+                                    <span>
+                                        {{ comment_icon_title }}
+                                        <i class="check-icon fa fa-check-circle"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="addon-content">
+                        <div class="collapse" id="sco-coupon">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="coupon" id="coupon"/>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary btnSco" type="button" id="coupon-button">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="collapse" id="sco-voucher">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="voucher" id="voucher"/>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary btnSco" type="button" id="voucher-button">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="collapse" id="sco-comment">
+                            <div class="input-group">
+                                <textarea class="form-control" name="comment" id="comment">{{ order_comment }}</textarea>
+                                <span class="input-group-btn">
+                                    <button class="btn sco-primary-btn btnSco" id="sco-comment-add" type="button">
+                                        <i id="sco-comment-button-icon" class="fa fa-check"></i>
+                                    </button>
+                                </span>
+                            </div>
+                            {% if order_comment %}
+                                <script>
+                                    $('#comment-toggle-btn').addClass('used');
+                                </script>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if module_sco_gather_newsletter_consent == 1 %}
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="sco-newsletter" name="sco-newsletter">
+                            <label class="sco-newsletter" for="sco-newsletter">
+                                {{ text_subscribe_to_newsletter }}
+                            </label>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-sm-12 sco-form step-2">              
+                    <h3><i class="fa fa-truck"></i> {{ heading_shipping }}</h3>
+                    <section id="sco-form">
+                        <div class="form-group">
+                            <div class="addon">
+                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                <input type="text" name="postcode" id="sco-postcode"
+                                       value="{{ module_sco_postcode }}"
+                                       class="form-control"
+                                       placeholder="{{ entry_postcode }}"/>
+                                <span class="change-postcode">{{ text_change_postcode }}</span>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="shipping-methods" id="sco-details">
+                        <select name="shipping" id="sco-shipping" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <button disabled type="button" id="continue-step-1" class="sco-continue-btn btn btn-primary btn-block sco-primary-btn">
+                        {{ button_continue }}
+                    </button>
+                </div>
+                <div class="col-sm-12 sco-snippet">
+                    <div class="text-center" style="margin-top: 10px;">
+                        <i class="fa fa-spinner" id="sco-snippet-loader" aria-hidden="true"></i>
+                    </div>
+                    <div id="sco-snippet-section"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div  style="text-align:center;margin-top:20px;">
+    <img src="image/svea-logotype.png">
+    </div>
+</div>
+<script src="extension/svea/catalog/view/javascript/sco.js"></script>
+{{ footer }}
+

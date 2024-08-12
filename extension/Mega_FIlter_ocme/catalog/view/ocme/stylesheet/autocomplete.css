@@ -1,0 +1,125 @@
+/**
+ * Mega Filter Pack
+ * 
+ * @license Commercial
+ * @author info@ocdemo.eu
+ * 
+ * All code within this file is copyright OC Mega Extensions.
+ * You may not copy or reuse code within this file without written permission. 
+ */
+
+@-webkit-keyframes vAutocompleteSpinner {
+	0% {
+		transform: rotate(0deg)
+	}
+	to {
+		transform: rotate(1turn)
+	}
+}
+
+@keyframes vAutocompleteSpinner {
+	0% {
+		transform: rotate(0deg)
+	}
+	to {
+		transform: rotate(1turn)
+	}
+}
+
+.ocme-autocomplete-input {
+	position: relative;
+}
+.input-group .ocme-autocomplete-input {
+	z-index: 2;
+	float: left;
+	width: 100%;
+	margin-bottom: 0;
+	display: table-cell;
+}
+.input-group .ocme-autocomplete-input .form-control {
+	display: inline-block;
+	border-radius: 4px 0 0 4px;
+}
+.input-group .ocme-autocomplete-input .ocme-autcomplete-spinner {
+	display: none;
+}
+
+.ocme-autcomplete .btn .fa-spin {
+	margin-left: -1px;
+}
+
+.ocme-autcomplete-spinner {
+	align-self: center;
+	display: none;
+	font-size: 5px;
+	text-indent: -9999em;
+	overflow: hidden;
+	border: .9em solid hsla(0, 0%, 39.2%, .1);
+	border-left-color: rgba(60, 60, 60, .45);
+	transform: translateZ(0);
+	-webkit-animation: vAutocompleteSpinner 1.1s linear infinite;
+	animation: vAutocompleteSpinner 1.1s linear infinite;
+	transition: opacity .1s;
+	position: absolute;
+	top: 5px;
+	right: 6px;
+	z-index: 1;
+}
+
+.ocme-autcomplete-spinner,
+.ocme-autcomplete-spinner:after {
+	border-radius: 50%;
+	width: 5em;
+	height: 5em;
+}
+
+.ocme-autcomplete-loading .ocme-autcomplete-spinner {
+	display: block;
+}
+
+.ocme-autcomplete-list {
+    position: absolute;
+    max-height: 350px;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    overflow-y: auto;
+    z-index: 999;
+	border: 1px solid #dddddd;
+}
+
+.ocme-autcomplete-list .list-group-item,
+.ocme-autcomplete-list .list-group-item:focus,
+.ocme-autcomplete-list .list-group-item:hover {
+	border-left-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-radius: 0;
+}
+.ocme-autcomplete-list .list-group-item:first-child {
+	border-top: none;
+}
+.ocme-autocomplte-matched-text {
+	font-weight: 700;
+}
+.ocme-autocomplte-item small {
+	display: block;
+	color: #999;
+}
+.ocme-autcomplete-list .ocme-mfp-f-value-count {
+	float: right;
+	margin: -2px 0;
+	padding: 1px 5px;
+}
+.ocme-autcomplete-list .ocme-mfp-f-value-count .ocme-autocomplte-matched-text,
+.ocme-autocomplte-item small .ocme-autocomplte-matched-text {
+	font-weight: normal;
+}
+.ocme-autcomplete-list > .vbt-matched-text{
+    font-weight: bold;
+}
+.ocme-autcomplete-list a:not(.disabled){
+    cursor: pointer;
+}
+.ocme-autcomplete-list a.disabled{
+    cursor: default;
+    pointer-events: none;
+}

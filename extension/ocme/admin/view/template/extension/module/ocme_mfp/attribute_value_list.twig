@@ -1,0 +1,51 @@
+{{ header }}
+<div id="ocme-app" class="{{ ocme.oc().isV4() ?'card' : 'panel panel-default' }}">
+	<div class="{{ ocme.oc().isV4() ? 'card-header' : 'panel-heading' }} panel-header">
+		{% if ocme.oc().isV3() %}
+			<h3 class="panel-title">
+		{% endif %}
+			<i class="fa fa-list"></i> {{ ocme.trans('module::global.text_list') }}
+		{% if ocme.oc().isV3() %}
+			</h3>
+		{% endif %}
+	</div>
+	<div class="{{ ocme.oc().isV4() ? 'card' : 'container-fluid panel' }}-body">
+		<form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-attribute">
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover">
+					<thead is="ocme-attribute-value-filter"  sort="{{ sort }}" order="{{ order }}" sort_name="{{ sort_name }}" sort_attribute="{{ sort_attribute }}" sort_sort_order="{{ sort_sort_order }}"></thead>
+					<tbody>
+						{% if results %}
+							{% for result in results %}
+								<tr>
+									<td class="text-center">
+										<input type="checkbox" name="selected[]" value="{{ result.o.attribute_value_id }}" {% if result.o.attribute_value_id in selected %} checked="checked" {% endif %} />
+									</td>
+									<td class="text-left text-start">{{ result.o.name }}</td>
+									<td class="text-left text-start">
+										<a href="{{ result.filter_by_attribute }}">{{ result.o.attribute.name }}</a>
+									</td>
+									<td class="text-right text-end">{{ result.o.sort_order }}</td>
+									<td class="text-right text-end">
+										<a href="{{ result.delete }}" data-toggle="tooltip" title="{{ ocme.trans('module::global.text_delete') }}" onclick="return confirm('{{ ocme.trans('module::global.text_are_you_sure') }}');" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+										<a href="{{ result.edit }}" data-toggle="tooltip" title="{{ ocme.trans('module::global.text_edit') }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+									</td>
+								</tr>
+							{% endfor %}
+						{% else %}
+							<tr>
+							  <td class="text-center" colspan="5">{{ ocme.trans('module::global.text_list_is_empty') }}</td>
+							</tr>
+						{% endif %}
+					</tbody>
+				</table>
+			</div>
+		</form>
+		<div class="row">
+			<div class="col-sm-6 text-left text-start">{{ pagination }}</div>
+			<div class="col-sm-6 text-right text-end">{{ pagination_info }}</div>
+		</div>
+	</div>
+</div>
+			
+{{ footer }}

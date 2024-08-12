@@ -1,0 +1,201 @@
+.manufacturers_container {
+    width: 100%;
+  }
+  
+  /* Breadcrumb */
+  .manufacturers_container .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 1.5rem;
+    padding-left: 40px;
+  }
+  .manufacturers_container .breadcrumb span {
+    color: #89909a;
+    font-family: Barlow;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .round {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: Pink;
+  }
+  .manufacturers_container .breadcrumb .active {
+    font-size: 12px;
+    color: black;
+  }
+  
+  /* HEADER BANNER */
+  .manufacturers_container .header_banner {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    background-color: #eff1ed;
+    background-image: url("../../../image/manufacturers-banner.jpg");
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .manufacturers_container .header_banner .left {
+    flex: 1;
+  }
+  .manufacturers_container .header_banner .right {
+    flex: 1;
+    padding-block: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-right: 30px;
+    margin-left: -30px;
+    padding-left: 30px;
+    background-color: rgba(250,250,250,0.6);
+    box-shadow: -27px 1px 19px -14px rgba(250,250,250,0.6);
+  }
+  .manufacturers_container .header_banner .right .heading {
+    margin: 0;
+    font-weight: 500;
+    font-size: calc(1.325rem + 0.9vw);
+  }
+  .manufacturers_container .header_banner .right .text1 {
+    margin: 0;
+    font-weight: 500;
+    font-size: 17px;
+  }
+  .manufacturers_container .header_banner .right .text2 {
+    margin: 0;
+    width: 78%;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  .manufacturers_container .header_banner .right button {
+    width: max-content;
+    margin-top: 20px;
+  }
+  
+  /* ALPHABETS */
+  .manufacturers_container .alphabets_box {
+    border-bottom: 1px solid #eff1ed;
+    width:100%;
+  }
+  .manufacturers_container .alphabets_box ul {
+    margin: 0;
+    padding-left: 0;
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    padding: 20px 60px;
+    justify-content: space-between;
+  }
+  .manufacturers_container .alphabets_box ul li {
+    width: 25px;
+    height: 25px;
+    text-align: center;
+  }
+  .manufacturers_container .alphabets_box ul li:hover {
+    background-color: pink;
+  }
+  .manufacturers_container .alphabets_box ul li a {
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  /* Logo Section */
+  .manufacturers_container .logo_container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 5px;
+  }
+  .manufacturers_container .logo_container .logo_row {
+    width: 100%;
+    /* display: flex; */
+    /* flex-direction: row; */
+    /* gap: 50px; */
+  }
+  .manufacturers_container .logo_container .logo_row h4 {
+    padding-left: 40px;
+    margin-top: 25px;
+    font-weight: bold;
+  }
+  .manufacturers_container .logo_container .logo_row .logo_box {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .manufacturers_container .logo_container .logo_row .logo_box img {
+    height: 90px;
+    width: auto;
+    filter: grayscale();
+    cursor: pointer;
+  }
+  .manufacturers_container .logo_container .logo_row .logo_box img:hover {
+    filter: none;
+  }
+  
+  @media (max-width: 768px) {
+    .manufacturers_container .breadcrumb {
+      padding-left: 0px;
+    }
+  
+    .manufacturers_container .header_banner {
+      background-image: none;
+    }
+    .manufacturers_container .header_banner .left {
+      display: none;
+    }
+    .manufacturers_container .header_banner .right {
+      padding: 30px;
+      background-color: #fbdeeb;
+      margin-left: 0px;
+      /* padding-left: 30px; */
+    }
+    .manufacturers_container .header_banner .right .heading {
+      font-size: 40px;
+    }
+    .manufacturers_container .header_banner .right .text2 {
+      width: 100%;
+    }
+  
+    .manufacturers_container .alphabets_box ul {
+      padding: 20px 0px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+  
+    .manufacturers_container .logo_container .logo_row {
+      flex-direction: column;
+      gap: 20px;
+    }
+    .manufacturers_container .logo_container .logo_row h4 {
+      padding-left: 0px;
+      margin-top: 0px;
+    }
+    .manufacturers_container .logo_container .logo_row .logo_box img {
+      height: 60px;
+      width: auto;
+    }
+  }
+  
+  .manufacturer-list-logo{
+    width: 125px;
+    border: 1px solid #eee;
+    padding: 7px;
+    border-radius: 12px;
+}
+
+  @media (max-width: 350px) {
+    .manufacturers_container .header_banner .right .heading {
+      font-size: 30px;
+    }
+  }
+  

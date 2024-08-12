@@ -1,0 +1,230 @@
+{{ header }}
+<main id="product-search" class="main-body searchresults-main">
+  <div class="product-header">
+    {% for breadcrumb in breadcrumbs %}
+      <h6>{{ breadcrumb.text }}</h6>
+      {% if not loop.last %}
+        <div class="bg-pink"></div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div class="input-group mb-5 drawer-input" >
+     <input type="text" name="search" value="{{ search }}" placeholder="{{ text_keyword }}" id="input-search" class="form-control mb-1"/>
+     {# <span class="input-group-text close">
+      <img src="image/close.svg">
+    </span> #}
+    <a id="button-search" style="display:flex; cursor:pointer;">    
+    <span class="input-group-text search">
+      <img src="image/search48.svg">
+    </span></a>
+  </div>
+  <div class="bar d-none d-lg-flex mb-4">
+    <div class="d-flex align-items-center">
+      
+      <h5>{{ heading_title }}</h5>
+      <p>{{ product_total }} produkter</p>
+    </div>
+    <div class="sort-div">
+      <p>Sortera:</p>
+      <select class="form-select" id="input-sort" style="border: none" aria-label="Default select example" onchange="location = this.value;">
+        {% for sorts in sorts %}
+          <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    {{ column_left }}
+    <div id="content" class="col-12 col-lg-9">{{ content_top }}
+      {% if products %}
+        <div id="product-list" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4">
+          {% for product in products %}
+            <div class="col-6 col-md-4 col-lg-4 col-xl-3 px-2">{{ product }}</div>
+          {% endfor %}
+        </div>
+        <div class="row">
+          <div class="col-sm-6 text-start">{{ pagination }}</div>
+          <div class="col-sm-6 text-end">{{ results }}</div>
+        </div>
+      {% endif %}
+      {% if not categories and not products %}
+        <p>{{ text_no_results }}</p>
+        <div class="text-end"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+      {% endif %}
+      {{ content_bottom }}
+    </div>
+    {{ column_right }}
+  </div>
+  <div class="gap-div"></div>
+  {# <div class="row mb-3"> #}
+      {# <div class="row row-cols-1 row-cols-md-2">
+        <div class="col">
+          <input type="text" name="search" value="{{ search }}" placeholder="{{ text_keyword }}" id="input-search" class="form-control mb-1"/>
+          {# <div class="form-check">
+            <input type="checkbox" name="description" value="1" id="input-description" class="form-check-input"{% if description %} checked{% endif %}/> <label for="input-description" class="form-check-label">{{ entry_description }}</label>
+          </div> #}
+        {# </div> #}
+        {# <div class="col">
+          <select name="category_id" id="input-category" class="form-select mb-1">
+            <option value="0">{{ text_category }}</option>
+            {% for category_1 in categories %}
+              <option value="{{ category_1.category_id }}"{% if category_1.category_id == category_id %} selected{% endif %}>{{ category_1.name }}</option>
+              {% for category_2 in category_1.children %}
+                <option value="{{ category_2.category_id }}"{% if category_2.category_id == category_id %} selected{% endif %}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ category_2.name }}</option>
+                {% for category_3 in category_2.children %}
+                  <option value="{{ category_3.category_id }}"{% if category_3.category_id == category_id %} selected{% endif %}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ category_3.name }}</option>
+                {% endfor %}
+              {% endfor %}
+            {% endfor %}
+          </select>
+          <div class="form-check">
+            <input type="checkbox" name="sub_category" value="1" id="input-sub-category" class="form-check-input"{% if sub_category %} checked{% endif %}/> <label for="input-sub-category" class="form-check-label">{{ text_sub_category }}</label>
+          </div>
+        </div> #}
+      {# </div> #}
+  {# {{ column_left }} #}
+    {# <div id="content" class="col">{{ content_top }} #}
+      {# <h1>{{ heading_title }}</h1> #}
+      {# <div class="row"> #}
+        {# <div class="col">
+          <button type="button" id="button-search" class="btn btn-primary">{{ button_search }}</button>
+        </div> #}
+      {# </div> #}
+      {# <hr/> #}
+      {# <h2>{{ text_search }}</h2> #}
+      {# {% if products %} #}
+        {# <div id="display-control" class="row"> #}
+          {# <div class="col-md-3"> #}
+            {# <div class="mb-3">
+              <a href="{{ compare }}" id="compare-total" class="btn btn-primary d-block"><i class="fa-solid fa-arrow-right-arrow-left"></i> <span class="d-inline d-md-none d-lg-inline">{{ text_compare }}</span></a>
+            </div> #}
+          {# </div> #}
+          {# <div class="col-md-1 d-none d-md-block">
+            <div class="btn-group">
+              <button type="button" id="button-list" class="btn btn-light" data-bs-toggle="tooltip" title="{{ button_list }}"><i class="fa-solid fa-table-list"></i></button>
+              <button type="button" id="button-grid" class="btn btn-light" data-bs-toggle="tooltip" title="{{ button_grid }}"><i class="fa-solid fa-table-cells"></i></button>
+            </div>
+          </div> #}
+          {# <div class="col-md-4 offset-md-1 col-6">
+            <div class="input-group mb-3">
+              <div class="input-group">
+                <label for="input-sort" class="input-group-text">{{ text_sort }}</label> <select id="input-sort" class="form-select" onchange="location = this.value;">
+                  {% for sorts in sorts %}
+                    <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div> #}
+          {# <div class="col-md-3 col-3"> #}
+            {# <div class="input-group mb-3">
+              <div class="input-group">
+                <label for="input-sort" class="input-group-text">{{ text_sort }}</label> <select id="input-sort" class="form-select" onchange="location = this.value;">
+                  {% for sorts in sorts %}
+                    <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div> #}
+          {# </div> #}
+          {# <div class="col-md-3 col-3"> #}
+            {# <div class="input-group mb-3">
+              <div class="input-group">
+                <label for="input-sort" class="input-group-text">{{ text_sort }}</label> <select id="input-sort" class="form-select" onchange="location = this.value;">
+                  {% for sorts in sorts %}
+                    <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div> #}
+          {# </div> #}
+          {# <div class="col-md-3 col-3"> #}
+            {# <div class="input-group mb-3">
+              <div class="input-group">
+                <label for="input-sort" class="input-group-text">{{ text_sort }}</label> <select id="input-sort" class="form-select" onchange="location = this.value;">
+                  {% for sorts in sorts %}
+                    <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div> #}
+          {# </div> #}
+          {# <div class="sort-div"> #}
+            {# <p>Sortera:</p> #}
+            {# <select class="form-select" id="input-sort" style="border: none" aria-label="Default select example" onchange="location = this.value;"> #}
+                  {# {% for sorts in sorts %} #}
+                    {# <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option> #}
+                  {# {% endfor %} #}
+            {# </select> #}
+          {# </div> #}
+            {# <div class="col-md-3 col-3">
+              <div class="input-group mb-3">
+                <div class="input-group">
+                  <label for="input-sort" class="input-group-text">{{ text_sort }}</label> <select id="input-sort" class="form-select" onchange="location = this.value;">
+                    {% for sorts in sorts %}
+                      <option value="{{ sorts.href }}"{% if sorts.value == '%s-%s'|format(sort, order) %} selected{% endif %}>{{ sorts.text }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div> #}
+        {# </div> #}
+        {# <div id="product-list" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4">
+          {% for product in products %}
+            <div class="col-6 col-md-4 col-lg-4 col-xl-3 px-2">{{ product }}</div>
+          {% endfor %}
+        </div> #}
+        {# <div class="row">
+          <div class="col-sm-6 text-start">{{ pagination }}</div>
+          <div class="col-sm-6 text-end">{{ results }}</div>
+        </div>
+      {% else %}
+        <p>{{ text_no_results }}</p>
+      {% endif %}
+      {{ content_bottom }}</div>
+    {{ column_right }}</div> #}
+</main>
+<script type="text/javascript"><!--
+$('#button-search').bind('click', function () {
+    url = 'index.php?route=product/search&language={{ language }}';
+
+    var search = $('#input-search').prop('value');
+
+    if (search) {
+        url += '&search=' + encodeURIComponent(search);
+    }
+
+    var category_id = $('#input-category').prop('value');
+
+    if (category_id > 0) {
+        url += '&category_id=' + encodeURIComponent(category_id);
+    }
+
+    var sub_category = $('#input-sub-category:checked').prop('value');
+
+    if (sub_category) {
+        url += '&sub_category=1';
+    }
+
+    var filter_description = $('#input-description:checked').prop('value');
+
+    if (filter_description) {
+        url += '&description=1';
+    }
+
+    location = url;
+});
+
+$('#input-search').bind('keydown', function (e) {
+    if (e.keyCode == 13) {
+        $('#button-search').trigger('click');
+    }
+});
+
+$('#input-category').on('change', function () {
+    $('#input-sub-category').prop('disabled', (this.value == '0' ? true : false));
+});
+
+$('#input-category').trigger('change');
+//--></script>
+{{ footer }}

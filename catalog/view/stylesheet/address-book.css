@@ -1,0 +1,203 @@
+.address-book-container {
+  padding: 30px 100px;
+}
+
+/* Breadcrumb */
+.address-book-container .address-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 1.5rem;
+}
+.address-book-container .address-breadcrumb span {
+  color: #89909a;
+  font-family: Barlow;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.address-book-container .address-breadcrumb .round {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: Pink;
+}
+.address-book-container .address-breadcrumb .active {
+  font-size: 12px;
+  color: black;
+}
+
+/* Center Container */
+.address-book-container .center-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+/* Left Side*/
+.address-book-container .left {
+  width: 360px;
+}
+
+/* Right Side*/
+.address-book-container .right {
+  width: calc(100% - 360px);
+}
+
+/* Address Header */
+.address-book-container .address-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.address-book-container .address-header h4 {
+  color: var(--black, #2a2a2a);
+  font-family: Barlow;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1;
+  margin: 0;
+}
+.address-book-container .address-header .add-new-address-btn {
+  padding: 5px 25px;
+  color: var(--white, #fff);
+  font-family: Barlow;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* Address Card */
+.address-book-container .address-card-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-top: 35px;
+  flex-wrap: wrap;
+}
+/* .address-book-container .address-card-container > * + * {
+  margin-left: 20px;
+} */
+
+.address-book-container .address-card-container .address-card {
+  width: calc((100% - 20px) / 2);
+  background: #fff;
+  border: 1px solid #eaeaea;
+  padding: 24px;
+}
+.address-book-container .address-card-container .address-card div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+}
+.address-book-container .address-card-container .address-card div h5 {
+  color: var(--black, #2a2a2a);
+  font-family: Barlow;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  margin-left: 0;
+  margin-bottom: 12px;
+}
+.address-book-container .address-card-container .address-card div .semi-colon {
+  color: black;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+}
+.address-book-container .address-card-container .address-card p:nth-child(2) {
+  margin-bottom: 12px;
+}
+.address-book-container .address-card-container .address-card p:nth-child(3) {
+  margin-bottom: 0px;
+}
+
+/* Drawer */
+.address-book-container .new_address_drawer{
+  width: 500px;
+}
+
+.address-book-container .drawer-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 48px;
+}
+.address-book-container .drawer-header h2 {
+  color: #000;
+  font-family: Barlow;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 400;
+}
+.address-book-container .drawer-header .btn-close {
+  font-size: 18px;
+  color: black;
+  box-shadow: none;
+}
+
+@media (max-width: 1050px) {
+  .address-book-container .left {
+    width: 280px;
+  }
+  .address-book-container .right {
+    width: calc(100% - 280px);
+  }
+}
+@media (max-width: 1024px) {
+  .address-book-container .center-container {
+    flex-direction: column;
+  }
+  .address-book-container .right {
+    width: 100%;
+  }
+  .address-book-container .left {
+    width: 100%;
+  }
+}
+@media (max-width: 767px) {
+  .address-book-container {
+    padding: 30px 30px;
+  }
+  .address-book-container .address-card-container .address-card {
+    width: 100% !important;
+  }
+}
+@media (max-width: 550px) {
+  .address-book-container .address-card-container .address-card {
+    padding: 16px;
+  }
+  .address-book-container .drawer-header h2 {
+    font-size: 22px;
+  }
+  .address-book-container .drawer-header .btn-close {
+    font-size: 14px;
+  }
+  .address-book-container .new_address_drawer{
+    width: 100%;
+  }
+  .address-book-container .drawer-header {
+    padding: 30px 30px;
+  }
+  .address-book-container .offcanvas-body{
+    padding-inline: 30px !important;
+  }
+}
+@media (max-width: 360px) {
+  .address-book-container .address-header .add-new-address-btn {
+    padding: 5px 15px;
+  }
+}

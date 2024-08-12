@@ -1,0 +1,184 @@
+{{ header }}
+<main class="main-body profile-container my-order-container">
+  <div class="profile-breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+      
+      {% if loop.last %}
+      <span class="item">{{ breadcrumb.text }}</span>
+      {% else %}
+      <a href="{{ breadcrumb.href }}"><span class="item active">{{ breadcrumb.text }}</span></a>
+      <span class="round"></span>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+  <div class="center-container">
+    {{ column_left }}
+    <div class="right">
+      <div class="order-header">
+        <h4>{{ heading_title }}</h4>
+        <div class="filter-box">
+          <form method="GET" action="{{ form_url }}"> 
+            <div class="input-group px-1">
+              <input type="text" name="search" class="form-control" placeholder="Search order" aria-label="SearchOrder" aria-describedby="basic-addon1">
+              <button type="submit" class="btn"><img src="image/search.svg" alt="Search Icon"></button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="order-card-container mt-3">
+
+
+      {% for order in orders %}
+          <div class="order-card" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRightaddOrderDetails{{ order.order_id }}" aria-controls="offcanvasRightaddOrderDetails">
+            <div class="order-card-header">
+              <div class="left-side">{% if order.status == 'Pending' %}
+                  <p class="active-order">{{ order.status }}</p>
+                  {% elseif order.status == 'Complete' %}
+                  <p class="complete-order">{{ order.status }}</p>
+                  {% elseif order.status == 'Canceled' %}
+                  <p class="cancelled-order">{{ order.status }}</p>
+                  {% else %}
+                  <p class="complete-order">{{ order.status }}</p>
+                  {% endif %}
+                <h6>order id - <span>{{ order.order_id }}</span></h6>
+              </div>
+              <div class="right-side">
+                <p>order placed on - <span>{{ order.date_added }}</span></p>
+              </div>
+            </div>
+            <div class="content-detail mt-3">
+              {# <div class="detail-left">
+                <div class="product-img-box">
+                {% if ordered_products.image != '' %}
+                  <img src="{{ ordered_products.image }}" class="product-img">
+                {% endif %}
+                </div>
+                <div class="detail-div">
+                  <h3>{{ ordered_products.name }}</h3>
+                  <h4>
+                    {% for options in ordered_products.option %}
+                        {{ options.value }}
+                        {% if not loop.last %}
+                          |
+                        {% endif %}
+                    {% endfor %}
+                  </h4>
+                  <p>Quantity - {{ ordered_products.quantity }}</p>
+                </div>
+              </div> #}
+              <div class="detail-right">
+                <div>
+                  <p>Total Order Price</p>
+                  <h6>{{ order.total }}</h6>
+                </div>
+                {# <div>
+                  <p>Estd. delivery</p>
+                  <h6>Mon, 05 Jun 2023</h6>
+                </div> #}
+              </div>
+            </div>
+          </div>
+      {% endfor %}
+
+
+
+      </div>
+    </div>
+  </div>
+{% for order in orders %}
+  {% for ordered_products in order.ordered_products %}
+    <div class="search-drawer">
+          <div style="width: 45%" class="main-drawer offcanvas offcanvas-end order-details-drawer" tabindex="-1" id="offcanvasRightaddOrderDetails{{ order.order_id }}" aria-labelledby="offcanvasRightLabel" aria-modal="true" role="dialog">
+            <div class="offcanvas-header drawer-header">
+              <h2>Order Details</h2>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body pt-0">
+              <div class="details-header">
+                <div class="left-side">
+                  {% if order.status == 'Pending' %}
+                  <p class="active-order">{{ order.status }}</p>
+                  {% elseif order.status == 'Complete' %}
+                  <p class="complete-order">{{ order.status }}</p>
+                  {% elseif order.status == 'Canceled' %}
+                  <p class="cancelled-order">{{ order.status }}</p>
+                  {% else %}
+                  <p class="complete-order">{{ order.status }}</p>
+                  {% endif %}
+                  <h6>order id - <span>{{ order.order_id }}</span></h6>
+                </div>
+                <div class="right-side">
+                  <p>order placed on - <span>{{ order.date_added }}</span></p>
+                </div>
+              </div>
+              <p class="order-summary-heading">Order Summary</p>
+              {% for ordered_products in order.ordered_products %}
+                <div class="content-detail mt-3">
+                  <div class="detail-left">
+                    <div class="product-img-box">
+                      {% if ordered_products.image != '' %}
+                        <img src="{{ ordered_products.image }}" class="product-img">
+                      {% endif %}
+                    </div>
+                    <div class="detail-div">
+                      <h3>{{ ordered_products.name }}</h3>
+
+                        {% set size = '' %}
+                        
+                      <h4>
+                        {% for options in ordered_products.option %}
+                            {{ options.value }}
+                            {% if options.name == 'Size' %}
+                              {% set size = options.value %}
+                            {% endif %}
+                            {% if not loop.last %}
+                              |
+                            {% endif %}
+                        {% endfor %}
+                      </h4>
+                      <div class="sizes-box">
+                        <p>{{ size }} &nbsp; | &nbsp; {{ ordered_products.quantity }} </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              <hr style="margin-bottom: 30px; margin-top: 30px">
+
+              <p class="order-summary-heading">Shipping Details</p>
+              <div class="shipping-detail-box">
+                <p class="title-1">Shipping address</p>
+                <p class="title-2">{{ order.shipping_info }}</p>
+              </div>
+              {# <div class="shipping-detail-box">
+                <p class="title-1">Estimated delivery</p>
+                <p class="title-2">Mon, 05 Jun 2023</p>
+              </div> #}
+              <hr style="margin-bottom: 30px; margin-top: 30px">
+              <p class="order-summary-heading">Price Details</p>
+              {% for total in order.totals %}
+                <div class="price-detail-box">
+                <p class="title-1">{{ total.title }}</p>
+                <p class="title-2">{{ total.value }}</p>
+              </div>
+              {% endfor %}
+              <hr style="margin-top: 30px">
+              <div class="button-box">
+                <button class="primaryButton">
+                  Download invoice
+                  <img src="image/arrow_right_white.svg" alt="Arrow">
+                </button>
+
+                <button class="outlinedButton cancel_order_button">
+                  Cancel order
+                  <img src="image/arrow-right-green.svg" alt="Arrow">
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+  {% endfor %}
+
+{{ footer }}

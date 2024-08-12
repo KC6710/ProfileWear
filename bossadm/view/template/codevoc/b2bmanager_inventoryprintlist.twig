@@ -1,0 +1,440 @@
+{{ header }}
+<link href="view/stylesheet/pw4_bootstrap_3.css" rel="stylesheet" type="text/css"/>
+<link href="view/stylesheet/pw4_style.css" rel="stylesheet" type="text/css"/>
+<style>#container{background:#fff;}</style>
+<link href="view/stylesheet/codevoc_b2b_mananger.css" rel="stylesheet">
+<link href="view/stylesheet/codevoc_b2b_mananger_dark.css" rel="stylesheet">
+<link href="view/javascript/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+{{ column_left }}
+<div id="content"
+  class="spwcountinventory_wrapper"
+  token="{{ token }}">
+
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="javascript:void(0)" @click="showAddToList($event)" data-toggle="tooltip" title="Plocklista" :class="{'btn btn-primary':true,'jump':animateShowListButton}">
+          <i class="fa fa-list"></i>&nbsp;Plocklista&nbsp;&nbsp;<span class="badge">${ addToListItems.length }</span>
+        </a>
+        <a href="javascript:void(0)" data-toggle="tooltip" title="Lägg till artikel" class="btn btn-primary" @click="showAddArticle($event)"><i class="fa fa-plus"></i>&nbsp;Lägg till artikel</a>
+      </div>
+      <h1>Transfer lager</h1>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+  <div class="panel panel-default bordernone">
+      <div class="panel-body">
+        <table id="list">
+          <thead>
+            <tr>
+              <th style="width: 4%"><!-- Plus sign column --></th>
+              <th style="width: 5%">Nr</th>
+              <th style="width: 15%">Kund</th>
+              <th style="width: 15%">Namn</th>
+              <th style="width: 8%">Färg</th>
+              <th style="width: 8%">Typ</th>
+              <th style="width: 12%">Kategori</th>
+              <th style="width: 8%">Antal</th>
+              <th style="width: 10%">Plats</th>
+              <th style="width: 10%">Inlagd</th>
+              <th style="width: 10%"><!-- Actions column --></th>
+            </tr>
+          </thead> <!-- thead -->
+          <tbody>
+            <!-- Filters -->
+            <tr class="filter-row">
+              <td style="width: 4%"></td>
+              <td style="width: 5%"><input type="text" v-model="filter_number"></td>
+              <td style="width: 15%"><input type="text" v-model="filter_client"></td>
+              <td style="width: 15%"><input type="text" v-model="filter_name"></td>
+              <td style="width: 8%"><input type="text" v-model="filter_color"></td>
+              <td style="width: 8%"><input type="text" v-model="filter_type"></td>
+              <td style="width: 12%"><input type="text" v-model="filter_category"></td>
+              <td style="width: 8%"><input type="text" v-model="filter_quantity"></td>
+              <td style="width: 10%"><input type="text" v-model="filter_location"></td>
+              <td style="width: 10%"></td>
+              <td style="width: 10%"></td>
+            </tr>
+            <tr v-for="item in filteredItems" :class="{'no-quantity':item.quantity == 0}">
+              <td style="text-align: center;"><button class="plus-button" type="button" v-if="item.quantity > 0" @click="addToList(item,$event)">+</button></td>
+              <td>${ item.number }</td>
+              <td>${ item.client }</td>
+              <td>${ item.name }</td>
+              <td>${ item.color }</td>
+              <td>${ item.type }</td>
+              <td>${ item.category }</td>
+              <td>${ item.quantity }</td>
+              <td>${ item.location }</td>
+              <td>${ item.created_at }</td>
+              <td class="actions">
+                <a href="javascript:void(0)" @click="editItem(item,$event)">
+                  <i class="fa fa-pencil" aria-hidden="true"></i>
+                </a>
+                <a href="javascript:void(0)" @click="copyItem(item,$event)">
+                  <i class="fa fa-files-o" aria-hidden="true"></i>
+                </a>
+                <a href="javascript:void(0)" @click="deleteItem(item,$event)">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div><!-- Panel body -->
+    </div>
+  </div> <!-- Container fluid -->
+  <add-article-component
+    :show="showAddArticleDialog"
+    :token="token"
+    @close-add-article-dialog="closeAddArticle()"
+    @update-items="getData()"
+  ></add-article-component>
+  <edit-component
+    :show="showEditDialog"
+    :item="currentEditItem"
+    :token="token"
+    @close-edit-dialog="closeEdit()"
+    @update-items="getData()"
+  ></edit-component>
+  <add-to-list-component
+    :show="showAddToListDialog"
+    :item="currentAddToListItem"
+    :token="token"
+    @close-add-to-list-dialog="closeAddToList()"
+    @update-list="updateAddToList()"
+  ></add-to-list-component>
+  <add-to-list-table-component
+    :show="showAddToListTableDialog"
+    :token="token"
+    :items="addToListItems"
+    @close-add-to-list-table-dialog="closeAddToListTable()"
+    @update-list="updateAddToList()"
+    @update-items="getData()"
+  ></add-to-list-table-component>
+</div> <!-- Content -->
+<script type="text/javascript" src="view/javascript/vue.js"></script>
+<script type="text/javascript" src="view/javascript/vue-resource.min.js"></script>
+<script type="text/x-template" id="edit-component-template">
+  <div class="edit-component">
+    <div class="modal show" tabindex="-1" role="dialog" v-if="show">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="close()"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Ändra artikel</h4>
+          </div>
+          <div class="modal-body">
+            <div v-if="isMessage" :class="{'alert alert-success':isSuccess,'alert alert-danger':isError}" role="alert">
+              <ul>
+                <li v-for="item in infoMessage">${ item }</li>
+              </ul>
+            </div>
+            <form ref="edit_form">
+              <input type="hidden" name="id" :value="item.id">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 5%">Nummer</th>
+                    <th style="width: 10%">Kund</th>
+                    <th style="width: 10%">Namn</th>
+                    <th style="width: 10%">Färg</th>
+                    <th style="width: 8%">Typ</th>
+                    <th style="width: 8%">Kategori</th>
+                    <th style="width: 5%">Antal</th>
+                    <th style="width: 5%">Plats</th>
+                    <th style="width: 15%">Kommentar</th>
+                  </tr>
+                </thead> <!-- thead -->
+                <tbody>
+                  <tr>
+                    <td style="width: 5%"><input type="text" :value="item.number" v-model="currentItem.number" name="number"></td>
+                    <td style="width: 10%"><input type="text" :value="item.client" v-model="currentItem.client" name="client"></td>
+                    <td style="width: 10%"><input type="text" :value="item.name" v-model="currentItem.name" name="name"></td>
+                    <td style="width: 10%"><input type="text" :value="item.color" v-model="currentItem.color" name="color"></td>
+                    <td style="width: 8%">
+                    <select  v-model="currentItem.type" name="type">
+                      <option>Select</option>
+                      <option value="PW-Folie">PW-Folie</option>
+                      <option value="PW-DTF">PW-DTF Hotpeal</option>
+                      <option value="PW-DTF-coldpeal">PW-DTF Coldpeal</option>
+                      <option value="HS-flex">HS-Flex</option>
+                      <option value="HS-stark">HS-Stark</option>
+                      <option value="N/A">N/A</option>
+                    </select>
+                    </td>
+                    <td style="width: 8%">
+                    <select  v-model="currentItem.category" name="category">
+                      <option>Select</option>
+                      <option value="Saving">Saving (betald)</option>
+                      <option value="Leftover">Leftover (överproduktion)</option>
+                      <option value="N/A">N/A</option>
+                    </select>
+                    </td>                    
+                    <td style="width: 5%"><input type="number" min="0" :value="item.quantity" v-model="currentItem.quantity" name="quantity"></td>
+                    <td style="width: 5%"><input type="text" :value="item.location" v-model="currentItem.location" name="location"></td>
+                    <td style="width: 15%"><input type="text" :value="item.comments" v-model="currentItem.comments" name="comments"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <button type="button" class="btn btn-save btn-primary" @click="save()"><i class="fa fa-save"></i> Spara ändringar</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <div class="footer_info">
+              <ul>
+                <li><span><strong><i class="fa fa-calendar-plus-o" aria-hidden="true"></i> Datum skapad: </strong></span>${ item.created_at }</li>
+                <li><span><strong><i class="fa fa-calendar-check-o" aria-hidden="true"></i> Ändrades senast: </strong></span>${ item.updated_at }</li>
+                <li><span><strong><i class="fa fa-user" aria-hidden="true"></i> Ändrades senast av: </strong></span>${ item.last_update_by }</li>
+              </ul>
+            </div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  </div>
+</script>
+
+<script type="text/x-template" id="add-to-list-component-template">
+  <div class="add-to-list-component">
+    <div class="modal show" tabindex="-1" role="dialog" v-if="show">
+      <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="close()"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Add to list</h4>
+          </div>
+          <div class="modal-body">
+            <div v-if="isMessage" :class="{'alert alert-success':isSuccess,'alert alert-danger':isError}" role="alert">
+              <ul>
+                <li v-for="item in infoMessage">${ item }</li>
+              </ul>
+            </div>
+            <div class="item-info">
+              <div class="row">
+                <div class="col-sm-6">
+                  <p>Nummer: <strong>${ item.number }</strong></p>
+                  <p>Kund: <strong>${ item.client }</strong></p>
+                  <p>Name: <strong>${ item.name }</strong></p>
+                  <p>Färg: <strong>${ item.color }</strong></p>
+                  <p>Typ: <strong>${ item.type }</strong></p>
+                </div>
+                <div class="col-sm-6">
+                  <p>Plats: <strong>${ item.location }</strong></p>
+                  <p>Antal i lager: <strong>${ item.quantity }</strong></p>
+                </div>
+              </div>
+            </div>
+            <br/>
+            <div class="row">
+              <div class="col-sm-12">
+                <p><input class="form-control" type="number" min="1" :max="item.quantity" :value="quantity" v-model="quantity"></p>
+                <p><button class="btn btn-block btn-primary" @click="save()">Add to list</button> </p>
+              </div>
+            </div>
+
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  </div>
+</script>
+
+<script type="text/x-template" id="add-to-list-table-component-template">
+  <div class="add-to-list-component-table">
+    <div class="modal show" tabindex="-1" role="dialog" v-if="show">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="close()"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">List</h4>
+          </div>
+          <div class="modal-body">
+            <div v-if="isMessage" :class="{'alert alert-success':isSuccess,'alert alert-danger':isError}" role="alert">
+              <ul>
+                <li v-for="item in infoMessage">${ item }</li>
+              </ul>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width: 10%">Nummer</th>
+                  <th style="width: 15%">Kund</th>
+                  <th style="width: 20%">Namn</th>
+                  <th style="width: 15%">Färg</th>
+                  <th style="width: 10%">Typ</th>
+                  <th style="width: 10%">Plats</th>
+                  <th style="width: 15%">Antal</th>
+                  <th style="width: 5%"></th>
+                </tr>
+              </thead> <!-- thead -->
+              <tbody>
+                <tr v-for="item in items">
+                  <td style="width: 10%"><span>${ item.item_info.number }</span></td>
+                  <td style="width: 15%"><span>${ item.item_info.client }</span></td>
+                  <td style="width: 20%"><span>${ item.item_info.name }</span></td>
+                  <td style="width: 15%"><span>${ item.item_info.color }</span></td>
+                  <td style="width: 10%"><span>${ item.item_info.type }</span></td>
+                  <td style="width: 10%"><span>${ item.item_info.location }</span></td>
+                  <td style="width: 15%"><span>${ item.quantity }</span></td>
+                  <td style="width: 5%"><a href="javascript:void(0)" @click="deleteItem(item,$event)"><i class="fa fa-trash-o"></i></a></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="6"></td>
+                  <td><strong>Total: </strong> ${ listTotal }</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+            <div class="row">
+              <div class="col-sm-12 d-grid">
+                <button class="btn btn-primary btn-block" @click="openPrint($event)"><i class="fa fa-print"></i> Print List</button><br/>
+                <button class="btn btn-primary btn-block" @click="collectAndClear($event)"><i class="fa fa-eraser"></i> Collect and Clear List</button><br/>
+                <button class="btn btn-gray btn-block" @click="deleteAll($event)"><i class="fa fa-trash-o"></i> Empty List</button>
+              </div>
+            </div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  </div>
+</script>
+
+<!-- Add article template -->
+<script type="text/x-template" id="add-article-component-template">
+  <div class="add-article-component">
+    <div class="modal show" tabindex="-1" role="dialog" v-if="show">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="close()"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Lägg till artikel</h4>
+          </div>
+          <div class="modal-body">
+            <div v-if="isMessage" :class="{'alert alert-success':isSuccess,'alert alert-danger':isError}" role="alert">
+              <ul>
+                <li v-for="item in infoMessage">${ item }</li>
+              </ul>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width: 6%">Nummer</th>
+                  <th style="width: 10%">Kund</th>
+                  <th style="width: 10%">Namn</th>
+                  <th style="width: 10%">Färg</th>
+                  <th style="width: 7%">Typ</th>
+                  <th style="width: 7%">Kategori</th>
+                  <th style="width: 5%">Antal</th>
+                  <th style="width: 5%">Plats</th>
+                  <th style="width: 20%">Kommentar</th>
+                </tr>
+              </thead> <!-- thead -->
+              <tbody>
+                <tr v-for="(item,index) in items">
+                  <td style="width: 6%"><input type="text" v-model="item.number" :class="typeof itemErrors[index] !== 'undefined' && typeof itemErrors[index].number !== 'undefined'  ? 'error-border' : ''"></td>
+                  <td style="width: 10%"><input type="text" v-model="item.client" :class="typeof itemErrors[index] !== 'undefined' && typeof itemErrors[index].client !== 'undefined'  ? 'error-border' : ''"></td>
+                  <td style="width: 10%"><input type="text" v-model="item.name" :class="typeof itemErrors[index] !== 'undefined' && typeof itemErrors[index].name !== 'undefined'  ? 'error-border' : ''"></td>
+                  <td style="width: 10%"><input type="text" v-model="item.color" :class="typeof itemErrors[index] !== 'undefined' && typeof itemErrors[index].color !== 'undefined'  ? 'error-border' : ''"></td>
+                  <td style="width: 7%">
+                    <select v-model="item.type" name="type" :class="typeof itemErrors[index] !== 'undefined' && typeof itemErrors[index].type !== 'undefined'  ? 'error-border' : ''">
+                      <option value="PW-Folie">PW-Folie</option>
+                      <option value="PW-DTF">PW-DTF Hotpeal</option>
+                      <option value="PW-DTF-coldpeal">PW-DTF Coldpeal</option>
+                      <option value="HS-flex">HS-Flex</option>
+                      <option value="HS-stark">HS-Stark</option>
+                      <option value="N/A">N/A</option>
+                    </select>                  
+                  </td>
+                  <td style="width: 7%">
+                    <select  v-model="item.category" name="category" :class="typeof itemErrors[index] !== 'undefined' && typeof itemErrors[index].category !== 'undefined'  ? 'error-border' : ''">
+                      <option value="Saving">Saving (betald)</option>
+                      <option value="Leftover">Leftover (överproduktion)</option>
+                      <option value="N/A">N/A</option>
+                    </select>                  
+                  </td>                  
+                  <td style="width: 5%"><input style="text-align:right" min="0" type="number" v-model="item.quantity" :class="typeof itemErrors[index] !== 'undefined' && typeof itemErrors[index].quantity !== 'undefined'  ? 'error-border' : ''"></td>
+                  <td style="width: 5%"><input type="text" v-model="item.location"></td>
+                  <td style="width: 20%"><input type="text" v-model="item.comments"></td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-primary btn-block" @click="save($event)"><i class="fa fa-save"></i>&nbsp;Spara</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+  </div>
+</script>
+
+<script type="text/x-template" id="autocomplete-template">
+  <input name="article_nr" ref="input" type="text" v-model="value" class="autocomplete" @input="updateValue()" />
+</script>
+<script type="text/javascript" src="view/javascript/b2bmanager_inventory_print.js"></script>
+
+<style type="text/css">
+.modal-content {
+    background-color: #2f363e;
+}
+.bordernone{border:1px solid #e8e8e8!important;border-left:none!important;border-right:none!important}
+#list{width:100%}
+#list .filter-row{background-color:#2d3743;border-bottom:1px dotted #000}
+#list .filter-row input{width:98%;background: transparent;
+    border: 1px solid #4c5c70;color:#fff}
+#list td,#list th{padding:5px 0;margin-bottom:5px;}
+#list tbody tr{border-bottom: 1px solid #4c5c70;}
+#list tr .actions{text-align:center}
+#list tr .actions a{display:inline-block;margin-right:5px;color:#5584a7}
+#list .no-quantity{background-color: #ff00001a;}
+.table input{width:98%;background: transparent;
+    border: 1px solid #4c5c70;color:#fff}
+.error-border{border:1px solid red}
+.plus-button{background:#6BA823;border:0;height:20px;width:20px;border-radius:20px;color:#fff;text-align:center;line-height:1.5;font-weight:700;font-size:12px;outline-width:0}
+.modal-title{text-align:center;font-weight:700}
+.add-to-list-component .item-info{background:#3f4b59;padding:8px}
+.add-to-list-component input[type='number']{text-align:center;font-size:24px;font-weight:700;padding:12px 0}
+.btn-gray{color:#000;background-color:#a7a5a5;border-color:#bdbebf}
+.edit-component .btn{font-size:14px}
+.edit-component .btn-save{width:100%;display:block;font-size:14px}
+.edit-component table thead tr{background-color:#EBEBEB}
+.edit-component .footer_info{text-align:center;margin-bottom:15px}
+.edit-component .footer_info ul{list-style:none}
+.edit-component .footer_info ul li{display:inline-block;margin-right:15px}
+.add-to-list-component-table table thead,.add-to-list-component-table table tfoot{background:#30414e}
+.add-article-component table thead tr{background:#EBEBEB}
+.jump{-webkit-animation:jump 1.2s linear 0 1 normal;animation:jump 1.2s linear 0 1 normal}
+@-webkit-keyframes jump {
+0%{-webkit-transform:translateY(0);transform:translateY(0)}
+20%{-webkit-transform:translateY(0);transform:translateY(0)}
+40%{-webkit-transform:translateY(-30px);transform:translateY(-30px)}
+50%{-webkit-transform:translateY(0);transform:translateY(0)}
+60%{-webkit-transform:translateY(-15px);transform:translateY(-15px)}
+80%{-webkit-transform:translateY(0);transform:translateY(0)}
+100%{-webkit-transform:translateY(0);transform:translateY(0)}
+}
+@keyframes jump {
+0%{transform:translateY(0)}
+20%{transform:translateY(0)}
+40%{transform:translateY(-30px)}
+50%{transform:translateY(0)}
+60%{transform:translateY(-15px)}
+80%{transform:translateY(0)}
+100%{transform:translateY(0)}
+}
+.modal-lg {width: 1200px;}
+select{background: none;border: 1px solid #4c5c70;width: 100%;}
+</style>
+
+{{ footer }}

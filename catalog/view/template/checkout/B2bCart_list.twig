@@ -1,0 +1,238 @@
+<div class="left">
+{% for product in products %}
+  <div class="section-1 mt-2">
+    <div class="left-side">
+      <div class="product-div">
+        {% if product.thumb %} 
+          <a href="{{ product.href }}">
+            <img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="product-img" />
+          </a> 
+        {% endif %}
+      </div>
+      <div class="wrapper">
+        <div class="detail-div">
+          <h3><a href="{{ product.href }}">{{ product.name }}</a>{% if not product.stock %} <span class="text-danger">***</span>{% endif %}</h3>
+          <h4>{{ product.quantity }} x {{ product.price }}</h4>
+          <p>
+            {% for option in product.option %}
+              {{ option.value }} 
+              {% if not loop.last %}
+                 |
+              {% endif %}
+            {% endfor %}
+          </p>
+        </div>
+        <div class="right-side">
+          <div class="detail-div">
+            <p>{{ product.total }}</p>
+            <div style="position: relative">
+              <div>
+                <form method="post" data-oc-target="#shopping-cart"  >
+                  <input type="hidden" name="quantity" value="{{ product.quantity }}" size="1" class="form-control">
+                  <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                  {% for option in product.option %}
+                  <input type="hidden" name="key[]" value="{{ option.cart_id }}">
+                  {% endfor %}
+                  <button type="submit" formaction="{{ product_remove }}" data-bs-toggle="tooltip" title="{{ button_remove }}" class="btn" disabled="disabled"><img class="delete_shopping_cart_icon" style="cursor:pointer;margin-top: -10px;" src="image/deleteIcon.svg"></button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{# {% if product.option %}
+<div class="section-2">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Particular Article</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Price Per Piece</th>
+          <th scope="col">Sub Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for option in product.option %}
+        {% if option.name == 'Size'%}
+                <tr>
+                    <td>{{ option.value }} </td>
+                    <td>
+                    <div class="input-group">
+                        <div class="input-group">
+                        <form method="post" data-oc-target="#shopping-cart" >
+                            <input type="hidden" name="quantity" value="{{ option.quantity - 1 }}" size="1" class="form-control">
+                            <input type="hidden" name="key" value="{{ option.cart_id }}">
+                            <input type="hidden" name="option_id" value="{{option.product_option_id}}">
+                            <input type="hidden" name="option_value_id" value="{{option.product_option_value_id}}">
+                            <button type="submit" formaction="{{ product_edit }}" data-bs-toggle="tooltip" title="{{ button_update }}" class="btn btn-outline-secondary">-</button>
+                        </form>
+                        <span class="mx-2">{{ option.quantity }}</span>
+                        <form method="post" data-oc-target="#shopping-cart" >
+                            <input type="hidden" name="quantity" value="{{ option.quantity + 1 }}" size="1" class="form-control">
+                            <input type="hidden" name="key" value="{{ option.cart_id }}">
+                            <input type="hidden" name="option_id" value="{{option.product_option_id}}">
+                            <input type="hidden" name="option_value_id" value="{{option.product_option_value_id}}">
+                            <button type="submit" formaction="{{ product_edit }}" data-bs-toggle="tooltip" title="{{ button_update }}" class="btn btn-outline-secondary">+</button>
+                        </form>
+                        </div>
+                    </div>
+                    </td>
+                    <td>{{ product.price }}</td>
+                    {% set price = 0 + product.price|number_format(2,'.',',') %}
+                    {% set  quantity = 0 + option.quantity|number_format(2,'.',',') %}
+                    <td>{{ (price * quantity)|number_format(2,'.',',') }} {{product.currency}}</td>
+                </tr>
+        {% endif %}
+        {% endfor %}
+        {% for print_product in product.group_products %}
+          <tr class="table-bottom-content">
+            <td>
+              {{ print_product.name }}
+            </td>
+            
+              {% if 'Startup' in print_product.name %}
+                  <td>{{ print_product.quantity }}</td>
+                  <td>{{ print_product.price }}</td>
+                  <td>{{ print_product.total }}</td>
+              {% else %}
+                  <td>{{ print_product.quantity }}</td>
+                  <td>{{ print_product.price }}</td>
+                  <td>{{ print_product.total }}</td>
+              {% endif %}
+            
+            
+            
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %} #}
+{% endfor %}
+  {% if customized == 1 %}
+    <p class="cutomize-details-heading">Customize Details</p>
+    <div class="print-file-box">
+      <div class="radio-button-box">
+        <div class="d-flex flex-row" style="width: 130px">
+          <p class="print-file-text" style="margin-bottom: 0rem">
+            Print File
+          </p>
+          <img src="image/info.svg" alt="Info" style="width: 18px; height: 18px; margin-top: 3px">
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="upload_files" id="flexRadioDefault1" checked>
+          <label class="form-check-label" for="flexRadioDefault1">
+            Upload my print files later
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="upload_files" id="flexRadioDefault2">
+          <label class="form-check-label" for="flexRadioDefault2">
+            Upload my print files now
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="input-group" id="fileUploadDiv" style="display:none;">
+      <div class="file-input-wrapper">
+        <input type="file" name="files[]" id="file-input" accept=".jpg, .jpeg, .png" multiple>
+        <input type="hidden" id="file-name">
+        <label for="file-input" class="file-input-label">
+          <span><img src="image/upload.svg" alt="Upload" style="margin-bottom: 2px; margin-right: 5px"></span>
+          <span class="file-size-limit">Select files to upload (the file size should not exceed
+            5.0MB)</span>
+        </label>
+      </div>
+      <div id="selected-file" class="selected-file mt-2">
+      </div>
+    </div>
+
+
+    {% if screen_color %}
+      <hr class="horizontal-line">
+
+      <div class="radio-button-box">
+        <div class="d-flex flex-row" style="width: 130px">
+          <p class="print-file-text" style="margin-bottom: 0rem">
+            Print Color
+          </p>
+          <img src="image/info.svg" alt="Info" style="width: 18px; height: 18px; margin-top: 3px">
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="select_colors" id="flexRadioDefault3" checked>
+          <label class="form-check-label" for="flexRadioDefault3">
+            I want suggestion for printing color
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="select_colors" id="flexRadioDefault4" >
+          <label class="form-check-label" for="flexRadioDefault4">
+            I want to specify print color
+          </label>
+        </div>
+      </div>
+
+      <div class="select-box-container" id="ColorsDiv">
+      {% for i in 1..(screen_color) %}
+        <div class="select-box">
+          <p class="select-box-label">
+            Color 0{{ i }} <span>*</span>
+            <span><img src="image/wheel-1.svg" alt="Wheel"></span>
+          </p>
+          <select class="form-select form-select-lg" aria-label=".form-select-lg example">
+            <option selected="">Select</option>
+            <option value="1">Red</option>
+            <option value="2">Green</option>
+            <option value="3">Blue</option>
+          </select>
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+    <hr class="horizontal-line">
+
+    <div class="text-area-section">
+      <p>Message <span style="color: red">*</span></p>
+      <div class="input-group">
+        <textarea class="form-control custom_message" aria-label="With textarea" placeholder="Your message"></textarea>
+      </div>
+    </div>
+  {% endif %}
+</div>
+<div class="right">
+  <div class="order-summary">
+    <h3>Order Summary</h3>
+    
+      {% for total in totals %}
+      
+        {% if total.title == 'Total' %}
+          <div class="grand-total">
+            <p>{{ total.title }}</p>
+              <p>{{ total.text }}</p>
+          </div>
+        {% else %}
+          <div class="border-bottom mb-3 mt-4">
+            <div>
+              <p>{{ total.title }}</p>
+              <p>{{ total.text }}</p>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+      <div class="buttons-box">
+      {% if customized == 1 %}
+        <a href="{{ quotation }}"class="outlinedButton" onclick="window.location.href='make-quotation.html'">
+          {{ button_quotation }}
+          <img src="image/arrow_right.svg" alt="">
+        </a>
+      {% else %}
+        <a href="{{ checkout }}" class="primaryButton" onclick="window.location.href='thank-you.html'" style="padding-block: 24px">
+          {{ button_checkout }}
+          <img src="image/arrow_right_white.svg" alt="">
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>

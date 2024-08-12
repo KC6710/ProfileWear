@@ -1,0 +1,157 @@
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
+<link href="view/javascript/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+<style type="text/css">
+	#print_view_wrapper{
+		padding: 15px;
+		font-family: 'Open Sans', sans-serif;
+		font-size: 11px;
+	}
+	.header{
+		border-bottom: 1px solid #ccc;
+		padding-bottom: 5px;
+		margin: 0 0 4px 0;
+	}
+	.header .heading{
+		font-size: 20px;
+		float: left;
+		margin: 0;
+	}
+	.header .print_button{
+	    float: right;
+	    color: #fff;
+	    background-color: #1e91cf;
+	    border-color: #1978ab;
+	    display: inline-block;
+	    margin-bottom: 0;
+	    font-weight: normal;
+	    text-align: center;
+	    vertical-align: middle;
+	    touch-action: manipulation;
+	    cursor: pointer;
+	    background-image: none;
+	    border: 1px solid transparent;
+	    white-space: nowrap;
+	    padding: 8px 13px;
+	    font-size: 12px;
+	    line-height: 1.42857;
+	    border-radius: 3px;
+	    -webkit-user-select: none;
+	    -moz-user-select: none;
+	    -ms-user-select: none;
+	    user-select: none;
+	}
+	table{
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 11px;
+	}
+	table thead{
+		background-color: #cecece;
+		-webkit-print-color-adjust: exact;
+	}
+	table tbody tr {
+		border-bottom: 1px solid #cecece;
+	}
+	table thead tr  th,table tbody tr  td{
+		padding: 6px 5px;
+	}
+	.tick-box{
+		height: 20px;
+	    width: 20px;
+	    border: 2px solid black;
+	    display: inline-block;
+	}
+	.location_item{
+		border-radius: 100px;
+	    padding: 3px 6px;
+	    color: black;
+	    border: 1px solid black;
+	    font-weight: normal;
+	}
+	.color_item,.size_item{
+		font-weight: bold;
+	}
+	.clearfix{
+		clear: both;
+	}
+	@media print{
+		.header .print_button{
+			display: none;
+		}
+	}
+</style>
+<div id="print_view_wrapper">
+	<div class="header">
+		<h1 class="heading">Print</h1>
+		<button class="print_button" @click="printPage()">Print Page</button>
+		<div class="clearfix"></div>
+	</div>
+	<table>
+		<thead>
+			<tr>
+				<th style="width: 10%"><!-- Plus sign column --></th>
+				<th style="width: 10%;text-align:left">{{ text_table_column_article_nr }}</th>
+				<th style="width: 25%;text-align:left">{{ text_table_column_name }}</th>
+				<th style="width: 10%;text-align:left">{{ text_table_column_color }}</th>
+				<th style="width: 10%;text-align:left">{{ text_table_column_size }}</th>
+				<th style="width: 20%;text-align:left">{{ text_table_column_brand }}</th>
+				<th style="width: 10%;text-align:left">{{ text_table_column_location }}</th>
+				<th style="width: 5%;text-align:right">Amount</th>
+			</tr>
+		</thead> <!-- thead -->
+		<tbody>
+			<tr v-for="item in items">
+				<td style="width: 10%;text-align: center"><span class="tick-box"></span></td>
+				<td style="width: 20%;text-align: left"><span>${ item.item_info.article_nr }</span></td>
+				<td style="width: 25%;text-align: left"><span>${ item.item_info.name }</span></td>
+				<td style="width: 10%;text-align: left"><span class="color_item">${ item.item_info.color }</span></td>
+				<td style="width: 10%;text-align: left"><span class="size_item">${ item.item_info.size }</span></td>
+				<td style="width: 10%;text-align: left"><span>${ item.item_info.brand }</span></td>
+				<td style="width: 10%;text-align: left"><span class="location_item">${ item.item_info.location }</span></td>
+				<td style="width: 5%;text-align: right"><span>${ item.quantity }</span></td>
+			</tr>
+		</tbody> <!-- tobdy -->
+	</table>
+</div>
+
+<script type="text/javascript" src="view/javascript/vue.js"></script>
+<script type="text/javascript" src="view/javascript/vue-resource.min.js"></script>
+<script type="text/javascript">
+	var app = new Vue({
+		el: '#print_view_wrapper',
+		delimiters: ['${', '}'],
+		data:{
+			items:[],
+			token: ''
+		},
+		mounted:function(){
+			var token = this.getQueryStringValue("user_token");
+			console.log(token);
+			this.token = token;
+			this.getData();
+		},
+		methods:{
+			getData:function(){
+				this.$http.get('index.php?route=codevoc/b2bmanager_inventory.api_get_add_to_list&user_token='+this.token).then(function(response){
+					// success
+					this.items = response.body.add_to_list_items;
+				},function(response){
+					// error
+				});
+				return false;
+			},
+			getQueryStringValue:function(key) {
+			  return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
+			},
+			printPage(){
+				if(this.items.length <= 0){
+					if(confirm("No items to print. Do you still want to print?")){
+						window.print();
+					}
+				}else{
+					window.print();
+				}
+			}
+		}
+	});
+</script>

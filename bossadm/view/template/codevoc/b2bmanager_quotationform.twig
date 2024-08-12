@@ -1,0 +1,2738 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<!-- B2Bmanager Module-->
+	 <script src="view/javascript/RowSorter.js" type="text/javascript"></script>
+		<style>
+			#container {
+				background: #fff;
+			}
+			.dropdown:hover>.dropdown-menu {
+				display: block;
+			}
+
+			.dropdown>.dropdown-toggle:active {
+			/*Without this, clicking will make it sticky*/
+				pointer-events: none;
+			}
+			.products-table .form-control {
+    display: block;
+    width: 100%;
+    padding: 2px;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #000;
+    background-color: #fff;
+    background-clip: padding-box;
+    border:0;
+    appearance: none;
+    border-radius:0;
+    transition: none;
+}
+		</style>
+		<div id="result"> </div>
+	<form method="post" enctype="multipart/form-data" id="form-product">
+		<div class="page-header" style="border:none;">
+			<div class="container-fluid">
+				<div class="float-end">
+					<a class="btn btn-primary" {% if quotation_id %} onclick="generateCart('{{custom_cart_url}}');" {% endif %}>
+						<i class="fa fa-cart-plus"></i>
+						Cart Link</a>
+					{% if order_id < 1 %}
+						<a {% if quotation_id %} class="btn btn-primary" href="javascript:void(0);" id="btn_order" onclick="createOrder('{{ quotation_id }}');" {% else %} class="btn btn-primary disabled" href="javascript:void(0);" {% endif %}>
+							<i class="fa fa-plus"></i>
+							Order</a>
+					{% else %}
+						<a class="btn btn-primary" href="{{ button_order }}">Order #{{order_id}}</a>
+					{% endif %}
+					<a {% if quotation_id %} class="btn btn-danger" href="{{exportpdf_url}}" {% else %} class="btn btn-danger disabled" href="javascript:void(0);" {% endif %}>
+						<i class="fa fa-file-pdf"></i>
+						{{button_pdf}}</a>
+					<a class="btn btn-success" data-toggle="tooltip" id="button-save" onclick="saveQuotation();" title="{{ button_save }}">
+						<i class="fa fa-save"></i>
+						{{button_save}}</a>
+				</div>
+				<h1>
+					<span class="label-quotation">Quotation {% if quotation_id %} #{{quotation_id}}{% endif %}</span>
+				</h1>
+				<hr>
+			</div>
+		</div>
+		<input type="hidden" name="buttontype" id="buttontype" value="">
+		<div class="container-fluid codevoc-b2b">
+			<div class="row mb-3">
+				<div class="col-sm-3">
+					<select class="form-select" name="shipping_method" id="input-shipping-method">
+						<option value="" cost="0" tax="0" total="0">--{{ entry_shipping_method }}--</option>
+						{% for method in shipping_methods %}
+							{% if method.installed == 1 and method.status == 'Enabled' %}
+								{% if shipping_method == method.code  %}
+								{% set code = method.code %}
+									<option value="{{ method.code }}" cost="{{method.cost}}" tax="{{method.tax_rate}}" total="{{method.total_cost}}" selected="selected">{{ method.name }}</option>
+								{% else %}
+									<option value="{{ method.code }}" cost="{{method.cost}}" tax="{{method.tax_rate}}" total="{{method.total_cost}}">{{ method.name }}</option>
+								{% endif %}
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<select class="form-select" name="payment_method" id="input-payment-method">
+						<option value="">--{{entry_payment_method}}--</option>
+						{% for method in payment_methods %}
+							{% if method.installed == 1 %}
+								{% if payment_method == method.code %}
+									<option value="{{ method.code }}" selected="selected">{{ method.name }}</option>
+								{% else %}
+									<option value="{{ method.code }}">{{ method.name }}</option>
+								{% endif %}
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<select class="form-select" id="assignee" name="assignee">
+						<option value="" selected="selected">{{ text_select }}</option>
+						{% for system_user in system_users %}
+							{% if system_user.user_id == quotation_other_detail.assignee %}
+								<option value="{{system_user.user_id}}" selected="selected">{{system_user.username}}</option>
+							{% else %}
+								<option value="{{system_user.user_id}}">{{system_user.username}}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+				<div class="col-sm-3">
+					<select class="form-select" id="quotation_status_id" name="quotation_status_id">
+						<option value="" selected="selected">{{ text_select }}</option>
+						{% for quotation_status in quotation_statuses %}
+							{% if quotation_status.quotation_status_id == quotation_status_id %}
+								<option value="{{ quotation_status.quotation_status_id }}" selected="selected">{{ quotation_status.name }}</option>
+							{% else %}
+								<option value="{{ quotation_status.quotation_status_id }}">{{ quotation_status.name }}</option>
+							{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+				{# <div class="btn-group" role="group" aria-label="actions">
+																																																												<a class="btn btn-success" data-toggle="tooltip" id="button-save-closed" onclick="$('#buttontype').val('2');buttonSave();" title="{{ button_saveandclose }}">{{button_saveandclose}}</a>
+																																																											</div>
+																																																											<div class="btn-group" role="group" aria-label="actions" style="margin-left:10px;">
+																																																												<a class="btn btn-warning" {% if quotation_id %} onclick="generateCart('{{custom_cart_url}}');" {% endif %}>
+																																																													<i class="fa fa-cart-plus"></i>
+																																																													Köplänk</a>
+																																																											</div> #}
+				<div class="clearfix"></div>
+			</div>
+			<div class="row mb-3">
+				{% if quotation_id %}
+					<div class="col-sm-12 labelset">
+						<fieldset>
+							<!--<span class="label label-default"><i class="fa fa-store"></i> <a href="{{store_url}}" target="_blank">{{store_name}}</a></span>-->
+							<span class="label label-quotation">
+								<button type="button" class="btn btn-secondary"><i class="fa fa-hashtag"></i>
+								Offert
+								{{quotation_id}}</button></span>
+							{% if order_id|length %}
+								<a href="{{ button_order }}" target="_blank" class="btn btn-secondary">
+									<span class="label label-order">
+										<i class="fa fa-hashtag"></i>
+										Order
+										{{order_id}}</span>
+								</a>
+								{% if production_id|length %}
+									<span class="label label-production">
+										<a href="{{button_prodution}}" class="btn btn-secondary" target="_blank">Production #{{production_id}}</a>
+									</span>
+								{% endif %}
+							{% endif %}
+							<hr>
+							<span class="label label-primary">
+								<button type="button" class="btn btn-secondary"><i class="fa fa-user"></i></button>
+								{% if customerurl %}
+									<a href="{{customerurl}}" class="btn btn-outline-primary" target="_blank">{{firstname}}
+										{{lastname}}</a>
+								{% else %}
+									{{firstname}}
+									{{lastname}}
+								{% endif %}
+								{# Show company name if exists #}
+								{% for custom_field in custom_fields %}
+									{% if custom_field.location == 'account' %}
+										{% if custom_field.type == 'text' %}
+											{% set thisCompanyName = account_custom_field[custom_field.custom_field_id] ? account_custom_field[custom_field.custom_field_id] : custom_field.value %}
+											<b>{{ account_custom_field[custom_field.custom_field_id] ? account_custom_field[custom_field.custom_field_id] : custom_field.value }}</b>
+										{% endif %}
+									{% endif %}
+								{% endfor %}
+
+							</span>
+							<span class="label label-primary">
+								<button type="button" class="btn btn-secondary"><i class="fa fa-truck"></i>
+								{{shipping_method_name}}</button></span>
+							<span class="label label-primary">
+								<button type="button" class="btn btn-secondary"><i class="fa fa-credit-card"></i>
+								{{payment_method_name}}</button></span>
+							<span class="label label-primary">
+								<button type="button" class="btn btn-secondary"><i class="fa fa-calendar"></i>
+								{{date_added}}</button></span>
+						</fieldset>
+					</div>
+				{% endif %}
+			</div>
+			<div class="row mb-3">
+				<div class="col-sm-12">
+
+					<div class="clearfix h10"></div>
+					<div class="accordion" id="accordionQuotationAdd" role="tablist" aria-multiselectable="true">
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="heading-account-details">
+								<button class="accordion-button" type="button" id="accountdetails" data-bs-toggle="collapse" data-bs-target="#account-details" aria-expanded="true" aria-controls="account-details">
+									<i class="fa fa-user"></i>&nbsp;{{tab_client_detail}}
+								</button>
+							</h2>
+							<div id="account-details" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionQuotationAdd">
+								<div
+									class="accordion-body">
+									{# <div class="row">
+																																					<div class="col-sm-6 hidden">
+																																						<label>{{entry_store}}</label>
+																																						<select class="form-select input-sm mb-3" name="store_id" id="input-store">
+																																							{% for store in stores %}
+																																								{% if store.store_id == store_id %}
+																																									<option value="{{ store.store_id }}" selected="selected">{{ store.name }}</option>
+																																								{% else %}
+																																									<option value="{{ store.store_id }}">{{ store.name }}</option>
+																																								{% endif %}
+																																							{% endfor %}
+																																						</select>
+																																					</div>
+																																					<div class="col-sm-6 hidden">
+																																						<label>{{entry_currency}}</label>
+																																						<select class="form-select input-sm mb-3" name="currency" id="input-currency">
+																																							{% for currency in currencies %}
+																																								{% if currency.code == currency_code %}
+																																									<option value="{{ currency.code }}" selected="selected">{{ currency.title }}</option>
+																																								{% else %}
+																																									<option value="{{ currency.code }}">{{ currency.title }}</option>
+																																								{% endif %}
+																																							{% endfor %}
+																																						</select>
+																																					</div>
+																																				</div> #}
+									<div class="row">
+										<div class="col-sm-7">
+											<label>{{entry_customer}}</label>
+											<div class="input-group mb-3">
+												<span class="input-group-btn">
+													<button type="button" class="btn btn-outline-primary">
+														<i class="fa fa-address-book"></i>
+													</button>
+												</span>
+												<input type="text" class="form-control" style="border: 1px solid #1e9fdd;" name="customer" value="{{ customer }}" placeholder="{{ entry_customer }}" id="input-customer" data-oc-target="autocomplete-customer" autocomplete="off">
+												<ul id="autocomplete-customer" class="dropdown-menu"></ul>
+												{# <input type="text" class="input-group" name="customer" value="{{ customer }}" placeholder="{{ entry_customer }}" id="input-customer"> #}
+												<!-- v4-->
+												<input type="hidden" name="customer_id" id="customer_id" value="{{ customer_id }}"/>
+													<a href="{{ button_add_customer }}" target="_blank" id="button-addon2" class="btn btn-outline-primary">
+														<i class="fa fa-plus"></i>
+														&nbsp; Skapa ny kund</a>
+												<!-- v4-->
+											</div>
+										</div>
+										<div class="col-sm-5" style="margin-top:19px;">
+											<a  {% if customer_id %} class="btn btn-outline-primary" target="_blank" href="index.php?route=customer/customer.form&user_token={{user_token}}&customer_id={{customer_id}}" {% else %} class="btn btn-outline-primary disabled editCustomer" href="javascript:void(0)" {% endif %}>
+												<i class="fa fa-pencil"></i>
+												&nbsp; Ändra i kundkort</a>
+											<a href="javascript:void(0)" type="button" {% if customer_id %} class="btn btn-outline-primary" value="{{ customer_id }}" id="button-sync-details" {% else %} class="btn btn-outline-primary button-sync-details disabled" value="" id="button-sync-details" {% endif %} >
+												<i class="fa fa-refresh"></i>
+												&nbsp; Synka</a>
+											<a href="javascript:void(0)" type="button" {% if customer_id %} class="btn btn-outline-primary" value="{{ customer_id }}" id="button-save-details" {% else %} class="btn btn-outline-primary button-save-details disabled" value="" id="button-save-details" {% endif %} >
+												<i class="fa fa-save"></i>
+												&nbsp; Spara ny adress</a>
+										</div>
+									</div>
+									<div class="clearfix"></div><hr>
+									<div class="row">
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label>{{entry_vatno}}</label>
+												<div class="input-group mb-3">
+													{% for custom_field in custom_fields %}
+													{% if custom_field.name == 'Vatnr'%}
+													<input class="form-control input-sm" id="vatnr" type="text" name="custom_field[{{ custom_field.custom_field_id }}]" value="{{ account_custom_field[custom_field.custom_field_id] ? account_custom_field[custom_field.custom_field_id] : custom_field.value }}">
+													<input id="custom_field_id_vatnr" type="hidden" name="" value="{{custom_field.custom_field_id}}">
+													{% endif %}
+													{% endfor %}
+													<button class="btn btn-outline-secondary btn-sm" type="button" id="INvatno">
+														<i class="fa fa-bolt"></i>
+													</button>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label>Företag</label>
+												<div class="input-group mb-3">
+													{% for custom_field in custom_fields %}
+													{% if custom_field.name == 'Företag'%}
+													<input class="form-control input-sm" id="customer_company" type="text" name="custom_field[{{ custom_field.custom_field_id }}]" value="{{ account_custom_field[custom_field.custom_field_id] ? account_custom_field[custom_field.custom_field_id] : custom_field.value }}">
+													<input id="custom_field_id_forerag" type="hidden" name="" value="{{custom_field.custom_field_id}}">
+													{% endif %}
+													{% endfor %}
+													<button class="btn btn-outline-secondary btn-sm" type="button" id="INvatno">
+														<i class="fa fa-bolt"></i>
+													</button>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label>{{entry_firstname}}</label>
+												<input class="form-control input-sm" type="text" name="input_firstname" value="{{ firstname }}" id="input-firstname" placeholder="{{entry_firstname}}">
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label>{{entry_lastname}}</label>
+												<input class="form-control input-sm" type="text" name="input_lastname" value="{{ lastname }}" id="input-lastname" placeholder="{{entry_lastname}}">
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<label>{{entry_email}}</label>
+											<input class="form-control input-sm" type="text" name="email" value="{{ email }}" id="input-email" placeholder="{{entry_email}}">
+										</div>
+										<div class="col-sm-6">
+											<label>{{entry_telephone}}</label>
+											<div class="input-group">
+												<input class="form-control input-sm" type="text" name="telephone" value="{{ telephone }}" id="input-telephone" placeholder="{{entry_telephone}}">
+												<button class="btn btn-outline-secondary btn-sm" type="button" id="INtelephone">
+													<i class="fa fa-bolt"></i>
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="heading-quotation-details">
+								<button id="quotationdetails" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#quotation-details" aria-expanded="false" aria-controls="quotation-details">
+									<i class="fa fa-calendar"></i>
+									&nbsp;{{tab_quotation_detail}}</button>
+							</h2>
+							<div id="quotation-details" class="accordion-collapse collapse" aria-labelledby="heading-quotation-details" data-bs-parent="#accordionQuotationAdd">
+								<div class="accordion-body">
+									<div class="row mb-3">
+										<div class="col-sm-4">
+											<label>{{entry_date_create}}</label>
+											<div class='input-group create_date'>
+												<input type='text' class="form-control date" data-date-format="YYYY-MM-DD" value="{{quotation_other_detail.create_date}}" name="create_date" id="create_date"/>
+												<input type='hidden' class="form-control" value="{{quotation_other_detail.create_date}}" name="delivery_date" id="delivery_date"/>
+												<a class="btn btn-outline-secondary" id="button-addon2">
+													<i class="fa fa-calendar"></i>
+												</a>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<label>{{entry_expire_date}}</label>
+											<div class='input-group expiration_date'>
+												<input type='text' class="form-control date" data-date-format="YYYY-MM-DD" value="{{quotation_other_detail.expiration_date}}" name="expiration_date" id="expiration_date"/>
+												<a class="btn btn-outline-secondary" id="button-addon2">
+													<i class="fa fa-calendar"></i>
+												</a>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<label>{{entry_delivery_terms}}</label>
+											<select name="shippment_terms" class="form-select input-sm">
+												<option value="10-15 arbetsdagar" {% if quotation_other_detail.shippment_terms == '10-15 arbetsdagar' %} {% endif %}>10-15 arbetsdagar</option>
+												<option value="5-7 arbetsdagar" {% if quotation_other_detail.shippment_terms == '5-7 arbetsdagar' %} selected {% endif %}>5-7 arbetsdagar</option>
+												<option value="15-20 arbetsdagar" {% if quotation_other_detail.shippment_terms == '15-20 arbetsdagar' %} selected {% endif %}>15-20 arbetsdagar</option>
+												<option value="Enligt överenskommelse" {% if quotation_other_detail.shippment_terms == 'Enligt överenskommelse' %} selected {% endif %}>Enligt överenskommelse</option>
+											</select>
+										</div>
+									</div>
+									{# <div class="row mb-3">
+																												<div class="col-sm-4">
+																													<label>{{entry_delay_rate}}</label>
+																													<input class="form-control input-sm" type="text" value="{{quotation_other_detail.rate_delay}}" name="rate_delay" id="rate_delay"/>
+																												</div>
+																												<div class="col-sm-4">
+																													<label>{{entry_customer_ordernr}}</label>
+																													<input class="form-control input-sm" type="text" value="{{quotation_other_detail.custom_ordernr}}" name="custom_ordernr" id="custom_ordernr"/>
+																												</div>
+																											</div> #}
+									<div class="row mb-3">
+										<div class="clearfix"></div><hr>
+										<div class="col-sm-12">
+											<label>{{entry_description}}</label>
+											<textarea class="form-control" rows="3" name="comment" id="comment">{{comment}}</textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="heading-payment-details">
+								<button id="paymentdetails" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#payment-details" aria-expanded="false" aria-controls="payment-details">
+									<i class="fa fa-credit-card"></i>
+									&nbsp;{{tab_payment_detail}}</button>
+							</h2>
+							<div id="payment-details" class="accordion-collapse collapse" aria-labelledby="heading-payment-details" data-bs-parent="#accordionQuotationAdd">
+								<div class="accordion-body">
+									<div class="row mb-3">
+										<div class="col-sm-9">
+											<label>{{entry_address}}</label>
+											<div class="input-group">
+												<select class="form-select input-sm" name="payment_address" id="input-payment-address">
+													<option value="0">{{ text_none }}</option>
+													{% for address in addresses %}
+													{% if payment_address_id == address.address_id %}
+														<option value="{{ address.address_id }}" selected="selected">{{ address.firstname }}
+															{{ address.lastname }},
+															{{ address.address_1 }},
+															{{ address.city }},
+															{{ address.country }}</option>
+													{% else %}
+														<option value="{{ address.address_id }}">{{ address.firstname }}
+															{{ address.lastname }},
+															{{ address.address_1 }},
+															{{ address.city }},
+															{{ address.country }}</option>
+													{% endif %}
+													{% endfor %}
+												</select>
+												{# <a style="padding-top: 8px;" href="{{customerurl}}" onclick="window.open('{{customerurl}}', '_blank');" target="_blank" type="button" id="button-addon2" class="btn btn-outline-secondary btn-sm editaddress">
+																									<i class="fa fa-pencil"></i>
+																								</a> #}
+											</div>
+										</div>
+										<div class="col-sm-3" style="margin-top:19px; display:flex;">
+											<a  {% if customer_id %} class="btn btn-outline-primary" target="_blank" href="index.php?route=customer/customer.form&user_token={{user_token}}&customer_id={{customer_id}}" {% else %} class="btn btn-outline-primary disabled editCustomer" href="javascript:void(0)" {% endif %}>
+												<i class="fa fa-pencil"></i>
+												Edit</a>
+												<div class="dropdown mx-2">
+													<button	class="btn btn-outline-primary dropdown-toggle"	type="button" id="dropdownMenuButton" data-mdb-toggle="dropdown" aria-expanded="false">
+														Spara Adress <i class="fa fa-angle-down"></i>
+													</button>
+													<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+														<li><a type="button" data-loading-text="{{ text_loading }}" id="savePaymentAddress" {% if payment_address_id %}  class="dropdown-item savePaymentAddress" value="{{payment_address_id}}" {% else %} class="dropdown-item disabled savePaymentAddress" {% endif %}>
+															<i class="fa fa-save"></i>
+															Uppdatera befintlig adress</a></li>
+														<li><a type="button" data-loading-text="{{ text_loading }}" id="savePaymentNewAddress" {% if payment_address_id %}  class="dropdown-item disabled savePaymentNewAddress" value="" {% else %} class="dropdown-item savePaymentNewAddress" {% endif %}>
+															<i class="fa-solid fa-location-dot"></i>
+															Spara som ny address</a></li>
+													</ul>
+												</div>
+												<button type="button" data-loading-text="{{ text_loading }}" id="syncPaymentAddress" {% if payment_address_id %}  class="btn btn-outline-primary" value="{{payment_address_id}}" {% else %} class="btn btn-outline-primary disabled" {% endif %}>
+												<i class="fa fa-sync"></i>
+												</button>
+										</div>
+									</div>
+									<div class="clearfix"></div><hr>
+									<div class="row mb-3">
+										<div class="col-sm-3">
+											<label>{{entry_firstname}}</label>
+											<input placeholder="{{entry_firstname}}" class="form-control input-sm" type="text" name="input_payment_firstname" value="{{ payment_firstname }}" id="input-payment-firstname">
+										</div>
+										<div class="col-sm-3">
+											<label>{{entry_lastname}}</label>
+											<input placeholder="{{entry_lastname}}" class="form-control input-sm" type="text" name="input_payment_lastname" value="{{ payment_lastname }}" id="input-payment-lastname">
+										</div>
+										<div class="col-sm-3">
+											<label>{{entry_company}}</label>
+											<input placeholder="{{entry_company}}" class="form-control input-sm" type="text" name="input_payment_company" value="{{ payment_company }}" id="input-payment-company">
+										</div>
+
+										<!-- Custome filds-->
+										{% for custom_field in custom_fields %}
+											{% if custom_field.location == 'address' %}
+												{% if custom_field.type == 'text' %}
+													<div class="col-sm-3 custom-field custom-field{{ custom_field.custom_field_id }}" data-sort="{{ custom_field.sort_order + 3 }}">
+														<label for="input-payment-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }}</label>
+														<input type="hidden" id="payment_custom_field_id" value="{{ custom_field.custom_field_id }}">
+														<input class="form-control" type="text" name="payment_custom_field[{{ custom_field.custom_field_id }}]" placeholder="{{ custom_field.name }}" id="input-payment-custom-field{{ custom_field.custom_field_id }}" value="{{ payment_custom_field[custom_field.custom_field_id] }}"/>
+													</div>
+												{% endif %}
+											{% endif %}
+										{% endfor %}
+										<!-- Custome filds-->
+
+									</div>
+									<div class="row mb-3">
+										<div class="col-sm-3">
+											<label>{{entry_address_1}}</label>
+											<input placeholder="{{entry_address_1}}" class="form-control input-sm" type="text" name="input_payment_address_1" value="{{ payment_address_1 }}" id="input-payment-address-1">
+										</div>
+										<div class="col-sm-3">
+											<label>{{entry_address_2}}</label>
+											<input placeholder="{{entry_address_2}}" class="form-control input-sm" type="text" name="input_payment_address_2" value="{{ payment_address_2 }}" id="input-payment-address-2">
+										</div>
+										<div class="col-sm-2">
+											<label>{{entry_postcode}}</label>
+											<input placeholder="{{entry_postcode}}" class="form-control input-sm" type="text" name="input_payment_postcode" value="{{ payment_postcode }}" id="input-payment-postcode">
+										</div>
+										<div class="col-sm-4">
+											<label>{{entry_city}}</label>
+											<input placeholder="{{entry_city}}" class="form-control input-sm" type="text" name="input_payment_city" value="{{ payment_city }}" id="input-payment-city">
+										</div>
+										<div class="col-sm-6">
+											<label>{{entry_country}}</label>
+											<select class="form-select input-sm" name="input_payment_country_id" id="input-payment-country">
+
+												<option value="">{{ text_select }}</option>
+												{% for country in countries %}
+													{% if country.country_id == payment_country_id %}
+														<option value="{{ country.country_id }}" selected="selected">{{ country.name }}</option>
+													{% else %}
+														<option value="{{ country.country_id }}">{{ country.name }}</option>
+													{% endif %}
+												{% endfor %}
+											</select>
+										</div>
+										<div class="col-sm-6">
+											<label>{{entry_zone}}</label>
+											<select class="form-control input-sm" name="input_payment_zone_id" id="input-payment-zone"></select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="heading-shipping-details">
+								<button id="shippingdetails" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#shipping-details" aria-expanded="false" aria-controls="shipping-details">
+									<i class="fa fa-truck"></i>
+									&nbsp;{{tab_shipping_detail}}</button>
+							</h2>
+							<div id="shipping-details" class="accordion-collapse collapse" aria-labelledby="heading-payment-details" data-bs-parent="#accordionQuotationAdd">
+								<div class="accordion-body">
+									<div class="row mb-3">
+										<div class="col-sm-9">
+											<label>{{entry_address}}</label>
+											<div class="input-group">
+												<select class="form-select input-sm" name="shipping_address" id="input-shipping-address">
+													<option value="0">{{ text_none }}</option>
+													{% for address in addresses %}
+													{% if shipping_address_id == address.address_id %}
+														<option value="{{ address.address_id }}" selected="selected">{{ address.firstname }}
+															{{ address.lastname }},
+															{{ address.address_1 }},
+															{{ address.city }},
+															{{ address.country }}</option>
+													{% else %}
+														<option value="{{ address.address_id }}">{{ address.firstname }}
+															{{ address.lastname }},
+															{{ address.address_1 }},
+															{{ address.city }},
+															{{ address.country }}</option>
+													{% endif %}
+													{% endfor %}
+												</select>
+												{# <a href="{{customerurl}}" onclick="window.open('{{customerurl}}', '_blank');" target="_blank" class="btn btn-outline-secondary btn-sm editaddress">
+																									<i class="fa fa-pencil"></i>
+																								</a> #}
+											</div>
+										</div>
+										<div class="col-sm-3" style="margin-top:19px; display:flex;">
+											<a  {% if customer_id %} class="btn btn-outline-primary" target="_blank" href="index.php?route=customer/customer.form&user_token={{user_token}}&customer_id={{customer_id}}" {% else %} class="btn btn-outline-primary disabled editCustomer" href="javascript:void(0)" {% endif %}>
+												<i class="fa fa-pencil"></i>
+												Edit</a>
+												<div class="dropdown mx-2">
+													<button	class="btn btn-outline-primary dropdown-toggle"	type="button" id="dropdownMenuButton" data-mdb-toggle="dropdown" aria-expanded="false">
+														Spara Adress <i class="fa fa-angle-down"></i>
+													</button>
+													<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+														<li><a type="button" data-loading-text="{{ text_loading }}" id="saveShippingAddress" {% if shipping_address_id %}  class="dropdown-item saveShippingAddress" value="{{shipping_address_id}}" {% else %} class="dropdown-item disabled saveShippingAddress" {% endif %}>
+															<i class="fa fa-save"></i>
+															Uppdatera befintlig adress</a></li>
+														<li><a type="button" data-loading-text="{{ text_loading }}" id="saveShippingNewAddress" {% if shipping_address_id %}  class="dropdown-item disabled saveShippingNewAddress" value="" {% else %} class="dropdown-item saveShippingNewAddress" {% endif %}>
+															<i class="fa-solid fa-location-dot"></i>
+															Spara som ny address</a></li>
+													</ul>
+												</div>
+											<button type="button" data-loading-text="{{ text_loading }}" id="syncShippingAddress" {% if shipping_address_id %}  class="btn btn-outline-primary saveShippingAddress" value="{{shipping_address_id}}" {% else %} class="btn btn-outline-primary disabled saveShippingAddress" {% endif %}>
+												<i class="fa fa-sync"></i>
+											</button>
+
+										</div>
+									</div>
+									<div class="clearfix"></div><hr>
+									<div class="row mb-3">
+										<div class="col-sm-3">
+											<label>{{entry_firstname}}</label>
+											<input placeholder="{{entry_firstname}}" class="form-control input-sm" type="text" name="input_shipping_firstname" value="{{ shipping_firstname }}" id="input-shipping-firstname">
+										</div>
+										<div class="col-sm-3">
+											<label>{{entry_lastname}}</label>
+											<input placeholder="{{entry_lastname}}" class="form-control input-sm" type="text" name="input_shipping_lastname" value="{{ shipping_lastname }}" id="input-shipping-lastname">
+										</div>
+										<div class="col-sm-3">
+											<label>{{entry_company}}</label>
+											<input placeholder="{{entry_company}}" class="form-control input-sm" type="text" name="input_shipping_company" value="{{ shipping_company }}" id="input-shipping-company">
+										</div>
+
+										<!-- Custome filds-->
+										{% for custom_field in custom_fields %}
+											{% if custom_field.location == 'address' %}
+												{% if custom_field.type == 'text' %}
+													<div class="col-sm-3 custom-field custom-field{{ custom_field.custom_field_id }}" data-sort="{{ custom_field.sort_order + 3 }}">
+														<label for="input-shipping-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }}</label>
+														<input type="hidden" id="shipping_custom_field_id" value="{{ custom_field.custom_field_id }}">
+														<input type="text" name="shipping_custom_field[{{ custom_field.custom_field_id }}]" placeholder="{{ custom_field.name }}" id="input-shipping-custom-field{{ custom_field.custom_field_id }}" class="form-control input-sm" value="{{ shipping_custom_field[custom_field.custom_field_id]}}"/>
+													</div>
+												{% endif %}
+											{% endif %}
+										{% endfor %}
+										<!-- Custome filds-->
+									</div>
+									<div class="row mb-3">
+										<div class="col-sm-3">
+											<label>{{entry_address_1}}</label>
+											<input placeholder="{{entry_address_1}}" class="form-control input-sm" type="text" name="input_shipping_address_1" value="{{ shipping_address_1 }}" id="input-shipping-address-1">
+										</div>
+										<div class="col-sm-3">
+											<label>{{entry_address_2}}</label>
+											<input placeholder="{{entry_address_2}}" class="form-control input-sm" type="text" name="input_shipping_address_2" value="{{ shipping_address_2 }}" id="input-shipping-address-2">
+										</div>
+										<div class="col-sm-2">
+											<label>{{entry_postcode}}</label>
+											<input placeholder="{{entry_postcode}}" class="form-control input-sm" type="text" name="input_shipping_postcode" value="{{ shipping_postcode }}" id="input-shipping-postcode">
+										</div>
+										<div class="col-sm-4">
+											<label>{{entry_city}}</label>
+											<input placeholder="{{entry_city}}" class="form-control input-sm" type="text" name="input_shipping_city" value="{{ shipping_city }}" id="input-shipping-city">
+										</div>
+										<div class="col-sm-6">
+											<label>{{entry_country}}</label>
+											<select class="form-select input-sm" name="input_shipping_country_id" id="input-shipping-country">
+												<option value="">{{ text_select }}</option>
+												{% for country in countries %}
+													{% if country.country_id == shipping_country_id %}
+														<option value="{{ country.country_id }}" selected="selected">{{ country.name }}</option>
+													{% else %}
+														<option value="{{ country.country_id }}">{{ country.name }}</option>
+													{% endif %}
+												{% endfor %}
+
+											</select>
+										</div>
+										<div class="col-sm-6">
+											<label>{{entry_zone}}</label>
+											<select class="form-select input-sm" name="input_shipping_zone_id" id="input-shipping-zone"></select>
+										</div>
+
+
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="heading-attachments">
+								<button id="attachmentsdetails" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#attachments-detail" aria-expanded="false" aria-controls="attachments-detail">
+									<i class="fa fa-paperclip"></i>
+									&nbsp;{{tab_attachment_detail}}</button>
+							</h2>
+							<div id="attachments-detail" class="accordion-collapse collapse" aria-labelledby="heading-payment-details" data-bs-parent="#accordionQuotationAdd">
+								<div class="accordion-body">
+									<div class="input-group mb-3">
+										<div class="input-group-prepend">
+											<span class="input-group-text input-sm" id="basic-addon3">
+												<i class="fa fa-file-text"></i>&nbsp;
+																																						Korrektur/URL</span> 
+										</div>
+										<input type="text" class="form-control input-sm" name="file_final_sketch" value="{{file_final_sketch}}" placeholder="Ange Google drive länk" style="background: transparent;border: 1px solid #373e47;border-radius: 0;">
+									</div>
+									<hr>
+									<!-- file upload-->
+									<div class="row">
+										<div class="well detailbox show_hide_box" id="fileuploadbox" style="background:none; border:none;">
+											<br>
+											<!-- The fileinput-button span is used to style the file input field as button -->
+											<span class="btn btn-primary fileinput-button">
+												<i class="fa fa-plus"></i>
+												<span>{{button_add_filtes}}...</span>
+												<!-- The file input field used as target for the file upload widget -->
+												<input id="fileupload" data-url="{{uploadUrl}}" type="file" name="files[]" multiple>
+											</span>
+											<br>
+											<br>
+											<!-- The global progress bar -->
+											<div id="progress" class="progress">
+												<div class="progress-bar progress-bar-success"></div>
+											</div>
+											<!-- The container for the uploaded files -->
+											<div id="files" class="files"></div>
+											<input type="hidden" name="files_data" id="files_data" value="{{files_data}}">
+
+											<table class="table" id="files-table">
+												<thead>
+													<tr>
+														<th style="width:25%"></th>
+														<th>Filename</th>
+														<th>Type</th>
+														<th style="width:10%">Size</th>
+														<th style="width:10%">Actions</th>
+													</tr>
+												</thead>
+												<tbody></tbody>
+											</table>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix h10"></div>
+
+				</div>
+
+			</div>
+			<!-- for article-->
+
+			<div class="card">
+				<div class="card-header">
+					Artiklar
+				</div>
+				<div class="row products-table">
+					<div
+						class="col-sm-12">
+						<!-- article-->
+
+					<input type="hidden" name="article" value="1">
+				<table class="table table-bordered table-hover table-sm" id="article" style="font-size:9px;">
+					<thead>
+						<tr>
+							<th scope="col" style="text-align: center;width: 1%;"><input type="checkbox" class="countArticle selectAll"></th>
+							<th style="width:14%" scope="col">{{column_model}}</th>
+							<!-- discount price calculation set to width 25% to 22%-->
+							<th style="width:25%" scope="col">{{column_title}}</th>
+							<th style="width:6%" scope="col">{{column_qty}}</th>
+							<!-- discount price calculation set to width 25% to 20%-->
+							<th style="width:18%" scope="col">{{column_options}}</th>
+							<!-- discount price calculation-->
+							<th style="width:7%" scope="col">Price</th>
+							<!-- discount price calculation-->
+							<th style="width:7%" scope="col">Discount Price</th>
+							<th style="width:6%" scope="col">{{column_percantage}}</th>
+							{# <th style="width:9%" scope="col">{{column_tax}}</th> #}
+							<th style="width:9%" scope="col">{{column_total}}</th>
+							<th scope="col"> </th>
+							<th></th>
+							{# <th></th> #}
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+							{% if order_products %}
+							{% set product_row = 0 %}
+							{% for order_product in order_products %}
+								<button type="button" id="addEmptyRow" onclick="addarticlerow();" style="display:none;"></button>
+								<tr id="article_row{{product_row}}">
+									<td style="text-align: center;"><input type="checkbox" class="countArticle"></td>
+									<input type="hidden" class="sort_order" name="order_products[{{product_row}}][sort_order]" value="">
+									<td><input class="form-control" type="text" name="order_products[{{product_row}}][model]" value="{{ order_product.model }}" placeholder="{{column_model}}" id="article_nr{{product_row}}" data-oc-target="autocomplete-article-nr{{product_row}}" autocomplete="off">
+									<ul id="autocomplete-article-nr{{product_row}}" class="dropdown-menu"></ul>
+									<input type="hidden" name="order_products[{{product_row}}][product_id]" value="{{order_product.product_id}}" id="productrow{{product_row}}">
+									</td>
+									<td><input type="text" class="form-control" name="order_products[{{product_row}}][name]" value="{{order_product.name}}" placeholder="{{column_title}}" id="productname{{product_row}}"></td>
+									<td><input class="form-control" onkeyup="pricecal();" class="ctrl_quantity" min="1" type="number" name="order_products[{{product_row}}][quantity]" value="{{order_product.quantity}}" placeholder="{{column_qty}}" id="quantity{{product_row}}"></td>
+									<td id="options{{product_row}}">
+									<input type="hidden" id="product_option_id{{product_row}}" value="">
+									{% set counter_row = 0 %}
+										{% for options in order_product.option %}
+											{% if options.type == 'select' %}
+											<!-- v5-->
+											<input type="hidden" id="optionprice{{product_row}}_{{counter_row}}" value="{{options.opprice}}">
+											<!-- v5-->
+											<select class="form-select form-select-sm" onchange="oppricecal({{product_row}},{{counter_row}});" id="optiondropdown{{product_row}}_{{counter_row}}" class="options-list" name='order_products[{{product_row}}][option][{{options.product_option_id}}]'>
+											<option value="" selected>{{options.name}}</option>
+											{% for product_option_value in options.product_option_value %}
+											{% if product_option_value.selected =='selected' %}
+											<option value='{{product_option_value.product_option_value_id}}' selected="selected">{{product_option_value.name}}</option>
+											{% else %}
+											<option value='{{product_option_value.product_option_value_id}}'>{{product_option_value.name}}</option>
+											{% endif %}
+											{% endfor %}
+											</select>
+											{% set counter_row = counter_row + 1 %}
+											{% endif %}
+											{% endfor %}
+									</td>
+										<td> 
+										<input class="form-control" type="text" value="{{order_product.org_price}}" placeholder="{{column_org_price}}" id="oprice{{product_row}}" name="order_products[{{product_row}}][oprice]" readonly="readonly">
+										<input type="hidden" id="oprice_v{{product_row}}" name="order_products[{{product_row}}][oprice_v]" value="{{order_product.org_price_base}}">
+										</td>
+										<td><input  class="form-control" onkeyup="pricecal();" type="text" value="{{order_product.price}}" placeholder="{{column_price}}" id="price{{product_row}}" readonly="readonly">
+											<input type="hidden" id="pprice{{product_row}}" name="order_products[{{product_row}}][price]" value="{{order_product.price}}"></td>
+										<td><input class="form-control" onkeyup="pricecal();" type="text" name="order_products[{{product_row}}][price_discount_percentage]" value="{{order_product.price_discount_percentage}}" placeholder="{{column_percantage}}" id="price_discount_percentage{{product_row}}">
+										</td>
+										<td style="display:none;"id="tax_classes{{product_row}}">
+											<input type="hidden" name="order_products[{{product_row}}][tax_class_id]" value="{{order_product.tax_class_id}}">
+											<input type="hidden" id="total_tax{{product_row}}" value="{{order_product.total_tax_rate}}">
+											<input type="hidden" id="total_tax_to_prod{{product_row}}" name="order_products[{{product_row}}][total_tax_to_prod]" value="{{order_product.tax}}">
+										</td>
+										<td><input class="form-control" type="text" name="order_products[{{product_row}}][total]" value="{{order_product.total}}" placeholder="{{column_total}}" id="total{{ product_row }}" readonly="readonly"></td>
+										<td><i class="fa fa-minus" onclick="$('#article_row{{product_row}}').remove();checkEmpty();removerow();"></i></td>
+										<td style="text-align: center; cursor:pointer;"><i class="fa fa-plus" onclick="addarticlerow();"></i></td>
+										<td style="text-align: center; cursor:pointer;"><i class="fa fa-copy" onclick="copyarticlerow('{{product_row}}');"></i></td>
+										<td><i class="fa fa-arrows sorter" data-move></i><input type="hidden" class="sort_order" name="order_products[{{product_row}}][sort_order]" value=""></td>
+								</tr>
+								{% set product_row = product_row + 1 %}
+							{% endfor %}
+							{% endif %}
+					</tbody>
+					<tfoot>						
+						<tr>
+							<td colspan="5">
+								<span>Antal rader: <span id="totalarticles">0</span>  Antal artiklar: <span id="totalarticles_quantity">0</span></span>
+							</td>
+							<td colspan="3">
+								<!-- apply button-->
+								<div class="col-sm-12 text-right">
+								<button type="button" id="button-addrow" onclick="addarticlerow();" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-sm"> Add New Row</button>
+								</div>
+								<!-- apply button-->
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+				<!-- article-->
+			</div>
+			</div>
+		</div>
+			<div class ="row">
+				<div class="col-sm-4 mt-3"><button type="button" id="button-product-add" data-loading-text="{{ text_loading }}" class="btn btn-primary">{{ button_apply }}</button></div>
+				<div class="col-sm-4"></div>
+					<div class="col-sm-4">
+						<ul class="order-totals">
+						{% if quotation_totals %}
+							{% for total in quotation_totals %}
+								<li>
+									<span class="order-total-name">{{ total.title }} : </span>
+									<input type="hidden" name="{{total.code}}" class="{{total.code}}" value="{{ total.text }}"/>
+									<span class="order-total-price {{total.code}}" id="{{total.code}}">{{ total.text }}</span>
+								</li>
+							{% endfor %}
+						{% else %}
+								<li>
+									<span class="order-total-name">Sub-Total</span>
+									<input type="hidden" name="sub_total" class="sub_total"/>
+									<span class="order-total-price sub_total" id="sub_total" ></span>
+								</li>
+								<li>
+									<span class="order-total-name">Shipping</span>
+									<input type="hidden" name="shipping_cost" class="shipping_cost"/>
+									<span class="order-total-price" id="shipping_cost"></span>
+								</li>
+								<li>
+									<span class="order-total-name">Tax</span>
+									<input type="hidden" name="tax"  class="tax" value=""/>
+									<span class="order-total-price tax" id="tax"></span>
+								</li>
+								<li>
+									<span class="order-total-name">Total</span>
+									<input type="hidden" name="total"  class="total" value="{{total}}"/>
+									<span class="order-total-price total" id="total"></span>
+								</li>
+						{% endif %}
+						</ul>
+					</div>
+			</div>
+		</div>
+		<input type="hidden" name="finalstep" id="finalstep" value="0">
+		<input type="hidden" name="finalstep2" id="finalstep2" value="0">
+		<input type="hidden" name="shipping_tax" id="shipping_tax" value="0">
+		<input type="hidden" name="quotation_id" value="{{ quotation_id }}"/>
+		<input type="hidden" id="totalrow" name="totalrow" value="{{product_row}}"/>
+	</form>
+
+ <!-- file upload-->
+<script type="text/javascript">
+    /*jslint unparam: true, regexp: true */
+    /*global window, $ */
+    $(function () {
+        'use strict';
+
+        // Change this to the location of your server-side upload handler:
+        var url = $("#fileupload").data("url"),
+            uploadButton = $('<button/>')
+                .addClass('btn btn-primary')
+                .prop('disabled', true)
+                .text('Processing...')
+                .on('click', function () {
+                    var $this = $(this),
+                        data = $this.data();
+                    $this
+                        .off('click')
+                        .text('Abort')
+                        .on('click', function () {
+                            $this.remove();
+                            data.abort();
+                        });
+                    data.submit().always(function () {
+                        $this.remove();
+                    });
+                });
+
+        var files = {{files}};
+
+        var updateFileData = function () {
+            var file_names = new Array();
+            $.each(files, function (index, file) {
+                file_names.push(file.name);
+            });
+            file_names = file_names.join("__|__");
+            $("#files_data").val(file_names);
+        };
+
+
+        // handle delete click
+        $(document).on("click", "#files-table tr td a.remove", function () {
+            var filename = $(this).data('filename');
+            var type = $(this).data('filetype');
+            var $this = $(this);
+            if (type == "temp") {
+                if (filename != "") {
+                    $.ajax({
+                        url: "{{deleteUrl|replace({'&amp;':'&'})}}",
+                        type: 'POST',
+                        data: {
+                            filename: filename,
+                            type: type
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            // remove file from an array
+                            files = jQuery.grep(files, function (file) {
+                                return file.name != filename;
+                            });
+
+                            updateFileData();
+
+                            $this.closest("td").closest("tr").remove();
+                        },
+                        error: function (response) {
+                            alert(response.error);
+                        }
+                    });
+                }
+            } else {
+                // remove file from an array
+                files = jQuery.grep(files, function (file) {
+                    return file.name != filename;
+                });
+
+                updateFileData();
+
+                $this.closest("td").closest("tr").remove();
+            }
+
+
+        });
+
+        $('#fileupload').fileupload({
+            url: url,
+            dataType: 'json',
+            autoUpload: true,
+            acceptFileTypes: /(\.|\/)(ai|eps|pdf|svg|docx?|gif|jpe?g|png|gif|zip|rar)$/i,
+            maxFileSize: 2250000,
+            // Enable image resizing, except for Android and Opera,
+            // which actually support image resizing, but fail to
+            // send Blob objects via XHR requests:
+            disableImageResize: /Android(?!.*Chrome)|Opera/
+                .test(window.navigator.userAgent),
+            previewMaxWidth: 100,
+            previewMaxHeight: 100,
+            previewCrop: true,
+        }).on('fileuploadadd', function (e, data) {
+
+            // reset progress bar
+            $('#progress .progress-bar').css('width', 0);
+
+            data.context = $('<div/>').appendTo('#files');
+
+        }).on('fileuploadprocessalways', function (e, data) {
+            var index = data.index,
+                file = data.files[index],
+                node = $(data.context.children()[index]);
+            if (file.preview) {
+                node
+                    .prepend('<br>')
+                    .prepend(file.preview);
+            }
+            if (file.error) {
+                alert(file.error);
+                node
+                    .append('<br>')
+                    .append($('<span class="text-danger"/>').text(file.error));
+            }
+            if (index + 1 === data.files.length) {
+                data.context.find('button')
+                    .text('Upload')
+                    .prop('disabled', !!data.files.error);
+            }
+        }).on('fileuploadprogressall', function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%'
+            );
+        }).on('fileuploaddone', function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                if (file.url) {
+                    console.log(file);
+                    // variable to check file is image or not will use for showing thumb preview
+                    var is_image = file.type.split('/')[0] == 'image';
+                    var image = is_image ? file.url : "{{no_image_ur}}";
+
+                    // file size
+                    var sizeinbytes = file.size;
+                    var file_size_types = new Array('Bytes', 'KB', 'MB', 'GB');
+                    var fSize = sizeinbytes;
+                    var i = 0;
+                    while (fSize > 900){fSize/=1024;i++;}
+                        fSize = ((Math.round(fSize * 100) / 100) + ' ' + file_size_types[i]);
+
+                    // var get extention
+                    var file_extention = file.name.substr((file.name.lastIndexOf('.') + 1)).toUpperCase();
+
+                    var link = $('<a>')
+                        .attr('target', '_blank')
+                        .prop('href', file.url)
+                        .text(file.name);
+                    files.push(file);
+
+                    updateFileData();
+
+                    var row = "<tr><td><a href='" + image + "' rel='attachment' class='attachment_image_link'><img src='" + image + "' width='80'/></a></td><td>" + file.name + "</td><td>" + file_extention + "</td><td>" + fSize + "</td><td><a class='download' href='" + file.url + "'><i class='fa fa-download btn-download' aria-hidden='true'></i></a> | <a class='remove' href='javascript:void(0)' data-filetype='temp' data-filename='" + file.name + "'><i class='fa fa-trash btn-delete' aria-hidden='true'></i></a></td></tr>";
+                    $("#fileuploadbox #files-table > tbody").append(row);
+                } else if (file.error) {
+                    alert(file.error);
+                    var error = $('<span class="text-danger"/>').text(file.error);
+                    $(data.context.children()[index])
+                        .append('<br>')
+                        .append(error);
+                }
+            });
+        }).on('fileuploadfail', function (e, data) {
+            $.each(data.files, function (index) {
+                var error = $('<span class="text-danger"/>').text('File upload failed.');
+                $(data.context.children()[index])
+                    .append('<br>')
+                    .append(error);
+            });
+        }).prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        var loadFiles = function () {
+            $.each(files, function (index, file) {
+                // variable to check file is image or not will use for showing thumb preview
+                var is_image = file.type.split('/')[0] == 'image';
+                var image = is_image ? file.fileurl : "{{no_image_ur}}";
+
+                // file size
+                var sizeinbytes = file.size;
+                var file_size_types = new Array('Bytes', 'KB', 'MB', 'GB');
+                var fSize = sizeinbytes;
+                var i = 0;
+                while (fSize > 900){fSize/=1024;i++;}
+                    fSize = ((Math.round(fSize * 100) / 100) + ' ' + file_size_types[i]);
+
+                // var get extention
+                var file_extention = file.original_name.substr((file.original_name.lastIndexOf('.') + 1)).toUpperCase();
+
+                var row = "<tr><td><a href='" + image + "' rel='attachment' class='attachment_image_link'><img src='" + image + "' width='80'/></a></td><td>" + file.original_name + "</td><td>" + file_extention + "</td><td>" + fSize + "</td><td><a class='download' href='" + file.url + "'><i class='fa fa-download btn-download' aria-hidden='true'></i></a> | <a class='remove' href='javascript:void(0)' data-filetype='' data-filename='" + file.name + "'><i class='fa fa-trash btn-delete' aria-hidden='true'></i></a></td></tr>";
+                $("#fileuploadbox #files-table > tbody").append(row);
+            });
+
+        }
+
+        // load values in file array on load
+        loadFiles();
+
+	});
+
+	jQuery(document).ready(function ($) {
+        $(document).delegate(".attachment_image_link", "click", function (e) {
+            $.colorbox.remove();
+            $.colorbox({
+                href: $(this).attr('href'),
+                open: true,
+                rel: 'attachment',
+                transition: "fade",
+                photo: true
+            });
+            return false;
+        });
+		if($('input[name=\'quotation_id\']').val()){
+			var total_shipping = $('option:selected', $('#input-shipping-method')).attr('total');
+			var cost_shipping = $('option:selected', $('#input-shipping-method')).attr('cost');
+			var tax_ship = parseFloat(parseFloat(total_shipping) - parseFloat(cost_shipping)).toFixed(2);
+			$('#shipping_tax').val(tax_ship);
+		}
+		$('#input-shipping-method').on('change',function(){
+			var cost = $('option:selected', this).attr('cost');
+			var tax_rate = $('option:selected', this).attr('tax');
+			var total_cost = $('option:selected', this).attr('total');
+			var tax_cost = 0;
+			var shipping_cost = $('.shipping_cost').val();
+			var shipping_tax = $('#shipping_tax').val();
+			if(shipping_cost == ''){
+				shipping_cost = 0;
+			}
+			if(cost != 0){
+				$('#shipping_cost').html(cost);
+				$('.shipping_cost').attr('value',cost);
+				tax_cost = total_cost-cost;
+			}else{
+				$('#shipping_cost').html('0.00');
+				$('.shipping_cost').attr('value','0.00');
+				cost = 0.00;
+			}
+			var total = $('.total').val();
+			var tax = $('.tax').val(); 
+
+			if(tax != ''){
+				var tax_added = parseFloat(parseFloat(tax.replace(",","")) - parseFloat(shipping_tax) + parseFloat(tax_cost)).toFixed(2);
+			}else{
+				var tax_added = parseFloat(tax_cost).toFixed(2);
+			}
+			var shipping_added = parseFloat(parseFloat(total.replace(",","")) - parseFloat(shipping_cost) - parseFloat(shipping_tax) + parseFloat(total_cost)).toFixed(2);
+			if(total != ''){
+				$('#total').html(numberWithCommas(shipping_added));
+				$('.total').val(shipping_added);
+			}else{
+				$('#total').html(numberWithCommas(total_cost));
+				$('.total').val(total_cost);
+			}
+
+			$('#tax').html(numberWithCommas(tax_added));
+			$('.tax').attr('value',tax_added)
+			$('#shipping_tax').attr('value',tax_cost);
+		});
+
+    });
+
+</script>
+
+<!-- file upload -->
+<script type="text/javascript">
+$('#accountdetails').trigger('click');
+  var rearrange_rows = function(){
+    $(document).find("[id^=article_nr]").each(function () {
+      var row_id = $(this).closest("tr").attr("id").replace("article_row","");
+      var index = $(this).closest("tr").index();
+      if(index > 0){
+        index = index / 2;
+      }
+      $(this).closest("tr").find(".sort_order").val(index);
+
+    });
+};
+  
+rearrange_rows();
+
+$(document).ready(function(){
+	$('#article').rowSorter({
+      handler: 'i.sorter',
+      onDrop: function(tbody, row, new_index, old_index){
+        rearrange_rows();
+      }
+    });
+	$('#addEmptyRow').trigger('click');
+
+    $(document).find("[id^=quantity]").keypress(function () {
+      if($(this).val() == 0 || $(this).val() == ''){
+        $(this).val(1);
+		$(this).attr('value',1);
+      }
+    });
+});
+
+$(document).on("input propertychange paste", "[id^=quantity]", function () {
+    var quantity_field = $(this);
+    var row_id = $(this).attr("id").replace("quantity", "");
+    var product_id = $("#productrow" + row_id).val();
+
+    if (product_id) {
+       displayRes(product_id, 'article_nr' + row_id);
+    }
+});
+
+    function displayRes(productid, row) {
+        var fields = row.split('article_nr');
+        var rowspos = fields[1];
+		//v4
+		var customer_id = $("#customer_id").val();
+		var quantity = $("#quantity" + rowspos).val();
+		 //v4
+        $.ajax({
+            url: 'index.php?route=codevoc/b2bmanager_quotation.loadproduct&user_token={{ user_token }}&product_id=' + productid+'&customer_id=' + customer_id + '&quantity=' + quantity,
+            dataType: 'json',
+            type: 'post',
+            success: function (json) {
+                if (json['success']) {
+					var pricem = json['price'];
+					pricem = parseFloat(pricem).toFixed(2);
+                    $('#price' + rowspos).val(pricem);
+					$('#total_tax' + rowspos).val(json['total_tax']);
+
+					//discount price calculation
+					var oprice = json['oprice'];
+					oprice = parseFloat(oprice).toFixed(2);
+					$('#oprice' + rowspos).val(oprice);
+					$('#oprice' + rowspos).attr('value',oprice);
+					$('#oprice_v' + rowspos).val(oprice);
+					var pricediscount_percentage=json['price_discount_percentage'];
+					if(pricediscount_percentage>0){
+						pricediscount_percentage = parseFloat(pricediscount_percentage).toFixed(2);
+						$('#price_discount_percentage' + rowspos).val(pricediscount_percentage);
+					}else{
+						$('#price_discount_percentage' + rowspos).val(pricediscount_percentage);
+					}
+					//discount price calculation
+
+					//v5
+					 $('#pprice' + rowspos).val(pricem);
+					$('#pprice' + rowspos).attr('value',pricem);
+					//v5
+					  pricecal();
+					// build select options and add options only when if it's not loaded first time
+					if($('#options' + rowspos).find('select').length <= 0 || $('#options' + rowspos).find('select')[0].name != 'order_products['+ rowspos + '][option]['+json['options'][0].product_option_id+']')
+                    {
+                      var options_string = "";
+
+                      if (json['options'].length > 0) {
+                          var counter_row=0;
+						  $.each(json['options'], function (i, v) {
+                              if (v.type == "select") {
+								  options_string += '<input type="hidden" id="optionprice' + rowspos + '_' + counter_row + '">';
+                                  options_string += '<select class="form-select form-select-sm" id="optiondropdown' + rowspos + '_' + counter_row + '" onChange="oppricecal('+rowspos+','+counter_row+');" name="order_products[' + rowspos + '][option][' + v.product_option_id + ']" id="input-option' + v.product_option_id + '" class="options-list">';
+                                  options_string += "<option value=''>" + v.name + "</option>";
+                                  $.each(v.product_option_value, function (op_i, op_v) {
+                                      options_string += "<option value='" + op_v.product_option_value_id + "'>" + op_v.name + "</option>";
+                                  });
+                                  options_string += "</select>";
+								counter_row=counter_row+1;
+							  }
+                          });
+                      } else {
+                          options_string += "<input type='hidden' name='order_products[" + rowspos + "][product_option][]' value=''><span>No options are available.</span>";
+                      }
+                      $('#options' + rowspos).html(options_string);
+					}
+
+					// build select options and add options only when if it's not loaded first time
+					if($('#tax_classes' + rowspos).find('select').length <= 0){
+                            {% for tax_class in tax_classes %}
+							  if(json['tax_class_id']=={{tax_class.tax_class_id}})
+							  {
+								$('input[name=\'order_products[' + rowspos +'][tax_class_id]\']').val({{ tax_class.tax_class_id }});
+							  }
+							  else
+							  {
+								$('input[name=\'order_products[' + rowspos +'][tax_class_id]\']').val({{ tax_class.tax_class_id }});
+							  }
+							{% endfor %}
+
+					}
+
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+        });
+    }
+
+	$(document).on('change', '.ctrl_quantity', function () {
+        pricecal();
+   	});
+
+	$("[id^=article_nr]").each(function () {
+        $(this).autocomplete({
+            'source': function (request, response) {
+                $.ajax({
+                    url: 'index.php?route=codevoc/b2bmanager_quotation.productsautocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                    dataType: 'json',
+                    success: function (json) {
+                        response($.map(json, function (item) {
+                            return {
+							    label: item['name'],
+                                value: item['product_id'],
+                                product_name: item['product_name'],
+                                model: item['model'],
+                            }
+                        }));
+                    }
+                });
+            },
+            'select': function (item) {
+				var res = item['model'];
+                $(this).attr('value',res);
+				$(this).val(res);
+                res1 = item['product_name'];
+
+                var pid = $(this).attr('id');
+                var values = pid.split('article_nr');
+                var countid = values[1];
+                $('#productrow' + countid).val(item['value']);
+                $('#productname' + countid).val(res1);
+				displayRes(item['value'], this.id);
+				calculateArticleTotals();
+				addarticlerow();
+            }
+        });
+    });
+
+	$('#button-sync-details').on('click', function() {
+		var customer_id = $(this).attr('value');
+		$.ajax({
+				url: 'index.php?route=customer/customer.getCustomer&user_token={{ user_token }}&customer_id=' + customer_id,
+				type: 'post',
+				dataType: 'json',
+				crossDomain: true,
+				success: function(json) {
+					$("#customer_company").val(json[0].custom_field[$('#custom_field_id_forerag').val()].replace("&amp;","&"));
+					$("#vatnr").val(json[0].custom_field[$('#custom_field_id_vatnr').val()].replace("&amp;","&"));
+					$("#input-firstname").val(json[0].firstname);
+					$("#input-lastname").val(json[0].lastname);
+					$("#input-email").val(json[0].email);
+					$("#input-telephone").val(json[0].telephone);
+					$("#customer_company").attr('value',json[0].custom_field[$('#custom_field_id_forerag').val()].replace("&amp;","&"));
+					$("#vatnr").attr('value',json[0].custom_field[$('#custom_field_id_vatnr').val()].replace("&amp;","&"));
+					$("#input-firstname").attr('value',json[0].firstname);
+					$("#input-lastname").attr('value',json[0].lastname);
+					$("#input-email").attr('value',json[0].email);
+					$("#input-telephone").attr('value',json[0].telephone);
+						
+					if (json['error']) {
+						console.log(json);
+					}
+					else
+					{
+					   $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Customer details synced successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+					}
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+	});
+
+	$('#button-save-details').on('click', function() {
+			var customer_id = $(this).attr('value');
+			var firstname = $("#input-firstname").val();
+			var lastname = $("#input-lastname").val();
+			var forerag = $("#customer_company").val();
+			var vatnr = $("#vatnr").val();
+			var custom_field_id_vatnr = $("#custom_field_id_vatnr").val();
+			var custom_field_id_forerag = $("#custom_field_id_forerag").val();
+			var email = $("#input-email").val();
+			var telephone = $("#input-telephone").val();
+			$.post({
+				url: 'index.php?route=customer/customer.updateNewDetails&user_token={{ user_token }}&customer_id=' + customer_id,
+				type: 'post',
+				data:{
+					customer_id : customer_id,
+					firstname : firstname,
+					lastname : lastname,
+					forerag: forerag,
+					vatnr: vatnr,
+					custom_field_id_vatnr: custom_field_id_vatnr,
+					custom_field_id_forerag: custom_field_id_forerag,
+					email : email,
+					telephone : telephone
+				},
+				dataType: 'json',
+				crossDomain: true,
+				success: function() {
+					$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Customer details updated successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+			},
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+	});
+
+	$('#input-customer').autocomplete({
+			'source': function(request, response) {
+					$.ajax({
+						url: 'index.php?route=customer/customer.autocomplete&user_token={{ user_token }}&filter_search=' +  encodeURIComponent(request),
+						dataType: 'json',
+						success: function(json) {
+						json.unshift({
+								customer_id: '0',
+								customer_group_id: '{{ customer_group_id }}',
+								name: '{{ text_none }}',
+								customer_group: '',
+								firstname: '',
+								lastname: '',
+								email: '',
+								telephone: '',
+								custom_field: [],
+								address: []
+						});
+				
+					response($.map(json, function(item) {
+						return {
+								category: item['customer_group'],
+								label: item['name'],
+								value: item['customer_id'],
+								customer_group_id: item['customer_group_id'],
+								firstname: item['firstname'],
+								lastname: item['lastname'],
+								email: item['email'],
+								telephone: item['telephone'],
+								custom_field: item['custom_field'],
+								address: item['address']
+							}
+					}));
+					
+				}
+			});
+		},
+		'select': function(item) {
+			// Reset all custom fields
+			$('#account-details input[type=\'text\'], #account-details textarea').not('#account-details input[name=\'customer\'], #account-details input[name=\'customer_id\']').val('');
+			$('#account-details select option').not($('#account-details select[name=\'store_id\'] option, #account-details select[name=\'currency\'] option')).removeAttr('selected');
+			$('#account-details input[type=\'checkbox\'], #account-details input[type=\'radio\']').removeAttr('checked');
+			console.log(item['custom_field']); 
+			if(item['custom_field']){
+                $('#customer_company').val((item['custom_field'][$('#custom_field_id_forerag').val()] != '') ? item['custom_field'][$('#custom_field_id_forerag').val()].replace('&amp;','&') : '');
+                $('#customer_company').attr('value',(item['custom_field'][$('#custom_field_id_forerag').val()] != '') ? item['custom_field'][$('#custom_field_id_forerag').val()].replace('&amp;','&') : '');
+				$('#vatnr').val((item['custom_field'][$('#custom_field_id_vatnr').val()] != '') ? item['custom_field'][$('#custom_field_id_vatnr').val()].replace('&amp;','&') : '');
+                $('#vatnr').attr('value',(item['custom_field'][$('#custom_field_id_vatnr').val()] != '') ? item['custom_field'][$('#custom_field_id_vatnr').val()].replace('&amp;','&') : '');
+            }else{
+                $('#customer_company').val();
+                $('#customer_company').attr('value','');
+				$('#vatnr').val();
+                $('#vatnr').attr('value','');
+            }
+			$('.editCustomer').attr("href", "index.php?route=customer/customer.form&user_token={{ user_token }}&customer_id="+item['value']);
+			$('.editCustomer').attr("target", "_blank");
+			$('.editCustomer').removeClass("disabled");
+			$('.button-sync-details').attr("value", item['value']);
+			$('.button-save-details').attr("value", item['value']);
+			$('.button-sync-details').removeClass("disabled");
+			$('.button-save-details').removeClass("disabled");
+			$('#account-details input[name=\'customer\']').val(item['label']);
+			$('#account-details input[name=\'customer_id\']').val(item['value']);
+			$('#account-details input[name=\'input_firstname\']').val(item['firstname']);
+			$('#account-details input[name=\'input_lastname\']').val(item['lastname']);
+			$('#account-details input[name=\'email\']').val(item['email']);
+			$('#account-details input[name=\'telephone\']').val(item['telephone']);
+			$('#account-details input[name=\'customer\']').attr('value',item['label']);
+			$('#account-details input[name=\'customer_id\']').attr('value',item['value']);
+			$('#account-details input[name=\'input_firstname\']').attr('value',item['firstname']);
+			$('#account-details input[name=\'input_lastname\']').attr('value',item['lastname']);
+			$('#account-details input[name=\'email\']').attr('value',item['email']);
+			$('#account-details input[name=\'telephone\']').attr('value',item['telephone']);
+					
+			for (i in item.custom_field) {
+				$('#account-details select[name=\'custom_field[' + i + ']\']').val(item.custom_field[i]);
+				$('#account-details textarea[name=\'custom_field[' + i + ']\']').val(item.custom_field[i]);
+				$('#account-details input[name^=\'custom_field[' + i + ']\'][type=\'text\']').val(item.custom_field[i]);
+				$('#account-details input[name^=\'custom_field[' + i + ']\'][type=\'hidden\']').val(item.custom_field[i]);
+				$('#account-details input[name^=\'custom_field[' + i + ']\'][type=\'radio\'][value=\'' + item.custom_field[i] + '\']').prop('checked', true);
+			
+				if (item.custom_field[i] instanceof Array) {
+					for (j = 0; j < item.custom_field[i].length; j++) {
+						$('#account-details input[name^=\'custom_field[' + i + ']\'][type=\'checkbox\'][value=\'' + item.custom_field[i][j] + '\']').prop('checked', true);
+					}
+				}
+			}
+			
+			
+			html = '<option value="0">{{ text_none }}</option>';
+					
+			for (i in  item['address']) {
+				html += '<option value="' + item['address'][i]['address_id'] + '">' + item['address'][i]['firstname'] + ' ' + item['address'][i]['lastname'] + ', ' + item['address'][i]['address_1'] + ', ' + item['address'][i]['city'] + ', ' + item['address'][i]['country'] + '</option>';
+			}
+					
+			$('select[name=\'payment_address\']').html(html);
+			$('select[name=\'shipping_address\']').html(html);
+				
+			/* save customer session step 1 */
+		}
+	});
+
+	//var totalrow = $('#totalrow').attr('name').match(/\d+/)[0];
+
+	$('select[name=\'payment_address\']').on('change', function() {
+		if($('#input-payment-address').val()){
+			url = 'index.php?route=customer/customer.address&user_token={{ user_token }}&address_id=' + $('#input-payment-address').val();
+		}else{
+			url = 'index.php?route=customer/customer.address&user_token={{ user_token }}&address_id=' + this.value;
+		}
+	$.ajax({
+		url: url,
+		dataType: 'json',
+		beforeSend: function() {
+			$('select[name=\'payment_address\']').prop('disabled', true);
+		},
+		complete: function() {
+			$('select[name=\'payment_address\']').prop('disabled', false);
+		},
+		success: function(json) {
+			// Reset all fields
+			if(json['address_id']){
+				$('#savePaymentAddress').attr('value',json['address_id']);
+				$('#savePaymentAddress').removeClass('disabled');
+				$('#syncPaymentAddress').removeClass('disabled');
+				$('#syncPaymentAddress').attr('value',json['address_id']);
+			}
+			if($('#input-payment-address').val()==0){
+				$('#savePaymentNewAddress').removeClass('disabled');
+				$('#savePaymentAddress').addClass('disabled');
+			}else{
+				$('#savePaymentNewAddress').addClass('disabled');
+				$('#savePaymentAddress').removeClass('disabled');
+			}
+			$('#payment-details input[type=\'text\'], #payment-details input[type=\'text\'], #payment-details textarea').val('');
+			$('#payment-details select option').not('#payment-details select[name=\'payment_address\']').removeAttr('selected');
+			$('#payment-details select[name=\'payment_address\'] ').val(json['address_id']);
+			$('#payment-details input[name=\'input_payment_firstname\']').val(json['firstname']);
+			$('#payment-details input[name=\'input_payment_lastname\']').val(json['lastname']);
+			$('#payment-details input[name=\'input_payment_company\']').val(json['company']);
+			$('#payment-details input[name=\'input_payment_address_1\']').val(json['address_1']);
+			$('#payment-details input[name=\'input_payment_address_2\']').val(json['address_2']);
+			$('#payment-details input[name=\'input_payment_city\']').val(json['city']);
+			$('#payment-details input[name=\'input_payment_postcode\']').val(json['postcode']);
+			$('#payment-details select[name=\'input_payment_country_id\']').val(json['country_id']);
+			$('#payment-details input[name=\'input_payment_firstname\']').attr('value',json['firstname']);
+			$('#payment-details input[name=\'input_payment_lastname\']').attr('value',json['lastname']);
+			$('#payment-details input[name=\'input_payment_company\']').attr('value',json['company']);
+			$('#payment-details input[name=\'input_payment_address_1\']').attr('value',json['address_1']);
+			$('#payment-details input[name=\'input_payment_address_2\']').attr('value',json['address_2']);
+			$('#payment-details input[name=\'input_payment_city\']').attr('value',json['city']);
+			$('#payment-details input[name=\'input_payment_postcode\']').attr('value',json['postcode']);
+			$('#payment-details select[name=\'input_payment_country_id\']').attr('value',json['country_id']);
+			payment_zone_id = json['zone_id'];
+
+			//for (i in json['custom_field']) {
+			//	$('#payment-details select[name=\'custom_field[' + i + ']\']').val(json['custom_field'][i]);
+			//	$('#payment-details textarea[name=\'custom_field[' + i + ']\']').val(json['custom_field'][i]);
+			//	$('#payment-details input[name^=\'custom_field[' + i + ']\'][type=\'text\']').val(json['custom_field'][i]);
+			//	$('#payment-details input[name^=\'custom_field[' + i + ']\'][type=\'hidden\']').val(json['custom_field'][i]);
+			//	$('#payment-details input[name^=\'custom_field[' + i + ']\'][type=\'radio\'][value=\'' + json['custom_field'][i] + '\']').prop('checked', true);
+			//	$('#payment-details input[name^=\'custom_field[' + i + ']\'][type=\'checkbox\'][value=\'' + json['custom_field'][i] + '\']').prop('checked', true);
+
+//				if (json['custom_field'][i] instanceof Array) {
+//					for (j = 0; j < json['custom_field'][i].length; j++) {
+//						$('#payment-details input[name^=\'custom_field[' + i + ']\'][type=\'checkbox\'][value=\'' + json['custom_field'][i][j] + '\']').prop('checked', true);
+//					}
+//				}
+//			}
+
+			$('#payment-details select[name=\'input_payment_country_id\']').trigger('change');
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+		});
+	});
+
+	$('#payment-details select[name=\'input_payment_country_id\']').on('change', function() {
+	$.ajax({
+		url: 'index.php?route=localisation/country.country&user_token={{ user_token }}&country_id=' + this.value,
+		dataType: 'json',
+		beforeSend: function() {
+			$('#payment-details select[name=\'input_payment_country_id\']').after('');
+		},
+		complete: function() {
+			$('#payment-details .fa-spin').remove();
+		},
+		success: function(json) {
+			if (json['postcode_required'] == '1') {
+				$('#payment-details input[name=\'input_payment_postcode\']').closest('.form-group').addClass('required');
+			} else {
+				$('#payment-details input[name=\'input_payment_postcode\']').closest('.form-group').removeClass('required');
+			}
+
+			html = '<option value="">{{ text_select }}</option>';
+
+			if (json['zone'] && json['zone'] != '') {
+				for (i = 0; i < json['zone'].length; i++) {
+        			html += '<option value="' + json['zone'][i]['zone_id'] + '"';
+
+					if (json['zone'][i]['zone_id'] == payment_zone_id) {
+	      				html += ' selected="selected"';
+	    			}
+
+	    			html += '>' + json['zone'][i]['name'] + '</option>';
+				}
+			} else {
+				html += '<option value="0" selected="selected">{{ text_none }}</option>';
+			}
+
+			$('#payment-details select[name=\'input_payment_zone_id\']').html(html);
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+	});
+
+	$('select[name=\'shipping_address\']').on('change', function() {
+		if($('#shipping_address_id').val()){
+			$url = 'index.php?route=customer/customer.address&user_token={{ user_token }}&address_id=' + $('#shipping_address_id').val();
+		}else{
+			$url = 'index.php?route=customer/customer.address&user_token={{ user_token }}&address_id=' + this.value;
+		}
+	$.ajax({
+		url: $url,
+		dataType: 'json',
+		beforeSend: function() {
+			$('select[name=\'shipping_address\']').prop('disabled', true);
+		},
+		complete: function() {
+			$('select[name=\'shipping_address\']').prop('disabled', false);
+		},
+		success: function(json) {
+			// Reset all fields
+			if(json['address_id']){
+				$('#saveShippingAddress').attr('value',json['address_id']);
+				$('#saveShippingAddress').removeClass('disabled');
+				$('#syncShippingAddress').removeClass('disabled');
+				$('#syncShippingAddress').attr('value',json['address_id']);
+			}
+			if($('#input-shipping-address').val()==0){
+				$('#saveShippingNewAddress').removeClass('disabled');
+				$('#saveShippingAddress').addClass('disabled');
+			}else{
+				$('#saveShippingNewAddress').addClass('disabled');
+				$('#saveShippingAddress').removeClass('disabled');
+			}
+			$('#shipping-details input[type=\'text\'], #shipping-details input[type=\'text\'], #shipping-details textarea').val('');
+			$('#shipping-details select option').not('#shipping-details select[name=\'shipping_address\']').removeAttr('selected');
+			$('select[name=\'shipping_address\']').val(json['address_id']);
+			$('#shipping-details input[name=\'input_shipping_firstname\']').val(json['firstname']);
+			$('#shipping-details input[name=\'input_shipping_lastname\']').val(json['lastname']);
+			$('#shipping-details input[name=\'input_shipping_company\']').val(json['company']);
+			$('#shipping-details input[name=\'input_shipping_address_1\']').val(json['address_1']);
+			$('#shipping-details input[name=\'input_shipping_address_2\']').val(json['address_2']);
+			$('#shipping-details input[name=\'input_shipping_city\']').val(json['city']);
+			$('#shipping-details input[name=\'input_shipping_postcode\']').val(json['postcode']);
+			$('#shipping-details select[name=\'input_shipping_country_id\']').val(json['country_id']);
+			$('#shipping-details input[name=\'input_shipping_firstname\']').attr('value',json['firstname']);
+			$('#shipping-details input[name=\'input_shipping_lastname\']').attr('value',json['lastname']);
+			$('#shipping-details input[name=\'input_shipping_company\']').attr('value',json['company']);
+			$('#shipping-details input[name=\'input_shipping_address_1\']').attr('value',json['address_1']);
+			$('#shipping-details input[name=\'input_shipping_address_2\']').attr('value',json['address_2']);
+			$('#shipping-details input[name=\'input_shipping_city\']').attr('value',json['city']);
+			$('#shipping-details input[name=\'input_shipping_postcode\']').attr('value',json['postcode']);
+			$('#shipping-details select[name=\'input_shipping_country_id\']').attr('value',json['country_id']);
+
+			shipping_zone_id = json['zone_id'];
+
+			//for (i in json['custom_field']) {
+			//	$('#shipping-details select[name=\'custom_field[' + i + ']\']').val(json['custom_field'][i]);
+			//	$('#shipping-details textarea[name=\'custom_field[' + i + ']\']').val(json['custom_field'][i]);
+			//	$('#shipping-details input[name^=\'custom_field[' + i + ']\'][type=\'text\']').val(json['custom_field'][i]);
+			//	$('#shipping-details input[name^=\'custom_field[' + i + ']\'][type=\'hidden\']').val(json['custom_field'][i]);
+			//	$('#shipping-details input[name^=\'custom_field[' + i + ']\'][type=\'radio\'][value=\'' + json['custom_field'][i] + '\']').prop('checked', true);
+			//	$('#shipping-details input[name^=\'custom_field[' + i + ']\'][type=\'checkbox\'][value=\'' + json['custom_field'][i] + '\']').prop('checked', true);
+
+			//	if (json['custom_field'][i] instanceof Array) {
+			//		for (j = 0; j < json['custom_field'][i].length; j++) {
+			//			$('#shipping-details input[name^=\'custom_field[' + i + ']\'][type=\'checkbox\'][value=\'' + json['custom_field'][i][j] + '\']').prop('checked', true);
+			//		}
+			//	}
+			//}
+
+			$('#shipping-details select[name=\'input_shipping_country_id\']').trigger('change');
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+	});
+
+	$('#shipping-details select[name=\'input_shipping_country_id\']').on('change', function() {
+	$.ajax({
+		url: 'index.php?route=localisation/country.country&user_token={{ user_token }}&country_id=' + this.value,
+		dataType: 'json',
+		beforeSend: function() {
+			$('#shipping-details select[name=\'input_shipping_country_id\']').prop('disabled', true);
+		},
+		complete: function() {
+			$('#shipping-details select[name=\'input_shipping_country_id\']').prop('disabled', false);
+		},
+		success: function(json) {
+			if (json['postcode_required'] == '1') {
+				$('#shipping-details input[name=\'input_shipping_postcode\']').closest('.form-group').addClass('required');
+			} else {
+				$('#shipping-details input[name=\'input_shipping_postcode\']').closest('.form-group').removeClass('required');
+			}
+
+			html = '<option value="">{{ text_select }}</option>';
+
+			if (json['zone'] && json['zone'] != '') {
+				for (i = 0; i < json['zone'].length; i++) {
+        			html += '<option value="' + json['zone'][i]['zone_id'] + '"';
+
+					if (json['zone'][i]['zone_id'] == shipping_zone_id) {
+	      				html += ' selected="selected"';
+	    			}
+
+	    			html += '>' + json['zone'][i]['name'] + '</option>';
+				}
+			} else {
+				html += '<option value="0" selected="selected">{{ text_none }}</option>';
+			}
+
+			$('#shipping-details select[name=\'input_shipping_zone_id\']').html(html);
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+	});
+
+$('#savePaymentNewAddress').on('click',function(){
+	var customer_id = $('#customer_id').val();
+	if(customer_id == ''){
+		alert('Please select customer first.');
+	}else{
+		var firstname = $('#input-payment-firstname').val();
+		var lastname = $("#input-payment-lastname").val();
+		var company = $("#input-payment-company").val();
+		var address_1 = $("#input-payment-address-1").val();
+		var address_2 = $("#input-payment-address-2").val();
+		var postcode = $("#input-payment-postcode").val();
+		var city = $("#input-payment-city").val();
+		var country_id = $("#input-payment-country").val();
+		var zone_id = $("#input-payment-zone").val();
+		$.ajax({
+			url: 'index.php?route=codevoc/b2bmanager_quotation.addAddress&user_token={{ user_token }}',
+			type: 'post',
+			data:{
+				customer_id : customer_id,
+				firstname : firstname,
+				lastname : lastname,
+				company : company,
+				address_1 : address_1,
+				address_2 : address_2,
+				postcode : postcode,
+				city : city,
+				country_id : country_id,
+				zone_id : zone_id,
+			},
+			success: function(json) {
+				var html = '<option value="'+json['address_id']+'" selected="selected">'+json['firstname']+' '+json['lastname']+','+json['address_1']+','+json['city']+','+json['country']+'</option>';
+				$('select[name=\'payment_address\']').append(html);
+				$('#savePaymentNewAddress').addClass('disabled');
+				$('#savePaymentAddress').removeClass('disabled');
+				$('#savePaymentAddress').attr('value',json['address_id']);
+				$('#syncPaymentAddress').removeClass('disabled');
+				$('#syncPaymentAddress').attr('value',json['address_id']);
+				$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Address Added Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	}
+});
+
+$('#saveShippingNewAddress').on('click',function(){
+	var customer_id = $('#customer_id').val();
+	if(customer_id != ''){
+		var firstname = $('#input-shipping-firstname').val();
+		var lastname = $("#input-shipping-lastname").val();
+		var company = $("#input-shipping-company").val();
+		var address_1 = $("#input-shipping-address-1").val();
+		var address_2 = $("#input-shipping-address-2").val();
+		var postcode = $("#input-shipping-postcode").val();
+		var city = $("#input-shipping-city").val();
+		var country_id = $("#input-shipping-country").val();
+		var zone_id = $("#input-shipping-zone").val();
+		$.ajax({
+			url: 'index.php?route=codevoc/b2bmanager_quotation.addAddress&user_token={{ user_token }}',
+			type: 'post',
+			data:{
+				customer_id : customer_id,
+				firstname : firstname,
+				lastname : lastname,
+				company : company,
+				address_1 : address_1,
+				address_2 : address_2,
+				postcode : postcode,
+				city : city,
+				country_id : country_id,
+				zone_id : zone_id,
+			},
+			success: function(json) {
+				var html = '<option value="'+json['address_id']+'" selected="selected">'+json['firstname']+' '+json['lastname']+','+json['address_1']+','+json['city']+','+json['country']+'</option>';
+				$('select[name=\'shipping_address\']').append(html);
+				$('#saveShippingNewAddress').addClass('disabled');
+				$('#saveShippingAddress').removeClass('disabled');
+				$('#saveShippingAddress').attr('value',json['address_id']);
+				$('#syncShippingAddress').removeClass('disabled');
+				$('#syncShippingAddress').attr('value',json['address_id']);
+				$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Address Added Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	}else{
+		alert('Please select customer first');
+	}
+});
+
+	function saveQuotation(){
+		var buttontype=$('#buttontype').val();
+		if($('input[name=\'quotation_status_id\']').val()=='')
+		{
+			alert("Ange offert status");
+		}
+		else{
+			if ($('input[name=\'quotation_id\']').val() == 0) {
+					var url = 'index.php?route=codevoc/b2bmanager_quotation.addQuotation&user_token={{ user_token }}';
+			} else {
+				var url = 'index.php?route=codevoc/b2bmanager_quotation.editQuotation&user_token={{ user_token }}'+ '&quotation_id=' + $('input[name=\'quotation_id\']').val();
+			}
+		
+			$.ajax({
+				url: url,
+				type: 'post',
+				data: $('#form-product').serialize(),
+				dataType: 'json',
+				crossDomain: true,
+				success: function(json) {
+					$('.alert-dismissible, .text-danger').remove();
+		
+					if (json['error']) {
+						$('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					}
+		
+					//if (json['success']) {
+					//	$('#content > .container-fluid').prepend('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + '  <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					//	if($('input[name=\'quotation_id\']').val()!=0)
+					//	{
+					//		var quotation_id=$('input[name=\'quotation_id\']').val();
+					//		alert('Quotation Update Successfully');
+		    		//		if(buttontype=='2'){window.location='{{cancel}}';}
+					
+					//	}
+					//}
+			
+					if (json['quotation_id']) {
+							$('input[name=\'quotation_id\']').val(json['quotation_id']);
+							      window.setTimeout(function () { 
+										$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Quotation Created Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>'); 
+									}, 2000); 
+							window.location='{{cancel}}';
+					}else if(json['quotation_id']==null){
+						window.setTimeout(function () { 
+							$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Quotation Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>'); 
+						}, 2000); 							
+					}
+			
+		//			}
+					$('#btn_order').removeClass('disabled');
+					$('#btn_order').attr('onclick','createOrder('+json['quotation_id']+')');
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+		}
+	}	
+
+function createOrder(quotation_id){
+if(confirm("Vill du skapa order?")) {
+	 $.ajax({
+     url: 'index.php?route=codevoc/b2bmanager_quotation.createOrder&user_token={{user_token}}&quotation_id=' + quotation_id,
+     type: 'post',
+     dataType: 'html',
+	 beforeSend: function() {
+			$('#btn_order'+quotation_id).button('loading');
+	},
+		complete: function() {
+			 $('#btn_order'+quotation_id).button('reset');
+	},
+     success: function (data){
+	 		if (data.error){
+            	alert(data.error);
+            }
+			else{
+				var url = '';
+				url = 'index.php?route=codevoc/b2bmanager_order&user_token={{user_token}}&order=true&filter_order_status_id=1';
+				$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Order created successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+				location = url;
+			}
+    }
+});
+
+}//IF OK
+}
+	function removerow() {
+        var totalrow = $('#totalrow').val();
+        totalrow = totalrow - 1;
+        $('#totalrow').val(totalrow);
+    }	
+
+$('#savePaymentAddress').on('click',function(){
+	var address_id = $(this).attr('value');
+	var firstname = $('#input-payment-firstname').val();
+	var lastname = $("#input-payment-lastname").val();
+	var company = $("#input-payment-company").val();
+	var address_1 = $("#input-payment-address-1").val();
+	var address_2 = $("#input-payment-address-2").val();
+	var postcode = $("#input-payment-postcode").val();
+	var city = $("#input-payment-city").val();
+	var country_id = $("#input-payment-country").val();
+	var zone_id = $("#input-payment-zone").val();
+	$.ajax({
+		url: 'index.php?route=customer/customer.address&user_token={{ user_token }}&address_id='+address_id,
+		type: 'post',
+		data:{},
+		dataType: '',
+		crossDomain: true,
+		success: function(jsonData) {
+			var firstname_before = jsonData['firstname'];
+			var lastname_before = jsonData['lastname'];
+			var company_before = jsonData['company'];
+			var address_1_before = jsonData['address_1'];
+			var address_2_before = jsonData['address_2'];
+			var postcode_before = jsonData['postcode'];
+			var city_before = jsonData['city'];
+			var country_id_before = jsonData['country_id'];
+			var zone_id_before = jsonData['zone_id'];
+
+				$.ajax({
+					url: 'index.php?route=customer/customer.updateAddressById&user_token={{ user_token }}',
+					type: 'post',
+					data:{
+						address_id : address_id,
+						firstname : firstname,
+						lastname : lastname,
+						company : company,
+						address_1 : address_1,
+						address_2 : address_2,
+						postcode : postcode,
+						city : city,
+						country_id : country_id,
+						zone_id : zone_id,
+					},
+					dataType: '',
+					crossDomain: true,
+					success: function() {
+						
+						$('#input-payment-firstname').val(firstname_before);
+						$('#input-payment-firstname').attr('value',firstname_before);
+						$('#input-payment-lastname').val(lastname_before);
+						$('#input-payment-lastname').attr('value',lastname_before);
+						$('#input-payment-company').val(company_before);
+						$('#input-payment-company').attr('value',company_before);
+						$('#input-payment-address-1').val(address_1_before);
+						$('#input-payment-address-1').attr('value',address_1_before);
+						$('#input-payment-address-2').val(address_2_before);
+						$('#input-payment-address-2').attr('value',address_2_before);
+						$('#input-payment-postcode').val(postcode_before);
+						$('#input-payment-postcode').attr('value',postcode_before);
+						$('#input-payment-city').val(city_before);
+						$('#input-payment-city').attr('value',city_before);
+						$('#input-payment-country').val(country_id_before);
+						$('#input-payment-country').attr('value',country_id_before);
+						payment_zone_id = zone_id_before;
+						$('#payment-details select[name=\'input_payment_country_id\']').trigger('change');
+						$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Address Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+
+				},
+					error: function(xhr, ajaxOptions, thrownError) {
+						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+					}
+				});
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+
+$('#saveShippingAddress').on('click',function(){
+	var address_id = $(this).attr('value');
+	var firstname = $('#input-shipping-firstname').val();
+	var lastname = $("#input-shipping-lastname").val();
+	var company = $("#input-shipping-company").val();
+	var address_1 = $("#input-shipping-address-1").val();
+	var address_2 = $("#input-shipping-address-2").val();
+	var postcode = $("#input-shipping-postcode").val();
+	var city = $("#input-shipping-city").val();
+	var country_id = $("#input-shipping-country").val();
+	var zone_id = $("#input-shipping-zone").val();
+	$.ajax({
+		url: 'index.php?route=customer/customer.address&user_token={{ user_token }}&address_id='+address_id,
+		type: 'post',
+		data:{},
+		dataType: '',
+		crossDomain: true,
+		success: function(jsonData) {
+			var firstname_before = jsonData['firstname'];
+			var lastname_before = jsonData['lastname'];
+			var company_before = jsonData['company'];
+			var address_1_before = jsonData['address_1'];
+			var address_2_before = jsonData['address_2'];
+			var postcode_before = jsonData['postcode'];
+			var city_before = jsonData['city'];
+			var country_id_before = jsonData['country_id'];
+			var zone_id_before = jsonData['zone_id'];
+
+				$.ajax({
+					url: 'index.php?route=customer/customer.updateAddressById&user_token={{ user_token }}',
+					type: 'post',
+					data:{
+						address_id : address_id,
+						firstname : firstname,
+						lastname : lastname,
+						company : company,
+						address_1 : address_1,
+						address_2 : address_2,
+						postcode : postcode,
+						city : city,
+						country_id : country_id,
+						zone_id : zone_id,
+					},
+					dataType: '',
+					crossDomain: true,
+					success: function() {
+						
+						$('#input-shipping-firstname').val(firstname_before);
+						$('#input-shipping-firstname').attr('value',firstname_before);
+						$('#input-shipping-lastname').val(lastname_before);
+						$('#input-shipping-lastname').attr('value',lastname_before);
+						$('#input-shipping-company').val(company_before);
+						$('#input-shipping-company').attr('value',company_before);
+						$('#input-shipping-address-1').val(address_1_before);
+						$('#input-shipping-address-1').attr('value',address_1_before);
+						$('#input-shipping-address-2').val(address_2_before);
+						$('#input-shipping-address-2').attr('value',address_2_before);
+						$('#input-shipping-postcode').val(postcode_before);
+						$('#input-shipping-postcode').attr('value',postcode_before);
+						$('#input-shipping-city').val(city_before);
+						$('#input-shipping-city').attr('value',city_before);
+						$('#input-shipping-country').val(country_id_before);
+						$('#input-shipping-country').attr('value',country_id_before);
+						shipping_zone_id = zone_id_before;
+						$('#shipping-details select[name=\'input_shipping_country_id\']').trigger('change');
+						$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Address Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+
+				},
+					error: function(xhr, ajaxOptions, thrownError) {
+						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+					}
+				});
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+
+$('#syncPaymentAddress').on('click',function(){
+	var address_id = $(this).attr('value');
+	$.ajax({
+		url: 'index.php?route=customer/customer.address&user_token={{ user_token }}&address_id='+address_id,
+		type: 'post',
+		data:{},
+		dataType: '',
+		crossDomain: true,
+		success: function(json) {
+	   		if(confirm('Do you really want to sync new payment address?')){
+
+					$('#input-payment-firstname').val(json['firstname']);
+					$('#input-payment-firstname').attr('value',json['firstname']);
+					$('#input-payment-lastname').val(json['lastname']);
+					$('#input-payment-lastname').attr('value',json['lastname']);
+					$('#input-payment-company').val(json['company']);
+					$('#input-payment-company').attr('value',json['company']);
+					$('#input-payment-address-1').val(json['address_1']);
+					$('#input-payment-address-1').attr('value',json['address_1']);
+					$('#input-payment-address-2').val(json['address_2']);
+					$('#input-payment-address-2').attr('value',json['address_2']);
+					$('#input-payment-postcode').val(json['postcode']);
+					$('#input-payment-postcode').attr('value',json['postcode']);
+					$('#input-payment-city').val(json['city']);
+					$('#input-payment-city').attr('value',json['city']);
+					$('#input-payment-country').val(json['country_id']);
+					$('#input-payment-country').attr('value',json['country_id']);
+					payment_zone_id = json['zone_id'];
+					$('#payment-details select[name=\'input_payment_country_id\']').trigger('change');
+					$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Payment address synced successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+
+			}
+
+	},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+
+$('#syncShippingAddress').on('click',function(){
+	var address_id = $(this).attr('value');
+	$.ajax({
+		url: 'index.php?route=customer/customer.address&user_token={{ user_token }}&address_id='+address_id,
+		type: 'post',
+		data:{},
+		dataType: '',
+		crossDomain: true,
+		success: function(json) {
+	   		if(confirm('Do you really want to sync new shipping address?')){
+
+					$('#input-shipping-firstname').val(json['firstname']);
+					$('#input-shipping-firstname').attr('value',json['firstname']);
+					$('#input-shipping-lastname').val(json['lastname']);
+					$('#input-shipping-lastname').attr('value',json['lastname']);
+					$('#input-shipping-company').val(json['company']);
+					$('#input-shipping-company').attr('value',json['company']);
+					$('#input-shipping-address-1').val(json['address_1']);
+					$('#input-shipping-address-1').attr('value',json['address_1']);
+					$('#input-shipping-address-2').val(json['address_2']);
+					$('#input-shipping-address-2').attr('value',json['address_2']);
+					$('#input-shipping-postcode').val(json['postcode']);
+					$('#input-shipping-postcode').attr('value',json['postcode']);
+					$('#input-shipping-city').val(json['city']);
+					$('#input-shipping-city').attr('value',json['city']);
+					$('#input-shipping-country').val(json['country_id']);
+					$('#input-shipping-country').attr('value',json['country_id']);
+					shipping_zone_id = json['zone_id'];
+					$('#shipping-details select[name=\'input_shipping_country_id\']').trigger('change');
+					$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Shipping address synced successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+
+			}
+
+	},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+//price calculation
+function pricecal() {
+        var totalrow = $('#totalrow').val();
+
+        var subtotal = 0;
+        var totalpay = 0;
+		var total_tax = 0;		
+
+        $('#article tbody tr').each(function () {
+            var id = $(this).attr('id');
+
+            var fields = id.split('article_row');
+            var i = fields[1];
+            if (i != null) {
+				//v5
+                var totalval = 0;
+                var priceval = 0;
+				var discountval = 0;
+                var org_price = 0;
+                //v5
+				var article_nr = $('#article_nr'+i).val();
+				if(article_nr != ''){
+					var quantity = parseInt($('#quantity' + i).val());
+					//v5
+					var price = parseFloat($('#oprice_v' + i).val());
+					//v5
+					//discount price calculation
+					var oprice = parseFloat($('#oprice_v' + i).val());
+					//discount pirce calculation				
+					var price_discount_percentage = parseFloat($('#price_discount_percentage' + i).val());
+					if (price != '' && quantity != '') {
+						priceval = parseFloat(price) * parseInt(quantity);
+						totalval = priceval;
+						//v5
+							org_price=parseFloat(price);
+						//v5
+					}
+					//discount price calculation
+					if (priceval != '' && price_discount_percentage != '' ) {
+						discountval = priceval * price_discount_percentage / 100;
+						totalval = totalval - discountval;
+						//discount price calculation
+						var pp=oprice*price_discount_percentage/100;
+						var disc=oprice-pp;
+						org_price = parseFloat(disc);
+							$('#price' + i).val(parseFloat(disc).toFixed(2));
+							$('#price' + i).attr('value',parseFloat(disc).toFixed(2));	
+							$('#pprice' + i).attr('value',parseFloat(disc).toFixed(2));	
+						//discount price calculation			  
+					}
+					//get option price
+						var optionprice=0;
+						$('#options'+i+' input').each(function (){
+							var opprice=$(this).val();
+							if(opprice!='')
+							{
+									var oppriceArr = opprice.split("_");
+									if(oppriceArr[0]=='-')
+									{
+										//v4
+										optionprice=parseFloat(oppriceArr[1])*parseInt(quantity);
+										totalval -=parseFloat(optionprice);
+										//v4
+
+										//v5
+										org_price -=parseFloat(oppriceArr[1]);
+										//v5
+
+										//disount price calculation
+										oprice -=parseFloat(oppriceArr[1]);
+										//discount price calculation
+
+									}
+									else
+									{
+										//v4
+										optionprice=parseFloat(oppriceArr[1])*parseInt(quantity);
+										totalval +=parseFloat(optionprice);
+										//v4
+
+										//v5
+										org_price +=parseFloat(oppriceArr[1]);
+										//v5
+
+										//disount price calculation
+										oprice +=parseFloat(oppriceArr[1]);
+										//discount price calculation
+
+
+									}
+								$('#price' + i).val(parseFloat(org_price).toFixed(2));
+								$('#price' + i).attr('value',parseFloat(org_price).toFixed(2));
+								$('#pprice' + i).attr('value',parseFloat(org_price).toFixed(2));
+							}
+
+						});
+					//get option price
+					//v5
+
+					
+					//v5
+					//discount price calculation
+					if(article_nr != ''){
+						$('#oprice' + i).val(parseFloat(oprice).toFixed(2));
+					}
+					$('#total' + i).val(parseFloat(totalval).toFixed(2));
+					totalvalue = totalval;
+					tax_rate = $('#total_tax'+i).val();
+					totalval = totalval + ((totalval*tax_rate)/100);
+					subtotal = parseFloat(subtotal) + totalvalue ;
+					total_tax_prod = parseFloat((totalvalue * tax_rate)/100);
+					
+					$('#total' + i).attr('value',parseFloat(totalvalue).toFixed(2));
+					$('#total_tax_to_prod' + i).val(parseFloat(total_tax_prod).toFixed(2))
+					totalpay = parseFloat(totalpay) + totalval;
+					total_tax = parseFloat(totalpay) - parseFloat(subtotal);
+				}
+            }
+        });
+
+
+
+        var num = subtotal;
+		subtotal = parseFloat(num).toFixed(2);
+		
+		var shipping = $('.shipping_cost').val();
+		var shipping_tax = $('#shipping_tax').val();
+		var num_total = totalpay;
+		if(shipping){
+			totalpay = (parseFloat(num_total) + parseFloat(shipping) + parseFloat(shipping_tax)).toFixed(2);
+		}else{
+			totalpay = parseFloat(num_total).toFixed(2);
+		}
+
+		if(shipping_tax){
+			var num_tax = (parseFloat(total_tax) + parseFloat(shipping_tax)).toFixed(2);
+		}else{
+			var num_tax = total_tax;
+		}
+		
+		total_tax = parseFloat(num_tax).toFixed(2);
+ 
+		$('.sub_total').attr('value',subtotal);
+        $('#sub_total').html(numberWithCommas(subtotal));
+		$('.total').attr('value',totalpay);
+        $('#total').html(numberWithCommas(totalpay));
+		$('.tax').attr('value',total_tax);
+		$('#tax').html(numberWithCommas(total_tax));
+		calculateArticleTotals();
+
+}	
+//price calculation
+function numberWithCommas(x) {
+        x = String(x).toString();
+        var afterPoint = '';
+        if (x.indexOf('.') > 0)
+            afterPoint = x.substring(x.indexOf('.'), x.length);
+        x = Math.floor(x);
+        x = x.toString();
+        var lastThree = x.substring(x.length - 3);
+        var otherNumbers = x.substring(0, x.length - 3);
+        if (otherNumbers != '')
+            lastThree = ',' + lastThree;
+        return otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
+}					
+</script> 
+<script type="text/javascript">
+function addarticlerow(){
+
+		if($('#totalrow').attr('value')){
+			b2bcountrow = $('#totalrow').attr('value');
+		}else{
+			b2bcountrow = 0;
+		}
+
+		html = '<tr id="article_row' + b2bcountrow + '">';
+		html += '<td style="text-align: center;"><input type="checkbox" class="countArticle">';
+		html += '<input type="hidden" class="sort_order" name="order_products[' + b2bcountrow + '][sort_order]" value=""></td>';
+		html += '<td><input class="form-control" type="text" name="order_products[' + b2bcountrow + '][model]" value="" placeholder="{{column_model}}" id="article_nr' + b2bcountrow + '" data-oc-target="autocomplete-article-nr' + b2bcountrow + '" autocomplete="off">'
+		html += '<ul id="autocomplete-article-nr' + b2bcountrow + '" class="dropdown-menu"></ul>';
+	    html += '<input type="hidden" name="order_products[' + b2bcountrow + '][product_id]" value="" id="productrow' + b2bcountrow + '"></td>';
+		html += '<td><input class="form-control" type="text" name="order_products[' + b2bcountrow + '][name]" value="" placeholder="{{column_title}}" id="productname' + b2bcountrow + '"></td>';
+		html +=	'<td><input onkeyup="pricecal();" class="form-control" class="ctrl_quantity" min="1" type="number" name="order_products[' + b2bcountrow + '][quantity]" value="1" placeholder="{{column_qty}}" id="quantity' + b2bcountrow + '"></td>';
+		html += '<td id="options' + b2bcountrow + '"><input type="hidden" id="product_option_id' + b2bcountrow + '" value="">';
+		html += '<input type="hidden" name="order_products[' + b2bcountrow + '][option][] value=""><span>No options are available.</span>';
+		html += '</td>';
+		html += '<td> <input class="form-control" type="text" value="" placeholder="{{column_org_price}}" id="oprice' + b2bcountrow + '" name="order_products[' + b2bcountrow + '][oprice]" readonly="readonly"><input type="hidden" id="oprice_v' + b2bcountrow + '" name="order_products[' + b2bcountrow + '][oprice_v]" value=""></td>';
+		html += '<td><input class="form-control" onkeyup="pricecal();" type="text" value="" placeholder="{{column_price}}" id="price' + b2bcountrow + '" readonly="readonly"><input type="hidden" id="pprice' + b2bcountrow + '" name="order_products[' + b2bcountrow + '][price]" value="{{order_product.org_price_base}}">';
+		html +=	'</td>';
+		html += '<td><input onkeyup="pricecal();" class="form-control" type="text" name="order_products[' + b2bcountrow + '][price_discount_percentage]" value="{{order_product.price_discount_percentage}}" placeholder="{{column_percantage}}" id="price_discount_percentage' + b2bcountrow + '" readonly="readonly"></td>';
+		html += '<td style="display:none;" id="tax_classes' + b2bcountrow + '">';
+		html += '<input type="hidden" name="order_products[' + b2bcountrow + '][tax_class_id]" value=""><input type="hidden" id="total_tax' + b2bcountrow + '" value=""><input type="hidden" id="total_tax_to_prod' + b2bcountrow + '" name="order_products[' + b2bcountrow + '][total_tax_to_prod]" value="">';
+		html += '</td>';
+		html += '<td><input type="text" class="form-control" name="order_products[' + b2bcountrow + '][total]" value="" placeholder="{{column_total}}" id="total' + b2bcountrow + '" readonly="readonly"></td>';
+		html += '<td><i class="fa fa-minus" onclick="$(\'#article_row' + b2bcountrow + '\').remove();checkEmpty();removerow();"></i></td>';
+		html += '<td style="text-align: center; cursor:pointer;"><i class="fa fa-plus" onclick="addarticlerow();"></i></td>';
+		html += '<td style="text-align: center; cursor:pointer;"><i class="fa fa-copy" onclick="copyarticlerow(' + b2bcountrow + ');"></i></td>';
+		html += '<td><i class="fa fa-arrows sorter" data-move></i></td>';
+		html += '</tr>';
+
+        $('#article tbody').append(html);
+		
+		b2bcountrow++;
+
+        $('#totalrow').val(b2bcountrow);
+
+
+	$("[id^=article_nr]").each(function () {
+        $(this).autocomplete({
+            'source': function (request, response) {
+                $.ajax({
+                    url: 'index.php?route=codevoc/b2bmanager_quotation.productsautocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                    dataType: 'json',
+                    success: function (json) {
+                        response($.map(json, function (item) {
+                            return {
+							    label: item['name'],
+                                value: item['product_id'],
+                                product_name: item['product_name'],
+                                model: item['model'],
+                            }
+                        }));
+                    }
+                });
+            },
+            'select': function (item) {
+				var res = item['model'];
+                $(this).attr('value',res);
+				$(this).val(res);
+                res1 = item['product_name'];
+
+                var pid = $(this).attr('id');
+                var values = pid.split('article_nr');
+                var countid = values[1];
+                $('#productrow' + countid).val(item['value']);
+                $('#productname' + countid).val(res1);
+				displayRes(item['value'], this.id);
+				calculateArticleTotals();
+				addarticlerow();
+				//$('input[name=\'order_products['+totalrow+'][product_id]\']' ).attr('value',res3);
+            }
+        });
+    });
+
+	$('#price_discount_percentage' + b2bcountrow).keypress(function (event) {
+            return isNumber(event, this)
+    });
+
+    $('#price' + b2bcountrow).keypress(function (event) {
+        return isNumber(event, this)
+    });
+
+
+    rearrange_rows();
+	if($('#article tbody tr').length>0)
+	{
+		$('#button-addrow').hide();
+	}
+}
+
+
+
+	if($('#article tbody tr').length>0)
+	{
+		$('#button-addrow').hide();
+	}
+
+if($('input[name=\'quotation_id\']').val() == 0){
+		addarticlerow();
+}
+function checkEmpty(){
+	if($('#article tbody tr').length==0){
+		$('#button-addrow').show();
+	}
+	pricecal();
+}
+
+
+ function copyarticlerow(row_id) {
+
+		if($('#article_nr'+parseInt(row_id+1)).val()){
+			var b2bcountrow = $('#totalrow').val();
+		}else{
+			var b2bcountrow = $('#totalrow').val();
+		}
+			var origin_article_row = $("#article_row" + row_id);
+			var new_row = $(origin_article_row).clone();
+			var tbody = $(origin_article_row).closest('tbody');
+			var last_row = $(tbody).find("tr:last");
+		
+
+
+        // Select control select value
+        new_row.find("select").each(function (i) {
+            this.selectedIndex = origin_article_row.find("select")[i].selectedIndex;
+        });
+
+        // replace product id with new id
+        $(new_row).attr("id", "article_row" + b2bcountrow);
+
+
+        // Hidden sort order field
+        $(new_row).find("td").eq(0).find('[type="hidden"]').attr("name", 'order_products[' + b2bcountrow + '][sort_order]');
+
+        // Model number column id replace
+        $(new_row).find("td").eq(1).find('[type="text"]').attr("name", 'order_products[' + b2bcountrow + '][model]');
+        $(new_row).find("td").eq(1).find('[type="text"]').attr("id", 'article_nr' + b2bcountrow);
+		$(new_row).find("td").eq(1).find('[type="text"]').attr("data-oc-target", 'autocomplete-article-nr' + b2bcountrow);
+		$(new_row).find("td").eq(1).find('ul').attr("id", 'autocomplete-article-nr' + b2bcountrow);
+        $(new_row).find("td").eq(1).find('[type="hidden"]').attr("name", 'order_products[' + b2bcountrow + '][product_id]');
+        $(new_row).find("td").eq(1).find('[type="hidden"]').attr("id", 'productrow' + b2bcountrow);
+
+        // Product name column id replace
+        $(new_row).find("td").eq(2).find('[type="text"]').attr("name", 'order_products[' + b2bcountrow + '][name]');
+        $(new_row).find("td").eq(2).find('[type="text"]').attr("id", 'productname' + b2bcountrow);
+
+        // Quantity replace
+        $(new_row).find("td").eq(3).find('[type="number"]').attr("name", 'order_products[' + b2bcountrow + '][quantity]');
+        $(new_row).find("td").eq(3).find('[type="number"]').attr("id", 'quantity' + b2bcountrow);
+
+        // Options id replace
+        if ($(new_row).find("td").eq(4).find('select').length > 0) {
+			var counter=0;
+            $(new_row).find("td").eq(4).find('select').each(function (i) {
+                this.selectedIndex = origin_article_row.find("select")[i].selectedIndex;
+                var select_old_name = $(this).attr("name");
+                var select_new_name = select_old_name.replace('order_products[' + row_id + ']', 'order_products[' + b2bcountrow + ']');
+                $(this).attr("name", select_new_name);
+
+				var select_old_name = $(this).attr("id");
+                var select_new_name = select_old_name.replace('optiondropdown' + row_id+'_'+counter, 'optiondropdown' + b2bcountrow+'_'+counter);
+                $(this).attr("id", select_new_name);
+
+				var select_old_name = $(this).attr("onChange");
+				var select_new_name = select_old_name.replace('oppricecal('+row_id+',' + counter + ');', 'oppricecal('+b2bcountrow+',' + counter + ');');
+				$(this).attr('onChange', select_new_name);
+				counter=counter+1;
+
+
+			});
+
+        } else {
+            $(new_row).find("td").eq(4).attr('id', 'options' + b2bcountrow);
+            $(new_row).find("td").eq(4).find('[type="hidden"]').attr("name", 'order_products[' + b2bcountrow + '][product_option][]');
+        }
+
+			//v5
+			//for hidden filds
+			if ($(new_row).find("td").eq(4).find('select').length > 0) {
+					var counter=0;
+					$(new_row).find("td").eq(4).find('input').each(function (i) {
+					var select_old_name = $(this).attr("id");
+					var oldvalue=$(select_old_name).val();
+					var select_new_name = select_old_name.replace('optionprice' + row_id+'_'+counter, 'optionprice' + b2bcountrow+'_'+counter);
+					$(this).attr("id", select_new_name);
+					$(select_new_name).val(oldvalue);
+					counter=counter+1;
+				});
+			}
+			//for hidden fields
+			//v5
+
+        $(new_row).find("td").eq(4).attr("id", "options" + b2bcountrow);
+
+		//discount price calculation
+		 $(new_row).find("td").eq(5).find('[type="text"]').attr("name", 'order_products[' + b2bcountrow + '][oprice]');
+       	 $(new_row).find("td").eq(5).find('[type="text"]').attr("id", 'oprice' + b2bcountrow);
+		 $(new_row).find("td").eq(5).find('[type="hidden"]').attr("name", 'order_products[' + b2bcountrow + '][oprice_v]');
+       	 $(new_row).find("td").eq(5).find('[type="hidden"]').attr("id", 'oprice_v' + b2bcountrow);
+		//discount price calculation
+
+        // price id replace
+
+		//v5
+		 $(new_row).find("td").eq(6).find('[type="hidden"]').attr("name", 'order_products[' + b2bcountrow + '][price]');
+       	 $(new_row).find("td").eq(6).find('[type="hidden"]').attr("id", 'pprice' + b2bcountrow);
+		//v5
+
+        $(new_row).find("td").eq(6).find('[type="text"]').attr("id", 'price' + b2bcountrow);
+
+        // price  discount id replace
+        $(new_row).find("td").eq(7).find('[type="text"]').attr("name", 'order_products[' + b2bcountrow + '][price_discount_percentage]');
+        $(new_row).find("td").eq(7).find('[type="text"]').attr("id", 'price_discount_percentage' + b2bcountrow);
+
+
+		// Tax Classes id replace
+        $(new_row).find("#tax_classes"+row_id).attr("id", "tax_classes" + b2bcountrow)
+
+        $(new_row).find("td").eq(8).find('[name="order_products['+row_id+'][tax_class_id]"]').attr("name", "order_products[" + b2bcountrow + "][tax_class_id]");
+		$(new_row).find("#total_tax" + row_id).attr("id", "total_tax" + b2bcountrow);
+		$(new_row).find("#total_tax_to_prod" + row_id).attr("id", "total_tax_to_prod" + b2bcountrow);
+		$(new_row).find("td").eq(8).find('[name="order_products['+row_id+'][total_tax_to_prod]"]').attr("name", "order_products["+b2bcountrow+"][total_tax_to_prod]");
+
+        // total id replace
+        $(new_row).find("#total" + row_id).attr("name", 'order_products[' + b2bcountrow + '][total]');
+        $(new_row).find("#total" + row_id).attr("id", 'total' + b2bcountrow);
+
+
+		 // change action buttons id
+        $(new_row).find("td").eq(10).find(".fa-minus").attr("onclick", "$('#article_row" + b2bcountrow + "').remove();pricecal();checkEmpty();");
+        $(new_row).find("td").eq(10).find(".fa-minus").attr("data-row-id",b2bcountrow);
+
+        $(new_row).find("td").eq(12).find(".btn-action-copy").attr("onclick", "copyarticlerow(" + b2bcountrow + ")");
+		$(new_row).find("td").eq(12).find(".btn-action-copy").attr("data-row-id",b2bcountrow);
+
+
+        $(origin_article_row).after(new_row);
+
+        // change descriptino row ids
+
+
+        //for the product
+        $("[id^=article_nr]").each(function () {
+            $(this).autocomplete({
+                'source': function (request, response) {
+                    $.ajax({
+                        url: 'index.php?route=codevoc/b2bmanager_quotation.productsautocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+                        dataType: 'json',
+                        success: function (json) {
+                            response($.map(json, function (item) {
+                                return {
+                                    label: item['name'],
+                                    value: item['product_id'],
+									product_name: item['product_name'],
+                                    model: item['model']
+                                }
+                            }));
+                        }
+                    });
+                },
+                'select': function (item) {
+                    var res = item['model'];
+                    $(this).val(res);
+                    res1 = item['product_name'];
+					var pid = $(this).attr('id');
+                    var values = pid.split('article_nr');
+                    var countid = values[1];
+                    $('#productrow' + countid).val(item['value']);
+					$('#productname' + countid).val(res1);
+					displayRes(item['value'], this.id);
+					addarticlerow();
+                }
+            });
+			calculateArticleTotals();
+        });
+
+		$('#price_discount_percentage' + b2bcountrow).keypress(function (event) {
+            return isNumber(event, this)
+        });
+
+        $('#price' + b2bcountrow).keypress(function (event) {
+            return isNumber(event, this)
+        });
+
+        rearrange_rows();
+
+
+        //for the product
+        b2bcountrow++;
+
+        $('#totalrow').val(b2bcountrow);
+
+
+        pricecal();
+
+		if($('#article tbody tr').length>0)
+		{
+			$('#button-addrow').hide();
+		}
+
+}
+</script>
+<script type="text/javascript">
+
+		// handle check all
+		$(".countArticle.selectAll").on('change', function(e) {
+		var checked = $(this).is(':checked')
+			$('tbody .countArticle').prop('checked', checked)
+		});
+
+        // calculate total quantity for articles
+        function calculateArticleTotals(){
+            var total_articles = 0;
+            var total_articles_quantity = 0;
+			var countCheckedItemsOnly = $('.countArticle:checkbox:checked').length > 0
+            $("#article tbody tr[id^='article_row']").each(function(){
+				var isChecked = $(this).find(".countArticle:checked").length > 0
+				if(countCheckedItemsOnly && !isChecked)
+					return;
+                var row_id = $(this).attr("id");
+                var article_nr = row_id.replace("article_row","#article_nr");
+                var article_nr = $(article_nr).val();
+                if(article_nr != ''){
+                  var qty_row = $(this).find("td").eq(3);
+                  var qty = parseInt($(qty_row).find("[type='number']").val());
+									total_articles_quantity += qty;
+									++total_articles;
+                }
+            });
+			$("#totalarticles").text(total_articles);
+            $("#totalarticles_quantity").text(total_articles_quantity);
+        };
+
+        // calculate on load of page
+        calculateArticleTotals();
+
+        // calculate totals on remove article
+        $(".btn-action-remove").on("click",function() {
+            calculateArticleTotals();
+        });
+		// article checkbox check change event
+		$(".countArticle").on('change', function() {
+			calculateArticleTotals();
+		});
+
+		if($('#input-payment-country').val()){
+			$('#payment-details select[name=\'input_payment_country_id\']').trigger('change');
+			payment_zone_id = '{{payment_zone_id}}';
+		}else if(!($('#payment_address_id').val())){
+			payment_zone_id = '';
+		}
+		if($('#input-payment-country').val()){
+			$('#shipping-details select[name=\'input_shipping_country_id\']').trigger('change');
+			shipping_zone_id = '{{shipping_zone_id}}';
+		}else if(!($('#shipping_address_id').val())){
+			shipping_zone_id = '';
+		}
+
+function generateCart(custom_cart_url){
+  window.prompt("Copy to clipboard: Ctrl+C, Enter", custom_cart_url);
+}
+
+function cartAdd()
+{
+	//cart add
+		$.ajax({
+		url: '{{ catalog }}index.php?route=api/sale/cart.add&api_token={{ api_token }}&quotation_id={{quotation_id}}&store_id=' + $('select[name=\'store_id\'] option:selected').val(),
+		type: 'post',
+		data: $('#form-product').serialize(),
+		dataType: 'json',
+		crossDomain: true,
+		success: function(json) {
+			$('.alert-dismissible, .text-danger').remove();
+			$('.form-group').removeClass('has-error');
+
+			if (json['error']) {
+				if (json['error']['warning']) {
+					$('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				}
+
+				if (json['error']['option']) {
+					for (i in json['error']['option']) {
+						var element = $('#input-option' + i.replace('_', '-'));
+
+						if (element.parent().hasClass('input-group')) {
+							$(element).parent().after('<div class="text-danger">' + json['error']['option'][i] + '</div>');
+						} else {
+							$(element).after('<div class="text-danger">' + json['error']['option'][i] + '</div>');
+						}
+					}
+				}
+
+				if (json['error']['store']) {
+					$('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error']['store'] + '</div>');
+				}
+
+				// Highlight any found errors
+				$('.text-danger').parentsUntil('.form-group').parent().addClass('has-error');
+			} else {
+				// Refresh products, vouchers and totals
+				 $('#button-refresh').trigger('click');
+
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+
+	//cart add
+}
+function oppricecal(rowcount,counter)
+{	var product_option_value_id=$('#optiondropdown'+rowcount+'_'+counter+' option:selected').val();
+	var product_id=$('#productrow'+rowcount).val();
+	//discount price calculation	
+	var customer_id = $("#customer_id").val();
+	var quantity = $("#quantity" + rowcount).val();
+	//discount price calculation	
+
+					$.ajax({
+					url: 'index.php?route=codevoc/b2bmanager_quotation.getpoprice&user_token={{ user_token }}&product_option_value_id=' + product_option_value_id+'&product_id=' + product_id+'&customer_id=' + customer_id + '&quantity=' + quantity+'&rowcount='+rowcount, //discount price calculation	url update with param
+					dataType: 'json',
+					type: 'post', //discount price calculation
+					success: function(result)
+					{
+								$('#optionprice'+rowcount+'_'+counter).val(result['success']);
+								//discount price calculation	
+								if(result['price_discount_percentage']>0)
+								{
+									var pricediscount_percentage = parseFloat(result['price_discount_percentage']).toFixed(2);
+									$('#price_discount_percentage'+rowcount).val(pricediscount_percentage);
+								}
+								//discount price calculation	
+								pricecal();
+
+					},
+					error: function(xhr, ajaxOptions, thrownError) {
+
+						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+					}
+		});
+
+}
+
+
+</script>
+{{ footer }}
