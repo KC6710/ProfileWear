@@ -337,11 +337,10 @@
 }
 
 .product-details-main .product-info .content .category .size-selection {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
 }
 
 /* .product-details-main .product-info .content .category  .size-selection .size-div{

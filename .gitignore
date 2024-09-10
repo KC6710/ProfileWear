@@ -1,9 +1,11 @@
 .htaccess
 config.php
 bossadm/config.php
-
+image/*
+logs/
+uploads/
 !index.html
-
+extension/ocme/*
 download/
 image/data/
 image/cache/
@@ -21,7 +23,7 @@ vqmod/mods.cache
 
 htpasswd
 db/
-
+storage/*
 image/
 
 
