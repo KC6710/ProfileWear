@@ -220,7 +220,7 @@ class Category extends \Opencart\System\Engine\Controller {
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],
-					'href'        => str_replace(HTTPS_SERVER."/",HTTPS_SERVER,$this->url->link('product/product', '&path=' . $this->request->get['path'] . '&product_id=' . $result['product_id']))
+					'href'        => str_replace(HTTPS_SERVER."/",HTTPS_SERVER,$this->url->link('product/product', '&product_id=' . $result['product_id']))
 				]; 
 				$product_data['tags'] = [];
 
