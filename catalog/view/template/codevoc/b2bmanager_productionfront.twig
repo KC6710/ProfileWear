@@ -387,11 +387,11 @@
           if('added' in event) {
             formdata.append('sort_order', event.added.newIndex);
             formdata.append('production_id', event.added.element.production_id);
-            axios.post('index.php?route=codevoc/b2bmanager_productionfront/updateStatus&token={{ token }}', formdata)
+            axios.post('index.php?route=codevoc/b2bmanager_productionfront.updateStatus&token={{ token }}', formdata)
           }else if('moved' in event) {
             formdata.append('sort_order', event.moved.newIndex);
             formdata.append('production_id', event.moved.element.production_id);
-            axios.post('index.php?route=codevoc/b2bmanager_productionfront/updateStatus&token={{ token }}', formdata)
+            axios.post('index.php?route=codevoc/b2bmanager_productionfront.updateStatus&token={{ token }}', formdata)
           }
         },
         showPrintArticles(suppliers) {
