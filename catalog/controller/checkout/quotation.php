@@ -570,8 +570,6 @@ class Quotation extends \Opencart\System\Engine\Controller {
 					$order_data['files_data'] = json_encode($file_names); // Store file names as JSON
 					$order_data['original_file_name'] = json_encode($original_file_names); // Store file names as JSON
 				}
-			} else {
-				$order_data['files_data'] = json_encode([]);
 			}
 			
 			// Order Totals

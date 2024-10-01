@@ -106,8 +106,8 @@
 					<button type="button" class="btn btn-warning" id="shipping_label" data-toggle="modal" data-target="#shippingModal"><i class="fa fa-th-list"></i> Fraktsedel</button>
 					<button type="button" class="btn btn-secondary" id="create_invoice" data-toggle="modal" data-target="#invoiceModal"><i class="fa fa-file-text"></i> Skapa faktura</button>
 					<button type="button" id="order_cost" data-toggle="modal" data-target="#orderCostModal" class="btn btn-primary"><i class="fa fa-dollar-sign"></i> Kostnader</button>
-                    <a class="btn btn-info" href="{{link_receipt}}" target="_blank" >Kvitto</a>
-                    <a class="btn btn-info" href="{{link_delivery_note}}" target="_blank" >Följesedel</a>
+                    <a {% if purchase.purchase_id != ''%} class="btn btn-info" href="{{link_receipt}}" target="_blank" {% else %} class="btn btn-info disabled" disabled {% endif %} >Kvitto</a>
+                    <a {% if purchase.purchase_id != ''%} class="btn btn-info" href="{{link_delivery_note}}" target="_blank" {% else %} class="btn btn-info disabled" disabled {% endif %} >Följesedel</a>
 					<a class="btn btn-success" data-toggle="tooltip" id="button-save" onclick="saveOrder();" title="{{ button_save }}"><i class="fa fa-save"></i> Spara</a>
 				</div>
 				<h1>
@@ -1059,25 +1059,25 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <label for="height" class="col-form-label">Height</label>
-                        <input type="text" class="form-control" placeholder="cm" id="height" name="height">
+                        <input type="text" class="form-control" placeholder="cm" id="height" name="height" value="0">
                     </div>
                     <div class="col-sm-4">
                         <label for="width" class="col-form-label">Width</label>
-                        <input type="text" class="form-control" placeholder="cm" id="width" name="width">
+                        <input type="text" class="form-control" placeholder="cm" id="width" name="width" value="0">
                     </div>
                     <div class="col-sm-4">
                         <label for="Length" class="col-form-label">Length</label>
-                        <input type="text" class="form-control" placeholder="cm" id="Length" name="Length">   
+                        <input type="text" class="form-control" placeholder="cm" id="Length" name="Length" value="0">   
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-4">
                         <label for="quantity" class="col-form-label">Quantity</label>
-                        <input type="text" class="form-control" placeholder="Quantity" id="quantity" name="quantity">
+                        <input type="text" class="form-control" placeholder="Quantity" id="quantity" name="quantity" value="1">
                     </div>
                     <div class="col-sm-4">
                         <label for="weight" class="col-form-label">Weight</label>
-                        <input type="text" class="form-control" placeholder="Weight" id="weight" name="weight">
+                        <input type="text" class="form-control" placeholder="Weight" id="weight" name="weight" value="0">
                     </div>
                     <div class="col-sm-4"></div>
                 </div>
@@ -1134,11 +1134,11 @@ $('#button-history').on('click', function(e) {
     e.preventDefault();
                  var sendmail_delivery = false
                  var order_status_id = $('#input-order-status').val()
-                 //if(order_status_id == 5){
+                 if(order_status_id == 5){
                         if(confirm("Vill du skicka leveransbekräftelse? Om lagerupphämtning välj avbryt/cancel = inget mail skickas.")) {
                                 sendmail_delivery = true
                         }
-                // }
+                 }
 				if(sendmail_delivery) {
                          $.ajax({
                                 url: 'index.php?route=codevoc/b2bmanager_order.sendmail_delivery&user_token={{ user_token }}&order_id={{ order_id }}&email={{ email }}',
@@ -1164,11 +1164,11 @@ $('#button-history').on('click', function(e) {
 
             if (json['error']) {
 				$('#historyModal').modal('hide');
-                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible" role="alert"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
             }
 
             if (json['success']) {
-                $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                $('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
                 $('#history').load('index.php?route=codevoc/b2bmanager_order.history&user_token={{ user_token }}&order_id=' + $('#input-order-id').val());
 
@@ -1198,7 +1198,7 @@ $('#orderType').on('change',function(){
 		},
 		success: function(json) {
 			if(json['response']==1){
-				$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Order type changed successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+				$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Order type changed successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 			}
 
 		},
@@ -1323,7 +1323,7 @@ $('#shipping_carrier').on('change',function(){
 		});
 });
 
-$('#product_type').on('click',function(){
+$('#product_type').on('change',function(){
     productType = $(this).val();
     url = 'index.php?route=codevoc/b2bmanager_shipmondo.shipmondoPackageType&user_token={{ user_token }}';
     $.ajax({
@@ -1389,7 +1389,7 @@ $('#create_shipment').on('click', function(){
             $('.alert-dismissible').remove();
 
             if (json['error']) {
-                $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                $('#alert').prepend('<div class="alert alert-danger alert-dismissible" role="alert"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
             }
 
             if (json['success']) {
@@ -1415,12 +1415,12 @@ $('#create_shipment').on('click', function(){
 								
 								html +=	'</ul></td>';
 								html +=	'<td>'+shipments['shipment_details'][i]['date_created']+'</td>';
-								html +=	'<td><button type="button" class="btn btn-sm btn-primary" value="'+shipments['shipment_details'][i]['id']+'"href="index.php?route=codevoc/b2bmanager_shipmondo.downloadShipmentPdf&user_token={{ user_token }}&shipment_id='+shipments['shipment_details'][i]['id']+'" class="btn btn-sm btn-primary" id="shipment_pdf" value="{{shipment.id}}" id=""><i class="fa fa-download"></i> DOWNLOAD PDF</button></td>';
+								html +=	'<td><a class="btn btn-sm btn-primary" value="'+shipments['shipment_details'][i]['id']+' "href="index.php?route=codevoc/b2bmanager_shipmondo.downloadShipmentPdf&user_token={{ user_token }}&shipment_id='+shipments['shipment_details'][i]['id']+'"><i class="fa fa-download"></i> DOWNLOAD PDF</button></td>';
 								html +=	'</tr>';
 							}
 							$('#shipment_table tbody').html(html);
 							$('#shippingModal').modal('hide');
-							$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+							$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 						},
 						error: function(xhr, ajaxOptions, thrownError) {
 							console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -1900,7 +1900,7 @@ $(document).on("input propertychange paste", "[id^=quantity]", function () {
                 $('#productname' + countid).val(res1);
 				displayRes(item['value'], this.id);
 				calculateArticleTotals();
-                addarticlerow();
+                //addarticlerow();
             }
         });
     });
@@ -1931,7 +1931,7 @@ $(document).on("input propertychange paste", "[id^=quantity]", function () {
 					}
 					else
 					{
-					   $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Customer details synced successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+					   $('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Customer details synced successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 					}
 				},
 				error: function(xhr, ajaxOptions, thrownError) {
@@ -1967,7 +1967,7 @@ $(document).on("input propertychange paste", "[id^=quantity]", function () {
 				dataType: 'json',
 				crossDomain: true,
 				success: function() {
-					$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Customer details updated successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+					$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Customer details updated successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 			},
 				error: function(xhr, ajaxOptions, thrownError) {
 					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -2334,12 +2334,12 @@ $(document).on("input propertychange paste", "[id^=quantity]", function () {
 					$('.alert-dismissible, .text-danger').remove();
 		
 					if (json['error']) {
-						$('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+						$('#alert').prepend('<div class="alert alert-danger alert-dismissible" role="alert"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 					}
 			
 					if (json['order_id']) {
 						$('input[name=\'order_id\']').val(json['order_id']);
-						$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Quotation Created Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+						$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Quotation Created Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 							window.location='{{cancel}}';
 					}else if(json['order_id']==null){
 						if(confirm('Do you want to send the mail to customer?')){
@@ -2349,7 +2349,7 @@ $(document).on("input propertychange paste", "[id^=quantity]", function () {
 								dataType:'html'
 							})
 						}
-						$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Order Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+						$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Order Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 					}
 					var sendmail_delivery = false
 					var order_status_id = $('#order_status_id').val()
@@ -2445,7 +2445,7 @@ $('#savePaymentAddress').on('click',function(){
 						$('#input-payment-country').attr('value',country_id_before);
 						payment_zone_id = zone_id_before;
 						$('#payment-details select[name=\'input_payment_country_id\']').trigger('change');
-						$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Address Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+						$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Address Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 				},
 					error: function(xhr, ajaxOptions, thrownError) {
 						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -2524,7 +2524,7 @@ $('#saveShippingAddress').on('click',function(){
 						$('#input-shipping-country').attr('value',country_id_before);
 						shipping_zone_id = zone_id_before;
 						$('#shipping-details select[name=\'input_shipping_country_id\']').trigger('change');
-						$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Address Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+						$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Address Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
 				},
 					error: function(xhr, ajaxOptions, thrownError) {
@@ -2576,7 +2576,7 @@ $('#savePaymentNewAddress').on('click',function(){
 				$('#savePaymentAddress').attr('value',json['address_id']);
 				$('#syncPaymentAddress').removeClass('disabled');
 				$('#syncPaymentAddress').attr('value',json['address_id']);
-				$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Address Added Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+				$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Address Added Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 			},
 			error: function(xhr, ajaxOptions, thrownError) {
 				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -2620,7 +2620,7 @@ $('#saveShippingNewAddress').on('click',function(){
 				$('#saveShippingAddress').attr('value',json['address_id']);
 				$('#syncShippingAddress').removeClass('disabled');
 				$('#syncShippingAddress').attr('value',json['address_id']);
-				$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Address Added Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+				$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Address Added Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 			},
 			error: function(xhr, ajaxOptions, thrownError) {
 				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -2661,7 +2661,7 @@ $('#syncPaymentAddress').on('click',function(){
 					payment_zone_id = json['zone_id'];
 					$('#payment-details select[name=\'input_payment_country_id\']').trigger('change');
 					$('.alert-dismissible').remove();
-					$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Payment address synced successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+					$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Payment address synced successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
 			}
 
@@ -2701,7 +2701,7 @@ $('#syncShippingAddress').on('click',function(){
 					$('#input-shipping-country').attr('value',json['country_id']);
 					shipping_zone_id = json['zone_id'];
 					$('#shipping-details select[name=\'input_shipping_country_id\']').trigger('change');
-					$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> Shipping address synced successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+					$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Shipping address synced successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
 			}
 
@@ -2948,7 +2948,7 @@ function addarticlerow(){
                 $('#productname' + countid).val(res1);
 				displayRes(item['value'], this.id);
 				calculateArticleTotals();
-				addarticlerow();
+				//addarticlerow();
 				//$('input[name=\'order_products['+totalrow+'][product_id]\']' ).attr('value',res3);
             }
         });
@@ -3149,7 +3149,7 @@ function checkEmpty(){
                     $('#productrow' + countid).val(item['value']);
 					$('#productname' + countid).val(res1);
 					displayRes(item['value'], this.id);
-					addarticlerow();
+					//addarticlerow();
                 }
             });
 			calculateArticleTotals();

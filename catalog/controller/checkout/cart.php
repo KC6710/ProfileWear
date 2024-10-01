@@ -90,7 +90,7 @@ class Cart extends \Opencart\System\Engine\Controller {
 			$data['content_bottom'] = $this->load->controller('common/content_bottom');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
-
+			
 			$this->response->setOutput($this->load->view('checkout/cart', $data));
 		} 
 		else {
@@ -302,6 +302,13 @@ class Cart extends \Opencart\System\Engine\Controller {
 				];
 			}
 		}
+		foreach($data['totals'] as $total){
+			if($total['title'] == 'Totalt'){
+				$data['carttotalvalue'] =  $total['text'];
+			 }
+		}
+		$data['carttotalvalue'] = str_replace(',','',$data['carttotalvalue']);
+		$data['carttotalvalue'] = str_replace('kr','',$data['carttotalvalue']);
 		$data['notSurePrint'] = $this->getnotsurevalue();
 		$data['quotation'] = $this->url->link('checkout/quotation', 'language=' . $this->config->get('config_language'));
 		$data['checkout'] = $this->url->link('extension/svea/module/svea/checkout', 'language=' . $this->config->get('config_language'));

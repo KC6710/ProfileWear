@@ -186,7 +186,7 @@ class B2bmanagerPurchase extends \Opencart\System\Engine\Model {
         'email' => $purchase_order['email'],
         'order_type' => $the_order_type,
         'quotation_id' => $purchase_order['quotation_id'],
-        'link' => $this->url->link('codevoc/b2bmanager_order/edit', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . $purchase_order['order_id'], true),
+        'link' => $this->url->link('codevoc/b2bmanager_order.edit', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . $purchase_order['order_id'], true),
         'products' => $this->getPurchaseOrderProducts($purchase_order['purchase_order_id']),
         'product_count' => $product_count,
         'order_product_count' => $order_product_count,

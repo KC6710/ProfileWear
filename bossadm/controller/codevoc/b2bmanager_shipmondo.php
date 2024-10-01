@@ -69,7 +69,7 @@ class B2bmanagerShipmondo extends \Opencart\System\Engine\Controller {
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-			CURLOPT_URL => 'https://app.shipmondo.com/api/public/v3/package_types?product_code='.$productType,
+			CURLOPT_URL => 'https://app.shipmondo.com/api/public/v3/package_types?sender_country_code=SE&receiver_country_code=SE&product_code='.$productType,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => '',
 			CURLOPT_MAXREDIRS => 10,
@@ -650,8 +650,8 @@ class B2bmanagerShipmondo extends \Opencart\System\Engine\Controller {
 				[
 						'weight' => $this->request->post['weight'],
 						'height' => $this->request->post['height'],
-						'width' => $this->request->post['width'],
-						'length' => $this->request->post['Length'],
+						'width' => '10',
+						'length' => '10',
 						'packaging' => $this->request->post['packing_type']
 				]
 			]
@@ -672,7 +672,7 @@ class B2bmanagerShipmondo extends \Opencart\System\Engine\Controller {
 			$this->response->addHeader('Content-Type: application/json');
 			$this->response->setOutput(json_encode($json));
 		} else {
-		$shipment_details = json_decode($response);
+			$shipment_details = json_decode($response);
 		}
 
 		if($shipment_details){

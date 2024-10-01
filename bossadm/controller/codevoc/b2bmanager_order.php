@@ -43,7 +43,7 @@ class B2bmanagerOrder extends \Opencart\System\Engine\Controller {
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('codevoc/b2bmanager_order');
-
+		
 		$this->getForm();
 	}
 
@@ -487,9 +487,9 @@ class B2bmanagerOrder extends \Opencart\System\Engine\Controller {
 			$data['order_type'] = $order_info['order_type'];
 			$data['this_order_status_id'] = $order_info['order_status_id'];
 			$this->load->model('codevoc/b2bmanager_shipmondo');
-			$shipmentDetails = $this->model_codevoc_b2bmanager_shipmondo->getShipmentDetails($order_info['order_id']);
+			$shipmentDetails = $this->model_codevoc_b2bmanager_shipmondo->getShipmentDetails($data['order_id']); 
 			if(count($shipmentDetails) > 0){
-				foreach($shipmentDetails as $shipment){
+				foreach($shipmentDetails as $shipment){ 
 					$product = $this->getShipmondoProduct($shipment['product_code']);
 					$services = $product[0]->available_services;
 					$addons_db = explode(",",$shipment['service_codes']);
@@ -528,7 +528,12 @@ class B2bmanagerOrder extends \Opencart\System\Engine\Controller {
 				$data['quotation_date'] = date($this->language->get('date_format_short'), strtotime($quotation_details['date_added']));
 			}
 			$quotation_others = $this->model_codevoc_b2bmanager_quotation->getQuotationOtherdetails($data['quotation_id']);  
-
+			
+			// System Users
+			$this->load->model('user/user');
+			if(array_key_exists('assignee',$quotation_others)){
+				$data['quotation_assignee'] = $this->model_user_user->getUser($quotation_others['assignee']);
+			}
 			if ($order_info['quotation_id']) {
 				$data['button_quotation'] = $this->url->link('codevoc/b2bmanager_quotation.edit&user_token=' . $this->session->data['user_token'].'&quotation_id='.$order_info['quotation_id'], true);
 			} else {
@@ -929,8 +934,6 @@ class B2bmanagerOrder extends \Opencart\System\Engine\Controller {
 			);
 		}
 
-		// System Users
-		$this->load->model('user/user');
 		$filter_data = array(
 					'sort'  => 'username',
 					'order' => 'ASC'
@@ -940,9 +943,7 @@ class B2bmanagerOrder extends \Opencart\System\Engine\Controller {
 		if($data['codevocb2border']['assignee']){
 			$data['order_assignee'] = $this->model_user_user->getUser($data['codevocb2border']['assignee']);
 		}
-		if(array_key_exists('assignee',$quotation_others)){
-			$data['quotation_assignee'] = $this->model_user_user->getUser($quotation_others['assignee']);
-		}
+		
 
 		// System Users
 
@@ -1207,8 +1208,7 @@ class B2bmanagerOrder extends \Opencart\System\Engine\Controller {
 	//for getting products autocomplete
 
 	//getting single product
-	public function loadproduct()
-	{
+	public function loadproduct(){
 		$json=array();
 		$this->load->model('catalog/product');
 		$this->load->model('codevoc/b2bmanager_order');
@@ -1294,8 +1294,7 @@ class B2bmanagerOrder extends \Opencart\System\Engine\Controller {
 	//getting single product
 
 	//get product option value price v4
-	public function getpoprice()
-	{
+	public function getpoprice(){
 		$json=array();
 
 		//discount price calculation
@@ -1389,8 +1388,7 @@ class B2bmanagerOrder extends \Opencart\System\Engine\Controller {
 	//get product option value price v4
 
 	//save custom filds assigne and vatnr
-    public function b2borderdata()
-	{
+    public function b2borderdata(){
 			$json=array();
 			$json['success']=0;
 			if(isset($this->request->get['order_id']))
@@ -2239,7 +2237,7 @@ class B2bmanagerOrder extends \Opencart\System\Engine\Controller {
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
-			CURLOPT_URL => 'https://app.shipmondo.com/api/public/v3/package_types?product_code='.$productType,
+			CURLOPT_URL => 'https://app.shipmondo.com/api/public/v3/package_types?sender_country_code=SE&receiver_country_code=SE&product_code='.$productType,
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => '',
 			CURLOPT_MAXREDIRS => 10,

@@ -12,15 +12,16 @@ class B2bmanagerShipmondo extends \Opencart\System\Engine\Model {
         product_code='".$data['product_code']."',
         service_codes='".$data['service_codes']."',
         pdf_data='".$data['pdf_data']."',
-        package_type='".$data['package_type']."',
-        created_at='".$data['created_at']."'");
+        package_type='".$data['package_type']."'");
 
         return $shipment_id = $this->db->getLastId();
 
     }
     public function getShipmentDetails($order_id){
+        // echo "SELECT * FROM `". DB_PREFIX . "codevoc_shipmondo` WHERE order_id = '".(int)$order_id."'"; die;
         $query = $this->db->query("SELECT * FROM `". DB_PREFIX . "codevoc_shipmondo` WHERE order_id = '".(int)$order_id."'");
-        if($query->num_rows>0){
+        // echo "<pre>"; print_r($query->num_rows);die;
+        if($query->num_rows > 0){
             return $query->rows;
         }else{
             return array();
