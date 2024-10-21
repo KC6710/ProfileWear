@@ -14,7 +14,7 @@ system/logs/
 extension/ocme/admin/view/ocme/javascript/cache/
 
 system/storage/
-
+bossadm/view/shipment/pdfs/
 # vQmod log files
 vqmod/logs/*
 # vQmod cache files
