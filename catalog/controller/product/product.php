@@ -820,9 +820,9 @@ class Product extends \Opencart\System\Engine\Controller {
 		$mail->setSubject($this->language->get('text_subject'));
 		$mail->setHtml($this->load->view('mail/product_query', $data)); 
 		if($mail->send() == ''){
-			$json['success'] = 'Your enquiry has ben sent.';
+			$json['success'] = 'Din förfrågan har skickats';
 		}else{
-			$json['error'] = 'Something went wrong. Please try again after some time.';
+			$json['error'] = 'Något gick fel. Försök igen efter en tid.';
 		}
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));

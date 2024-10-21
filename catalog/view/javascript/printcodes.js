@@ -116,9 +116,15 @@ function calculateTotalProductPrice(quantity, baseprice) {
   });
 
   totalPrice += baseTotal;
-  $("#price_breakup").html(htmlToAppend);
-  $("#total_price_breakup").html(totalPrice.toFixed(2));
-
+  
+  if(isNaN(totalPrice)){
+    $("#price_breakup").html(`<br>Startavgift: 0`);
+    $("#total_price_breakup").html('0');
+  }else{
+    $("#price_breakup").html(htmlToAppend);
+    $("#total_price_breakup").html(totalPrice.toFixed(2));
+  }
+  
   return totalPrice.toFixed(2);
 }
 

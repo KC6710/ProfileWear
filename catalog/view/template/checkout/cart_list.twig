@@ -262,10 +262,17 @@
       {% endfor %}
       <div class="buttons-box">
       {% if customized == 1 or notSurePrint == 1 %}
-        <a href="{{ quotation }}"class="outlinedButton" onclick="window.location.href='make-quotation.html'">
-          Skapa offert
-          <img src="image/arrow_right.svg" alt="">
-        </a>
+        
+          <a 
+          {% if carttotalvalue < 1000 %}
+            data-bs-toggle="modal" data-bs-target="#minOrderValueModal"
+          {% else %}
+            href="{{ quotation }}" onclick="window.location.href='make-quotation.html'"
+          {% endif %}
+          class="outlinedButton">
+            Skapa offert
+            <img src="image/arrow_right.svg" alt="">
+          </a>
       {% else %}
         <a
         {% if carttotalvalue < 1000 %}

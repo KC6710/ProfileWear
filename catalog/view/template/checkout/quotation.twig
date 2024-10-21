@@ -88,7 +88,7 @@
           </div>
           <div class="col-12 mb-3">
             <label for="inputMessage" class="form-label input-label">Instruktioner <span class="input-required">*</span></label>            
-            <textarea class="form-control input-textarea" name="message" id="message" aria-label="With textarea" placeholder="Ange information om din förfrågan."></textarea>
+            <textarea class="form-control input-textarea" name="message" id="message" aria-label="With textarea" placeholder="Ange information om din förfrågan." value=""></textarea>
               <div class="d-flex align-items-center justify-content-start gap-2 my-2">
                 <img src="image/info.svg">
                 <p style="margin: 0">
@@ -543,7 +543,7 @@ function validateForm() {
   return isValid;
 }
 
-$('#message').val(localStorage.getItem('message') || '');
+//$('#message').val(localStorage.getItem('message') || '');
 $('#quotation_add').on('submit', 'form', function(e) {
     e.preventDefault();
     if (!validateForm()) {
@@ -553,7 +553,7 @@ $('#quotation_add').on('submit', 'form', function(e) {
 
     // Populate hidden fields from LocalStorage
     $('#hidden_select_colors').val(localStorage.getItem('select_colors') || '');
-    $('#message').val(localStorage.getItem('message') || '');
+    //$('#message').val(localStorage.getItem('message') || '');
     $('#hidden_color_selects').val(localStorage.getItem('colorSelects') || '');
 
     var imagesJSON = localStorage.getItem('images');

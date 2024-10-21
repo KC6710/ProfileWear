@@ -648,10 +648,7 @@ class B2bmanagerShipmondo extends \Opencart\System\Engine\Controller {
 			],
 			'parcels' => [
 				[
-						'weight' => $this->request->post['weight'],
-						'height' => $this->request->post['height'],
-						'width' => '10',
-						'length' => '10',
+						'weight' => '100',
 						'packaging' => $this->request->post['packing_type']
 				]
 			]

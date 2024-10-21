@@ -106,7 +106,6 @@ class Quotation extends \Opencart\System\Engine\Controller {
 	}
 
 	public function confirm(): void {
-
 		$json = array();
 
 		$this->load->model('account/customer');

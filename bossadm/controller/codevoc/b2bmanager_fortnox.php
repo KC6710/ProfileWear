@@ -20,10 +20,36 @@ class B2bmanagerFortnox extends \Opencart\System\Engine\Controller {
 			$order = $this->model_sale_order->getOrder($order_id);
 			$customer_id = $order['customer_id'];
 			$oc_customer = $this->model_customer_customer->getCustomer($customer_id);
-			$address_id = $oc_customer['payment_address_id'];
-			$address = $this->model_customer_customer->getAddress($address_id);
-			$order_products = $this->model_sale_order->getOrderProducts($order_id);
-			$order_totals = $this->model_sale_order->getOrderTotals($order_id);
+			// print_r($order); die;
+			if(array_key_exists('payment_address_id',$order)){
+				$address_id = $oc_customer['payment_address_id'];
+				$address = $this->model_customer_customer->getAddress($address_id);
+			}else{
+				$address = [
+					// 'address_id'     => $order['address_id'],
+					// 'customer_id'    => $order['customer_id'],
+					'firstname'      => $order['payment_firstname'],
+					'lastname'       => $order['payment_lastname'],
+					'company'        => $order['payment_company'],
+					'address_1'      => $order['payment_address_1'],
+					'address_2'      => $order['payment_address_2'],
+					'postcode'       => $order['payment_postcode'],
+					'city'           => $order['payment_city'],
+					'zone_id'        => $order['payment_zone_id'],
+					'zone'           => $order['payment_zone'],
+					'zone_code'      => $order['payment_zone_code'],
+					'country_id'     => $order['payment_country_id'],
+					'country'        => $order['payment_country'],
+					'iso_code_2'     => $order['payment_iso_code_2'],
+					'iso_code_3'     => $order['payment_iso_code_3'],
+					'address_format' => $order['payment_address_format'],
+					// 'custom_field'   => json_decode($order['payment_custom_field'], true),
+					// 'default'        => $order['default']
+				];
+			}
+
+			$order_products = $this->model_sale_order->getProducts($order_id);
+			$order_totals = $this->model_sale_order->getTotals($order_id);
 
 			/* Retrive customer */
 			$customer = $this->getFortnoxCustomer($customer_id);
@@ -41,7 +67,6 @@ class B2bmanagerFortnox extends \Opencart\System\Engine\Controller {
 				'totals' => $order_totals,
 			];
 			$result = $this->generateFortnoxInvoice($data);
-
 			/* If unable to create invoice for order */
 			if(!$result['status']) {
 				$json['error'] = $result['error'];
@@ -73,8 +98,8 @@ class B2bmanagerFortnox extends \Opencart\System\Engine\Controller {
 		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 		CURLOPT_CUSTOMREQUEST => 'GET',
 		CURLOPT_HTTPHEADER => array(
-			'Access-Token: c7118f61-4186-4a65-b044-749aa04982f2',
-			'Client-Secret: paxYcGcFhy'
+			// 'Access-Token: c7118f61-4186-4a65-b044-749aa04982f2',
+			// 'Client-Secret: paxYcGcFhy'
 		),
 		));
 

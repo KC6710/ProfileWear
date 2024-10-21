@@ -2350,6 +2350,7 @@ $(document).on("input propertychange paste", "[id^=quantity]", function () {
 							})
 						}
 						$('#alert').prepend('<div class="alert alert-success alert-dismissible" role="alert"><i class="fa-solid fa-check-circle"></i> Order Updated Successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+						setInterval(function(){ $(".alert").fadeOut(); }, 5000);
 					}
 					var sendmail_delivery = false
 					var order_status_id = $('#order_status_id').val()
